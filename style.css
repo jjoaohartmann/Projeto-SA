@@ -6,7 +6,6 @@
     --cor-texto: #F8F9FA;
 }
 
-
 html{
     scroll-behavior: smooth;
 }
@@ -23,11 +22,14 @@ body {
     padding: 0;
 }
 
+/* =========================================
+   CABEÇALHO (NAV-BAR)
+   ========================================= */
 .nav-bar {
     background-color: var(--verde-agua);
     padding: 15px 40px;
     display: flex;
-    justify-content: flex-end; /* Alinha os itens de navegação à direita */
+    justify-content: flex-end;
     align-items: center;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     position: sticky;
@@ -41,7 +43,7 @@ body {
     font-size: 20px;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     font-weight: 600;
-    margin-right: auto; /* Empurra o logotipo/título para a extrema esquerda */
+    margin-right: auto;
 }
 
 .topic {
@@ -64,7 +66,6 @@ body {
     transition: color 0.3s ease;
 }
 
-/* Efeito de underline animado nos links de navegação */
 .topic a::after {
     content: '';
     position: absolute;
@@ -84,7 +85,6 @@ body {
     color: #90d8ee;
 }
 
-/* Estilo específico para o botão de "Contatos" (Último item do menu) */
 .topic li:last-child a {
     background-color:#F8F9FA;
     color: rgb(0, 0, 0);
@@ -101,7 +101,7 @@ body {
 }
 
 .topic li:last-child a::after {
-    display: none; /* Remove o underline animado do botão */
+    display: none;
 }
 
 .logo {
@@ -110,18 +110,90 @@ body {
     margin-right: 15px;
 }
 
-/* iMAGEM MAC */
+/* =========================================
+   SEÇÃO DE INTRODUÇÃO (ALTERADA)
+   ========================================= */
+.introducao {
+    display: flex;
+    flex-direction: row; /* Coloca texto e imagem lado a lado */
+    align-items: center;
+    justify-content: space-around;
+    padding: 80px 40px;
+    max-width: 1100px; /* Limita a largura para ficar agradável em telas grandes */
+    margin: 0 auto;
+    gap: 40px;
+}
 
+.conteudo-esquerdo {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* Alinha à esquerda */
+    text-align: left;
+    max-width: 500px;
+}
+
+.introducao h2 {
+    font-size: 66px;
+    margin: 0 0 15px 0;
+    color: var(--cor-texto);
+}
+
+.introducao p {
+    font-size: 18px;
+    margin: 0 0 25px 0;
+    color: #ffffff;
+}
+
+.btn-inicio {
+    display: flex;
+    gap: 15px;
+}
+
+.btn {
+    background-color: var(--verde-agua);
+    color: #fff;
+    padding: 12px 24px;
+    text-decoration: none;
+    border-radius: 20px;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+.btn-secundario {
+    background-color: transparent;
+    color: #fff;
+    border: solid 2px #504a4a;
+    padding: 12px 24px;
+    text-decoration: none;
+    border-radius: 20px;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+.btn-secundario:hover {
+    background-color: #2a8c8279;
+    border: solid 2px #2a8c82;
+    color: #ffc400c0;
+    padding: 12px 24px;
+    transition: background-color 0.3s;
+}
+
+.btn:hover {
+    background-color: var(--verde-escuro);
+}
+
+/* =========================================
+   CARD DO PROJETO (ESTILO MAC)
+   ========================================= */
 .projeto-card {
     border: 1px solid #ddd;
     border-radius: 10px;
     overflow: hidden;
-    max-width: 800px;
-    margin: 0 auto;
+    width: 100%;
+    max-width: 450px; /* Tamanho reduzido para caber bem ao lado do texto */
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
-/* UI estilo janela de navegador Mac */
 .navegador-topo {
     background-color: #f1f1f1;
     padding: 10px;
@@ -139,7 +211,6 @@ body {
 .amarela { background-color: #ffbd2e; }
 .verde   { background-color: #27c93f; }
 
-/* Efeito de sobreposição (Overlay) da imagem do projeto */
 .projeto-imagem {
     position: relative;
 }
@@ -149,6 +220,9 @@ body {
     display: block;
 }
 
+/* =========================================
+   RODAPÉ (FOOTER)
+   ========================================= */
 footer {
     background-color: var(--verde-agua);
     color: #ffffff;
