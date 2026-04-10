@@ -1,0 +1,167 @@
+:root {
+    --verde-escuro: #125b5c;
+    --amarelo-vivo: #F4A222;
+    --verde-agua: #2A8C82;
+    --cor-fundo: #333333;
+    --cor-texto: #F8F9FA;
+}
+
+
+html{
+    scroll-behavior: smooth;
+}
+
+* {
+    scrollbar-color: #000000 #ffffff;
+}
+
+body {
+    background-color: var(--cor-fundo);
+    color: var(--cor-texto);
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.nav-bar {
+    background-color: var(--verde-agua);
+    padding: 15px 40px;
+    display: flex;
+    justify-content: flex-end; /* Alinha os itens de navegação à direita */
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.nav-bar h3 {
+    color: #ffffff;
+    margin: 0;
+    font-size: 20px;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-weight: 600;
+    margin-right: auto; /* Empurra o logotipo/título para a extrema esquerda */
+}
+
+.topic {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 30px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.topic a {
+    text-decoration: none;
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 600;
+    position: relative;
+    padding-bottom: 5px;
+    transition: color 0.3s ease;
+}
+
+/* Efeito de underline animado nos links de navegação */
+.topic a::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: 0;
+    left: 0;
+    background-color: #90d8ee;
+    transition: width 0.3s ease;
+}
+
+.topic a:hover::after {
+    width: 100%;
+}
+
+.topic a:hover {
+    color: #90d8ee;
+}
+
+/* Estilo específico para o botão de "Contatos" (Último item do menu) */
+.topic li:last-child a {
+    background-color:#F8F9FA;
+    color: rgb(0, 0, 0);
+    padding: 10px 24px;
+    border-radius: 30px;
+    font-weight: 700;
+    transition: all 0.3s ease;
+}
+
+.topic li:last-child a:hover {
+    background-color: #74dbd1;
+    color: #F8F9FA;
+    box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+}
+
+.topic li:last-child a::after {
+    display: none; /* Remove o underline animado do botão */
+}
+
+.logo {
+    width: 100px;
+    height: 50px;
+    margin-right: 15px;
+}
+
+/* iMAGEM MAC */
+
+.projeto-card {
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    overflow: hidden;
+    max-width: 800px;
+    margin: 0 auto;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* UI estilo janela de navegador Mac */
+.navegador-topo {
+    background-color: #f1f1f1;
+    padding: 10px;
+    display: flex;
+    gap: 8px;
+}
+
+.bolinha {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+}
+
+.vermelha { background-color: #ff5f56; }
+.amarela { background-color: #ffbd2e; }
+.verde   { background-color: #27c93f; }
+
+/* Efeito de sobreposição (Overlay) da imagem do projeto */
+.projeto-imagem {
+    position: relative;
+}
+
+.projeto-imagem img {
+    width: 100%;
+    display: block;
+}
+
+footer {
+    background-color: var(--verde-agua);
+    color: #ffffff;
+    text-align: center;
+    padding: 20px 0;
+    margin-top: 40px;
+}
+
+.contatos {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+}
