@@ -20,6 +20,10 @@ body {
     font-family: 'Arial', sans-serif;
     margin: 0;
     padding: 0;
+
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
 }
 
 /* =========================================
@@ -228,6 +232,181 @@ body {
 }
 
 /* =========================================
+   PÁGINAS DE LOGIN E CADASTRO
+   ========================================= */
+.auth-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 60px 20px;
+    flex-grow: 1; /* Faz o container crescer para empurrar o footer pra baixo */
+}
+
+.auth-box {
+    background-color: #242424; /* Um pouco mais claro que o fundo principal */
+    padding: 40px;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 420px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.auth-box h2 {
+    color: var(--verde-agua);
+    margin-top: 0;
+    margin-bottom: 5px;
+    font-size: 28px;
+}
+
+.auth-box p {
+    color: #aaaaaa;
+    margin-bottom: 30px;
+    font-size: 14px;
+}
+
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    text-align: left;
+}
+
+.input-group label {
+    display: block;
+    font-size: 14px;
+    margin-bottom: 5px;
+    color: #dddddd;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #504a4a;
+    background-color: #1a1a1a;
+    color: white;
+    font-size: 15px;
+    box-sizing: border-box;
+    transition: all 0.3s;
+}
+
+.input-group input:focus {
+    outline: none;
+    border-color: var(--verde-agua);
+    box-shadow: 0 0 0 2px rgba(42, 140, 130, 0.3);
+}
+
+.auth-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    margin-bottom: 5px;
+}
+
+.auth-options label {
+    color: #aaaaaa;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+}
+
+.forgot-password {
+    color: var(--verde-agua);
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.forgot-password:hover {
+    color: var(--amarelo-vivo);
+}
+
+.btn-full {
+    width: 100%;
+    text-align: center;
+    padding: 14px;
+    font-size: 16px;
+    margin-top: 10px;
+    cursor: pointer;
+    border: none;
+}
+
+/* Divisor "ou continue com" */
+.divider {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    margin: 25px 0;
+    color: #777777;
+    font-size: 14px;
+}
+
+.divider::before,
+.divider::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid #504a4a;
+}
+
+.divider span {
+    padding: 0 10px;
+}
+
+/* Botões Sociais */
+.social-login {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.btn-social {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #504a4a;
+    background: transparent;
+    color: #ffffff;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-social i {
+    font-size: 20px;
+}
+
+.btn-social:hover {
+    background-color: #333333;
+}
+
+/* Cores específicas no hover para cada rede */
+.btn-google:hover { border-color: #ea4335; color: #ea4335; }
+.btn-facebook:hover { border-color: #1877f2; color: #1877f2; }
+.btn-apple:hover { border-color: #ffffff; color: #ffffff; }
+
+.auth-footer {
+    margin-top: 25px;
+    font-size: 14px;
+}
+
+.auth-footer a {
+    color: var(--verde-agua);
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.auth-footer a:hover {
+    text-decoration: underline;
+}
+/* =========================================
    RODAPÉ (FOOTER)
    ========================================= */
 footer {
@@ -235,7 +414,7 @@ footer {
     color: #ffffff;
     text-align: center;
     padding: 20px 0;
-    margin-top: 40px;
+    margin-top: auto;
 }
 
 .contatos {
