@@ -1,32 +1,41 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <title>RTV Solar</title>
 </head>
-
 <body>
     <header class="nav-bar">
-        <a href="index.html"><img src="imagens/logo-site.png" alt="logo" class="logo">
-        <h3>RTV ENERGIA SOLAR</h3></a>
+        <a href="index.html">
+            <img src="imagens/logo-site.png" alt="logo" class="logo">
+            <h3>RTV ENERGIA SOLAR</h3>
+        </a>
+        
+        <button class="hamburger">
+            <i class="ph ph-list"></i>
+        </button>
+
         <ul class="topic">
+            <li><a href="index.html">Início</a></li>
             <li><a href="servicos.html">Serviços</a></li>
             <li><a href="#contato">Contatos</a></li>
-            <li><a href="login.html">login</a></li>
+            <li><a href="login.html">Login</a></li>
         </ul>
     </header>
-   <section class="inicio">
-        <div class="introducao"> <div class="conteudo-esquerdo">
+
+    <section class="inicio">
+        <div class="introducao"> 
+            <div class="conteudo-esquerdo">
                 <div class="texto">
                     <h2>Energia solar para o amanhã.</h2>
                     <p>Uma empresa inovadora cheia de inovação, inovando inovações</p>
                 </div>
                 <div class="btn-inicio">
                     <a href="cadastro.html" class="btn">Cadastre-se</a>
-                    <a href="#servicos" class="btn-secundario">Conheça mais</a>
+                    <a href="servicos.html" class="btn-secundario">Conheça mais</a>
                 </div>
             </div>
 
@@ -40,18 +49,29 @@
                     <img src="imagens/imagem-capa.png" alt="imagem do projeto">
                 </div>
             </div>
-            
         </div>
     </section>
 
     <footer id="contato">
-        <ul class="contatos">
-            <li><a href="https://www.facebook.com/rtvsolar">Facebook</a></li>
-            <li><a href="https://www.instagram.com/rtvsolar">Instagram</a></li>
-            <li><a href="https://www.linkedin.com/company/rtvsolar">LinkedIn</a></li>
-        </ul>
-        <p>&copy; 2026 RTV Solar. Todos os direitos reservados.</p>
+        <div class="footer-container">
+            <div class="footer-info">
+                <div class="info-item">
+                    <h3>Fale Conosco</h3>
+                    <p>rvt.energiasolar@gmail.com</p>
+                    <p>+55 (48) 94040-4040</p>
+                </div>
+                <div class="info-item">
+                    <h3>Nos siga nas redes sociais</h3>
+                    <p>@rvt.energiasolar</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 RTV Solar. Todos os direitos reservados.</p>
+                <a href="#" class="reclame-aqui">Reclame aqui</a>
+            </div>
+        </div>
     </footer>
-</body>
 
+    <script src="script.js"></script>
+</body>
 </html>

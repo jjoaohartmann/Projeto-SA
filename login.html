@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
+    <script src="script.js"></script>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <title>Login - RTV Solar</title>
 </head>
@@ -27,19 +28,18 @@
             <h2>Acesse sua conta</h2>
             <p>Bem-vindo de volta à RTV Energia Solar</p>
 
-            <form action="#" method="POST" class="auth-form">
+            <form id="form-login" class="auth-form">
                 <div class="input-group">
                     <label for="email">E-mail</label>
                     <input type="email" id="email" placeholder="Seu e-mail" required>
                 </div>
-                <div class="input-group">
+
+                <div class="input-group senha-group">
                     <label for="senha">Senha</label>
                     <input type="password" id="senha" placeholder="Sua senha" required>
+                    <i class="ph ph-eye toggle-password" id="toggle-senha"></i>
                 </div>
-                <div class="auth-options">
-                    <label><input type="checkbox"> Lembrar de mim</label>
-                    <a href="#" class="forgot-password">Esqueceu a senha?</a>
-                </div>
+
                 <button type="submit" class="btn btn-full">Entrar</button>
             </form>
 
@@ -64,12 +64,24 @@
     </main>
 
     <footer id="contato">
-        <ul class="contatos">
-            <li><a href="https://www.facebook.com/rtvsolar">Facebook</a></li>
-            <li><a href="https://www.instagram.com/rtvsolar">Instagram</a></li>
-            <li><a href="https://www.linkedin.com/company/rtvsolar">LinkedIn</a></li>
-        </ul>
-        <p>&copy; 2026 RTV Solar. Todos os direitos reservados.</p>
+        <div class="footer-container">
+            <div class="footer-info">
+                <div class="info-item">
+                    <h3>Fale Conosco</h3>
+                    <p>rvt.energiasolar@gmail.com</p>
+                    <p>+55 (48) 94040-4040</p>
+                </div>
+                <div class="info-item">
+                    <h3>Nos siga nas redes sociais</h3>
+                    <p>@rvt.energiasolar</p>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2026 RTV Solar. Todos os direitos reservados.</p>
+                <a href="#" class="reclame-aqui">Reclame aqui</a>
+            </div>
+        </div>
     </footer>
 </body>
 
