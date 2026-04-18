@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <title>Cadastro - RTV Solar</title>
+</head>
+
+<body>
+    <header class="nav-bar">
+        <a href="index.html">
+            <img src="imagens/logo-site.png" alt="logo" class="logo">
+            <h3>RTV ENERGIA SOLAR</h3>
+        </a>
+        <ul class="topic">
+            <li><a href="index.html">Início</a></li>
+            <li><a href="servicos.html">Serviços</a></li>
+            <li><a href="#contato">Contatos</a></li>
+            <li><a href="login.html" class="btn" style="padding: 8px 20px; margin-left: 15px;">Área do cliente</a></li>
+        </ul>
+    </header>
+
+    <main class="auth-container">
+        <div class="auth-box" style="max-width: 500px;">
+            <h2>Criar Conta de Cliente</h2>
+            <p style="color: #aaa; margin-bottom: 25px;">Preencha seus dados para solicitar acesso ao painel. Após a aprovação do administrador, você poderá acessar a plataforma.</p>
+
+            <form id="form-registro" class="auth-form">
+                <div class="input-group">
+                    <label for="nome-registro">Nome Completo</label>
+                    <input type="text" id="nome-registro" placeholder="Seu nome" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="email-registro">E-mail</label>
+                    <input type="email" id="email-registro" placeholder="seu@email.com" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="telefone-registro">Telefone</label>
+                    <input type="tel" id="telefone-registro" placeholder="(48) 99999-9999" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="endereco-registro">Endereço</label>
+                    <input type="text" id="endereco-registro" placeholder="Rua, número, cidade" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="cpf-registro">CPF/CNPJ</label>
+                    <input type="text" id="cpf-registro" placeholder="000.000.000-00" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="servico-interesse">Serviço de Interesse</label>
+                    <select id="servico-interesse" required>
+                        <option value="">Selecione um serviço</option>
+                        <option value="energia-solar">Energia Solar Residencial</option>
+                        <option value="hibrido">Sistema Híbrido com Bateria</option>
+                        <option value="assinatura">Energia por Assinatura</option>
+                        <option value="manutencao">Manutenção e Expansão</option>
+                    </select>
+                </div>
+
+                <div class="input-group senha-group">
+                    <label for="senha-registro">Senha</label>
+                    <input type="password" id="senha-registro" placeholder="Mínimo 6 caracteres" required minlength="6">
+                    <i class="ph ph-eye toggle-password" id="toggle-senha-registro"></i>
+                </div>
+
+                <div class="input-group senha-group">
+                    <label for="confirma-senha-registro">Confirmar Senha</label>
+                    <input type="password" id="confirma-senha-registro" placeholder="Repita a senha" required minlength="6">
+                    <i class="ph ph-eye toggle-password" id="toggle-confirma-senha-registro"></i>
+                </div>
+
+                <div style="display: flex; align-items: center; gap: 10px; margin: 20px 0; font-size: 13px;">
+                    <input type="checkbox" id="termos-check" required>
+                    <label for="termos-check" style="margin: 0;">Concordo com os <a href="#" style="color: var(--verde-agua);">termos de serviço</a> e <a href="#" style="color: var(--verde-agua);">política de privacidade</a></label>
+                </div>
+
+                <button type="submit" class="btn btn-full">Criar Conta e Solicitar Aprovação</button>
+            </form>
+
+            <p style="text-align: center; color: #aaa; margin-top: 20px;">
+                Já tem conta? <a href="login.html" style="color: var(--verde-agua);">Faça login aqui</a>
+            </p>
+        </div>
+    </main>
+
+    <footer id="contato">
+        <div class="footer-container">
+            <div class="footer-info">
+                <div class="info-item">
+                    <h3>Fale Conosco</h3>
+                    <p>rvt.energiasolar@gmail.com</p>
+                    <p>+55 (48) 94040-4040</p>
+                </div>
+                <div class="info-item">
+                    <h3>Nos siga nas redes sociais</h3>
+                    <p>@rvt.energiasolar</p>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2026 RTV Solar. Todos os direitos reservados.</p>
+                <a href="https://www.reclameaqui.com.br/" target="_blank" rel="noopener noreferrer" class="reclame-aqui">Reclame aqui</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.getElementById('form-registro').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const senha = document.getElementById('senha-registro').value;
+            const confirmaSenha = document.getElementById('confirma-senha-registro').value;
+
+            if (senha !== confirmaSenha) {
+                showToast('As senhas não coincidem!', 'error');
+                return;
+            }
+
+            const novoCliente = {
+                id: 'cli_' + Date.now(),
+                nome: document.getElementById('nome-registro').value,
+                email: document.getElementById('email-registro').value,
+                telefone: document.getElementById('telefone-registro').value,
+                endereco: document.getElementById('endereco-registro').value,
+                cpf: document.getElementById('cpf-registro').value,
+                servico: document.getElementById('servico-interesse').value,
+                senha: document.getElementById('senha-registro').value,
+                role: 'cliente',
+                aprovadoAdmin: false,
+                servicosAdquiridos: [],
+                dataCadastro: new Date().toLocaleString('pt-BR'),
+                dataAprovacao: null
+            };
+
+            // Verificar se o email já existe
+            const usuarios = JSON.parse(localStorage.getItem("rtv_usuarios")) || [];
+            if (usuarios.find(u => u.email === novoCliente.email)) {
+                showToast('Este e-mail já está cadastrado!', 'error');
+                return;
+            }
+
+            // Adicionar à lista de usuários
+            usuarios.push(novoCliente);
+            localStorage.setItem("rtv_usuarios", JSON.stringify(usuarios));
+
+            // Registrar auditoria
+            registrarAuditoria(`Novo cliente cadastrado: ${novoCliente.nome} (${novoCliente.email}) - Aguardando aprovação`);
+
+            showToast('Cadastro realizado! Aguardando aprovação do administrador.', 'success');
+            setTimeout(() => {
+                window.location.href = 'login.html';
+            }, 2000);
+        });
+
+        // Toggle de visibilidade de senha
+        document.getElementById('toggle-senha-registro').addEventListener('click', function() {
+            const input = document.getElementById('senha-registro');
+            input.type = input.type === 'password' ? 'text' : 'password';
+        });
+
+        document.getElementById('toggle-confirma-senha-registro').addEventListener('click', function() {
+            const input = document.getElementById('confirma-senha-registro');
+            input.type = input.type === 'password' ? 'text' : 'password';
+        });
+    </script>
+</body>
+
+</html>

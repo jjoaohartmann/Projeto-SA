@@ -1,0 +1,223 @@
+╔════════════════════════════════════════════════════════════════════════════════╗
+║                  GUIA RÁPIDO - SISTEMA DE APROVAÇÃO RTV SOLAR                  ║
+╚════════════════════════════════════════════════════════════════════════════════╝
+
+COMO USAR O NOVO SISTEMA
+========================
+
+1️⃣ NOVO CLIENTE SE REGISTRA
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Passo 1: Acesse a página inicial (index.html)
+         └─ Clique em "Criar Conta" (botão amarelo)
+
+Passo 2: Preencha o formulário em registro.html
+         ├─ Nome completo
+         ├─ E-mail
+         ├─ Telefone
+         ├─ Endereço
+         ├─ CPF/CNPJ
+         ├─ Serviço de interesse
+         └─ Senha (mín. 6 caracteres)
+
+Passo 3: Clique "Criar Conta e Solicitar Aprovação"
+         └─ Mensagem: "Cadastro realizado! Aguardando aprovação"
+
+
+2️⃣ CLIENTE TENTA FAZER LOGIN
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Neste momento, o cliente:
+  ❌ NÃO consegue acessar o painel
+  ❌ Recebe mensagem: "Sua conta está sob análise"
+
+
+3️⃣ ADMIN APROVA CLIENTE
+━━━━━━━━━━━━━━━━━━━━━━━━
+Passo 1: Acesse login-admin.html
+         ├─ E-mail: admin@rtvsolar.com
+         └─ Senha: admin123
+
+Passo 2: Você está no admin.html
+         └─ Procure a seção "APROVAÇÕES DE CLIENTES"
+
+Passo 3: Veja a tabela "Clientes Aguardando Aprovação"
+         ├─ Nome do cliente
+         ├─ E-mail
+         ├─ Serviço de interesse
+         ├─ Data de cadastro
+         └─ Botões: [Aprovar] [Rejeitar]
+
+Passo 4: Clique no botão [Aprovar]
+         └─ Confirmação: "Cliente XX aprovado com sucesso!"
+
+
+4️⃣ CLIENTE AGORA TEM ACESSO
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Passo 1: Volte to login.html
+Passo 2: Faça login com e-mail e senha
+Passo 3: ✅ Acesso ao dashboard.html LIBERADO!
+
+
+➕ O QUE MAIS FOI IMPLEMENTADO
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+PARA O ADMIN:
+  ✓ Edição de métricas em tempo real
+    - Clientes Pendentes
+    - Clientes Aprovados
+    - Total geral
+  
+  ✓ Seção de "Aprovação de Serviços"
+    - Clientes podem solicitar serviços após aprovação
+    - Admin aprova os serviços solicitados
+  
+  ✓ Sistema de Auditoria
+    - Todas as ações registradas
+    - Motivo de rejeição pode ser adicionado
+
+
+PARA O CLIENTE:
+  ✓ Se não aprovado:
+    - Acesso negado ao dashboard
+    - Mensagem clara e amigável
+  
+  ✓ Se aprovado:
+    - Acesso completo ao painel
+    - Pode solicitar serviços
+    - Pode abrir chamados
+
+
+NO HOME (index.html):
+  ✓ Simulador Expresso CORRIGIDO
+    - Digite um valor de conta (ex: 500)
+    - Veja a economia calculada em tempo real
+    - Responsivo em mobile
+
+
+🎯 FLUXO VISUAL
+━━━━━━━━━━━━━━
+
+Cliente Novo
+    │
+    ├─ Acessa registro.html
+    ├─ Preenche formulário
+    └─ SUBMETE
+         │
+         ├─ Dados salvos
+         ├─ aprovadoAdmin = false
+         └─ Mensagem: "Aguardando aprovação"
+              │
+              ├─ Tenta login → BLOQUEADO
+              │
+              ├─ Admin vê na tabela
+              │
+              └─ Admin clica [Aprovar]
+                   │
+                   ├─ aprovadoAdmin = true
+                   ├─ dataAprovacao = data/hora
+                   │
+                   └─ Cliente consegue login
+                       └─ Dashboard DESBLOQUEADO
+
+
+📊 VISUALIZANDO DADOS NO ADMIN
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Seção "APROVAÇÕES DE CLIENTES":
+┌─────────────────────────────────────────────────────────┐
+│ Métricas:                                               │
+│ • Pendentes: 2    • Aprovados: 5    • Total: 7         │
+├─────────────────────────────────────────────────────────┤
+│ Clientes Aguardando Aprovação:                          │
+│ Nome      Email           Telefone    Serviço  [Ações] │
+│ João      joao@...        (48)99...   Solar   [Apr][Rej]│
+│ Maria     maria@...       (48)98...   Híbrido [Apr][Rej]│
+├─────────────────────────────────────────────────────────┤
+│ Clientes Aprovados:                                     │
+│ Nome      Email           Telefone    Data Aprovação   │
+│ Pedro     pedro@...       (48)97...   18/04/2026      │
+│ Ana       ana@...         (48)96...   18/04/2026      │
+└─────────────────────────────────────────────────────────┘
+
+Seção "APROVAÇÃO DE SERVIÇOS":
+┌─────────────────────────────────────────────────────────┐
+│ Cliente      Email        Serviço    Valor    [Aprova] │
+│ João Silva   joao@...     Solar      R$ 15k   [Aprovar]│
+│ Maria       maria@...     Híbrido    R$ 25k   [Aprovar]│
+└─────────────────────────────────────────────────────────┘
+
+
+🔧 TESTANDO RAPIDAMENTE
+━━━━━━━━━━━━━━━━━━━━━━
+
+1. Abra index.html no navegador
+2. Clique "Criar Conta"
+3. Preencha com dados de teste:
+   - Nome: Teste Silva
+   - Email: teste@teste.com
+   - Telefone: (48) 99999-9999
+   - Endereço: Rua Teste, 123
+   - CPF: 123.456.789-00
+   - Serviço: Energia Solar
+   - Senha: teste123
+4. Clique em "Criar Conta e Solicitar Aprovação"
+5. Vá para login-admin.html e faça login
+6. Procure o novo cliente e clique "Aprovar"
+7. Volte para login.html e faça login com teste@teste.com / teste123
+8. ✅ Pronto! Você está no dashboard
+
+
+💡 DICAS IMPORTANTES
+━━━━━━━━━━━━━━━━━━
+
+▪ Os dados são salvos no localStorage do navegador
+▪ Se limpar cache/cookies, perde os dados
+▪ Para desenvolvimento, use DevTools (F12) → Application → localStorage
+▪ O admin padrão é: admin@rtvsolar.com / admin123
+▪ Para resetar tudo: F12 → Console → localStorage.clear() → Refresh
+
+
+📱 RESPONSIVIDADE
+━━━━━━━━━━━━━━━━
+
+Teste em diferentes tamanhos:
+  • Desktop: 1920x1080+
+  • Tablet: 768px
+  • Mobile: 375px
+
+O simulador expresso se adapta automaticamente!
+
+
+❓ PROBLEMAS COMUNS
+━━━━━━━━━━━━━━━━
+
+Problema: Cliente criado mas não aparece na tabela do admin
+Solução: Limpe o cache (Ctrl+Shift+Delete) e tente novamente
+
+Problema: Login bloqueado mesmo após aprovar
+Solução: Verifique se salvou corretamente, tente logout completo
+
+Problema: Simulador não calcula
+Solução: Verifique se digitou números, não letras
+
+Problema: Página fica em branco
+Solução: Verifique console (F12) por erros JavaScript
+
+
+🎓 PRÓXIMAS MELHORIAS
+━━━━━━━━━━━━━━━━
+
+Você pode adicionar:
+  • Envio de e-mail de aprovação
+  • Temas customizáveis
+  • Mais campos no cadastro
+  • Sistema de pontuação automática
+  • Integração com pagamento
+  • Notificações por WhatsApp
+  • Relatórios PDF
+
+
+═══════════════════════════════════════════════════════════════════════════════
+
+Versão: 1.0 - 18/04/2026
+Desenvolvido para RTV Solar
+Sistema de Aprovação de Clientes v1

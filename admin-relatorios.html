@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+    <script src="sistema-permissoes.js" defer></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>Relatórios - RTV Solar Admin</title>
+</head>
+<body class="pagina-painel">
+    <header class="nav-bar">
+        <a href="dashboard.html">
+            <img src="imagens/logo-site.png" alt="logo" class="logo">
+            <h3>RTV ENERGIA SOLAR - ADMIN</h3>
+        </a>
+        <div class="topbar-actions">
+            <div class="search-bar">
+                <i class="ph ph-magnifying-glass"></i>
+                <input type="text" placeholder="Buscar relatórios...">
+            </div>
+            <div class="notification-wrapper">
+                <a href="#" id="btn-notificacoes" style="color: var(--amarelo-vivo); position: relative;">
+                    <i class="ph ph-bell" style="font-size: 24px;"></i>
+                    <span class="notif-badge">0</span>
+                </a>
+                <div class="notif-dropdown" id="notif-dropdown"></div>
+            </div>
+            <a href="#" id="btn-logout" class="btn" style="background-color: #ff5f56; padding: 8px 15px;">Sair</a>
+        </div>
+    </header>
+
+    <div class="dashboard-layout">
+        <aside class="sidebar">
+            <a href="dashboard.html"><i class="ph ph-squares-four"></i> Dashboard</a>
+            <a href="admin-clientes.html"><i class="ph ph-users"></i> Gestão de Clientes</a>
+            <a href="admin-servicos.html"><i class="ph ph-briefcase"></i> Gestão de Serviços</a>
+            <a href="admin-equipamentos.html"><i class="ph ph-package"></i> Gestão de Equipamentos</a>
+            <a href="admin-relatorios.html" class="active"><i class="ph ph-chart-bar"></i> Relatórios</a>
+            <a href="admin-configuracoes.html"><i class="ph ph-gear"></i> Configurações</a>
+            <a href="admin-configuracoes.html"><i class="ph ph-shield-check"></i> Auditoria</a>
+            <a href="dashboard.html" style="margin-top: 30px; color: #aaa;"><i class="ph ph-sign-out"></i> Voltar ao Cliente</a>
+        </aside>
+
+        <main class="dashboard-content">
+            <div class="dash-header">
+                <div>
+                    <h2>Relatórios Administrativos</h2>
+                    <p style="color: #aaa;">Análise de desempenho, financeiro e operacional da plataforma</p>
+                </div>
+                <div>
+                    <input type="month" style="background: #222; color: #aaa; padding: 8px 12px; border: 1px solid #444; border-radius: 4px; margin-right: 10px;">
+                    <a href="#" class="btn" style="background-color: var(--amarelo-vivo); padding: 8px 15px; text-decoration: none;">
+                        <i class="ph ph-download"></i> Exportar PDF
+                    </a>
+                </div>
+            </div>
+
+            <!-- KPIs PRINCIPAIS -->
+            <div class="grid-cards-mini">
+                <div class="dash-card mini" data-permissao="ver_relatorios">
+                    <i class="ph ph-users icone-bg" style="color: #2A8C82;"></i>
+                    <h4>Clientes Ativos</h4>
+                    <div class="valor">147</div>
+                    <span class="status positivo">+5 este mês</span>
+                </div>
+                <div class="dash-card mini" data-permissao="ver_relatorios">
+                    <i class="ph ph-currency-dollar icone-bg" style="color: #27c93f;"></i>
+                    <h4>Receita MRR</h4>
+                    <div class="valor">R$ 45.2K</div>
+                    <span class="status positivo">+12% MoM</span>
+                </div>
+                <div class="dash-card mini" data-permissao="ver_relatorios">
+                    <i class="ph ph-zap icone-bg" style="color: var(--amarelo-vivo);"></i>
+                    <h4>Energia Gerada</h4>
+                    <div class="valor">1.205 MWh</div>
+                    <span class="status positivo">Este mês</span>
+                </div>
+                <div class="dash-card mini" data-permissao="ver_relatorios">
+                    <i class="ph ph-leaf icone-bg" style="color: #27c93f;"></i>
+                    <h4>CO₂ Evitado</h4>
+                    <div class="valor">425 Ton</div>
+                    <span class="status positivo">Equivalente</span>
+                </div>
+            </div>
+
+            <!-- GRÁFICOS PRINCIPAIS -->
+            <div class="dash-grid-main">
+                <div class="dash-card" data-permissao="ver_relatorios" style="grid-column: 1 / 2;">
+                    <h3>Crescimento de Clientes</h3>
+                    <canvas id="chart-crescimento-clientes" style="max-height: 250px;"></canvas>
+                </div>
+
+                <div class="dash-card" data-permissao="ver_relatorios" style="grid-column: 2 / 3;">
+                    <h3>Receita Mensal</h3>
+                    <canvas id="chart-receita-mensal" style="max-height: 250px;"></canvas>
+                </div>
+            </div>
+
+            <!-- PERFORMANCE OPERACIONAL -->
+            <div class="dash-grid-main">
+                <div class="dash-card" data-permissao="ver_relatorios" style="grid-column: 1 / -1;">
+                    <h3>Performance Operacional</h3>
+                    <canvas id="chart-performance" style="max-height: 300px;"></canvas>
+                </div>
+            </div>
+
+            <!-- TABELA RESUMIDA -->
+            <div class="dash-grid-main">
+                <div class="dash-card" data-permissao="ver_relatorios" style="grid-column: 1 / -1;">
+                    <h3>Resumo por Período</h3>
+                    <div style="overflow-x: auto;">
+                        <table style="width: 100%; color: #aaa; font-size: 13px;">
+                            <thead>
+                                <tr style="border-bottom: 1px solid #444;">
+                                    <th style="text-align: left; padding: 10px 0;">Período</th>
+                                    <th style="text-align: right; padding: 10px 0;">Clientes</th>
+                                    <th style="text-align: right; padding: 10px 0;">Receita</th>
+                                    <th style="text-align: right; padding: 10px 0;">Energia (MWh)</th>
+                                    <th style="text-align: right; padding: 10px 0;">Crescimento</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr style="border-bottom: 1px solid #333;">
+                                    <td style="padding: 12px 0;"><strong>Janeiro/2025</strong></td>
+                                    <td style="text-align: right;">147</td>
+                                    <td style="text-align: right;"><span style="color: #27c93f;">R$ 45.200</span></td>
+                                    <td style="text-align: right;">1.205</td>
+                                    <td style="text-align: right;"><span style="color: #27c93f;">+12%</span></td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid #333;">
+                                    <td style="padding: 12px 0;"><strong>Dezembro/2024</strong></td>
+                                    <td style="text-align: right;">142</td>
+                                    <td style="text-align: right;"><span style="color: #999;">R$ 40.100</span></td>
+                                    <td style="text-align: right;">980</td>
+                                    <td style="text-align: right;"><span style="color: #999;">+8%</span></td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid #333;">
+                                    <td style="padding: 12px 0;"><strong>Novembro/2024</strong></td>
+                                    <td style="text-align: right;">132</td>
+                                    <td style="text-align: right;"><span style="color: #999;">R$ 37.050</span></td>
+                                    <td style="text-align: right;">1.130</td>
+                                    <td style="text-align: right;"><span style="color: #999;">+10%</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RELATÓRIOS DISPONÍVEIS -->
+            <div class="dash-grid-main">
+                <div class="dash-card" data-permissao="ver_relatorios" style="grid-column: 1 / -1;">
+                    <h3>Relatórios para Download</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                        <a href="#" style="background: #222; padding: 15px; border-radius: 8px; text-decoration: none; border: 1px solid #444;">
+                            <p style="margin: 0 0 10px 0; color: var(--amarelo-vivo); font-weight: bold;">
+                                <i class="ph ph-file-pdf"></i> Relatório de Clientes
+                            </p>
+                            <p style="margin: 0; color: #999; font-size: 12px;">Lista completa com histórico</p>
+                        </a>
+                        <a href="#" style="background: #222; padding: 15px; border-radius: 8px; text-decoration: none; border: 1px solid #444;">
+                            <p style="margin: 0 0 10px 0; color: #2A8C82; font-weight: bold;">
+                                <i class="ph ph-file-pdf"></i> Relatório Financeiro
+                            </p>
+                            <p style="margin: 0; color: #999; font-size: 12px;">Receita, despesas e lucro</p>
+                        </a>
+                        <a href="#" style="background: #222; padding: 15px; border-radius: 8px; text-decoration: none; border: 1px solid #444;">
+                            <p style="margin: 0 0 10px 0; color: #27c93f; font-weight: bold;">
+                                <i class="ph ph-file-pdf"></i> Relatório de Energia
+                            </p>
+                            <p style="margin: 0; color: #999; font-size: 12px;">Geração, consumo e impacto</p>
+                        </a>
+                        <a href="#" style="background: #222; padding: 15px; border-radius: 8px; text-decoration: none; border: 1px solid #444;">
+                            <p style="margin: 0 0 10px 0; color: #ff9500; font-weight: bold;">
+                                <i class="ph ph-file-pdf"></i> Relatório de Performance
+                            </p>
+                            <p style="margin: 0; color: #999; font-size: 12px;">Uptime, eficiência, alertas</p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        // Verificar se é admin
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!ehAdmin()) {
+                window.location.href = 'dashboard.html';
+            }
+
+            inicializarGraficosRelatorios();
+        });
+
+        function inicializarGraficosRelatorios() {
+            // Crescimento de Clientes
+            const ctxCrescimento = document.getElementById('chart-crescimento-clientes')?.getContext('2d');
+            if (ctxCrescimento) {
+                new Chart(ctxCrescimento, {
+                    type: 'line',
+                    data: {
+                        labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
+                        datasets: [{
+                            label: 'Clientes Ativos',
+                            data: [85, 92, 98, 105, 112, 118, 125, 132, 135, 140, 142, 147],
+                            borderColor: '#2A8C82',
+                            backgroundColor: 'rgba(42, 140, 130, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            y: { beginAtZero: true, ticks: { color: '#aaa' } },
+                            x: { ticks: { color: '#aaa' } }
+                        }
+                    }
+                });
+            }
+
+            // Receita Mensal
+            const ctxReceita = document.getElementById('chart-receita-mensal')?.getContext('2d');
+            if (ctxReceita) {
+                new Chart(ctxReceita, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
+                        datasets: [{
+                            label: 'R$',
+                            data: [25800, 28500, 31200, 34100, 37050, 40100, 42300, 44200, 45100, 45200, 45200, 45200],
+                            backgroundColor: '#27c93f'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        indexAxis: 'x',
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            y: { beginAtZero: true, ticks: { color: '#aaa' } },
+                            x: { ticks: { color: '#aaa' } }
+                        }
+                    }
+                });
+            }
+
+            // Performance
+            const ctxPerformance = document.getElementById('chart-performance')?.getContext('2d');
+            if (ctxPerformance) {
+                new Chart(ctxPerformance, {
+                    type: 'line',
+                    data: {
+                        labels: ['Semana 1', 'Semana 2', 'Semana 3', 'Semana 4', 'Semana 5'],
+                        datasets: [
+                            {
+                                label: 'Uptime (%)',
+                                data: [99.8, 99.7, 100, 99.9, 99.8],
+                                borderColor: '#27c93f',
+                                backgroundColor: 'rgba(39, 201, 63, 0.1)',
+                                tension: 0.4
+                            },
+                            {
+                                label: 'Disponibilidade (%)',
+                                data: [98, 98.5, 99, 98.8, 99.2],
+                                borderColor: '#2A8C82',
+                                backgroundColor: 'rgba(42, 140, 130, 0.1)',
+                                tension: 0.4
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        scales: {
+                            y: { beginAtZero: false, min: 97, max: 100, ticks: { color: '#aaa' } },
+                            x: { ticks: { color: '#aaa' } }
+                        }
+                    }
+                });
+            }
+        }
+    </script>
+</body>
+</html>

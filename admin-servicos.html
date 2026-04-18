@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+    <script src="sistema-permissoes.js" defer></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <title>Gestão de Serviços - RTV Solar Admin</title>
+</head>
+<body class="pagina-painel">
+    <header class="nav-bar">
+        <a href="dashboard.html">
+            <img src="imagens/logo-site.png" alt="logo" class="logo">
+            <h3>RTV ENERGIA SOLAR - ADMIN</h3>
+        </a>
+        <div class="topbar-actions">
+            <div class="search-bar">
+                <i class="ph ph-magnifying-glass"></i>
+                <input type="text" placeholder="Buscar serviços...">
+            </div>
+            <div class="notification-wrapper">
+                <a href="#" id="btn-notificacoes" style="color: var(--amarelo-vivo); position: relative;">
+                    <i class="ph ph-bell" style="font-size: 24px;"></i>
+                    <span class="notif-badge">2</span>
+                </a>
+                <div class="notif-dropdown" id="notif-dropdown"></div>
+            </div>
+            <a href="#" id="btn-logout" class="btn" style="background-color: #ff5f56; padding: 8px 15px;">Sair</a>
+        </div>
+    </header>
+
+    <div class="dashboard-layout">
+        <aside class="sidebar">
+            <a href="dashboard.html"><i class="ph ph-squares-four"></i> Dashboard</a>
+            <a href="admin-clientes.html"><i class="ph ph-users"></i> Gestão de Clientes</a>
+            <a href="admin-servicos.html" class="active"><i class="ph ph-briefcase"></i> Gestão de Serviços</a>
+            <a href="admin-equipamentos.html"><i class="ph ph-package"></i> Gestão de Equipamentos</a>
+            <a href="admin-relatorios.html"><i class="ph ph-chart-bar"></i> Relatórios</a>
+            <a href="admin-configuracoes.html"><i class="ph ph-gear"></i> Configurações</a>
+            <a href="admin-configuracoes.html"><i class="ph ph-shield-check"></i> Auditoria</a>
+            <a href="dashboard.html" style="margin-top: 30px; color: #aaa;"><i class="ph ph-sign-out"></i> Voltar ao Cliente</a>
+        </aside>
+
+        <main class="dashboard-content">
+            <div class="dash-header">
+                <div>
+                    <h2>Gestão de Serviços</h2>
+                    <p style="color: #aaa;">Gerencie pacotes de serviços, preços e disponibilidade</p>
+                </div>
+                <a href="#" class="btn" style="background-color: var(--amarelo-vivo); padding: 12px 20px; text-decoration: none;">
+                    <i class="ph ph-plus-circle"></i> Novo Serviço
+                </a>
+            </div>
+
+            <!-- ESTATÍSTICAS RÁPIDAS -->
+            <div class="grid-cards-mini">
+                <div class="dash-card mini" data-permissao="gerenciar_servicos">
+                    <i class="ph ph-briefcase icone-bg" style="color: #2A8C82;"></i>
+                    <h4>Serviços Ativos</h4>
+                    <div class="valor" id="servicos-ativos">12</div>
+                    <span class="status positivo">Em operação</span>
+                </div>
+                <div class="dash-card mini" data-permissao="gerenciar_servicos">
+                    <i class="ph ph-currency-dollar icone-bg" style="color: #27c93f;"></i>
+                    <h4>Receita Mensal</h4>
+                    <div class="valor" id="receita-mensal">R$ 45.2K</div>
+                    <span class="status positivo">Última 30 dias</span>
+                </div>
+                <div class="dash-card mini" data-permissao="gerenciar_servicos">
+                    <i class="ph ph-chart-line-up icone-bg" style="color: var(--amarelo-vivo);"></i>
+                    <h4>Crescimento</h4>
+                    <div class="valor" id="crescimento">+18%</div>
+                    <span class="status positivo">vs. mês anterior</span>
+                </div>
+                <div class="dash-card mini" data-permissao="gerenciar_servicos">
+                    <i class="ph ph-users icone-bg" style="color: #ff9500;"></i>
+                    <h4>Subscritores</h4>
+                    <div class="valor" id="subscritores">127</div>
+                    <span class="status positivo">Ativos</span>
+                </div>
+            </div>
+
+            <!-- LISTA DE SERVIÇOS -->
+            <div class="dash-grid-main">
+                <div class="dash-card" data-permissao="gerenciar_servicos" style="grid-column: 1 / -1;">
+                    <div style="margin-bottom: 20px;">
+                        <h3>Pacotes de Serviços</h3>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+                        <!-- Serviço 1 -->
+                        <div style="background: #222; padding: 20px; border-radius: 8px; border: 1px solid #444;">
+                            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 15px;">
+                                <div>
+                                    <h4 style="margin: 0 0 5px 0;">Instalação Padrão</h4>
+                                    <p style="margin: 0; color: #999; font-size: 12px;">Até 10kW</p>
+                                </div>
+                                <span style="background: #27c93f; color: #000; padding: 4px 8px; border-radius: 4px; font-size: 11px;">Ativo</span>
+                            </div>
+                            <p style="margin: 10px 0; font-size: 20px; color: var(--amarelo-vivo); font-weight: bold;">R$ 25.000</p>
+                            <p style="margin: 10px 0; color: #aaa; font-size: 12px;">Inclui: Painéis, inversor, medidor e instalação completa.</p>
+                            <div style="margin: 15px 0; padding-top: 15px; border-top: 1px solid #444;">
+                                <p style="margin: 5px 0; font-size: 12px;"><strong>Contratos:</strong> 45</p>
+                                <p style="margin: 5px 0; font-size: 12px;"><strong>Receita:</strong> R$ 1.125.000</p>
+                            </div>
+                            <div style="display: flex; gap: 10px; margin-top: 15px;">
+                                <button style="background: #2A8C82; color: #fff; padding: 8px 12px; border: none; border-radius: 4px; cursor: pointer; flex: 1; font-size: 12px;">
+                                    <i class="ph ph-pencil"></i> Editar
+                                </button>
+                                <button style="background: #444; color: #aaa; padding: 8px 12px; border: none; border-radius: 4px; cursor: pointer; flex: 1; font-size: 12px;">
+                                    <i class="ph ph-eye"></i> Ver
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Serviço 2 -->
+                        <div style="background: #222; padding: 20px; border-radius: 8px; border: 1px solid #444;">
+                            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 15px;">
+                                <div>
+                                    <h4 style="margin: 0 0 5px 0;">Instalação Premium</h4>
+                                    <p style="margin: 0; color: #999; font-size: 12px;">Até 20kW + Bateria</p>
+                                </div>
+                                <span style="background: #27c93f; color: #000; padding: 4px 8px; border-radius: 4px; font-size: 11px;">Ativo</span>
+                            </div>
+                            <p style="margin: 10px 0; font-size: 20px; color: var(--amarelo-vivo); font-weight: bold;">R$ 55.000</p>
+                            <p style="margin: 10px 0; color: #aaa; font-size: 12px;">Inclui: Painéis, inversor, medidor, bateria e instalação.</p>
+                            <div style="margin: 15px 0; padding-top: 15px; border-top: 1px solid #444;">
+                                <p style="margin: 5px 0; font-size: 12px;"><strong>Contratos:</strong> 28</p>
+                                <p style="margin: 5px 0; font-size: 12px;"><strong>Receita:</strong> R$ 1.540.000</p>
+                            </div>
+                            <div style="display: flex; gap: 10px; margin-top: 15px;">
+                                <button style="background: #2A8C82; color: #fff; padding: 8px 12px; border: none; border-radius: 4px; cursor: pointer; flex: 1; font-size: 12px;">
+                                    <i class="ph ph-pencil"></i> Editar
+                                </button>
+                                <button style="background: #444; color: #aaa; padding: 8px 12px; border: none; border-radius: 4px; cursor: pointer; flex: 1; font-size: 12px;">
+                                    <i class="ph ph-eye"></i> Ver
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Serviço 3 -->
+                        <div style="background: #222; padding: 20px; border-radius: 8px; border: 1px solid #444;">
+                            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 15px;">
+                                <div>
+                                    <h4 style="margin: 0 0 5px 0;">Manutenção Anual</h4>
+                                    <p style="margin: 0; color: #999; font-size: 12px;">Qualquer tamanho</p>
+                                </div>
+                                <span style="background: #27c93f; color: #000; padding: 4px 8px; border-radius: 4px; font-size: 11px;">Ativo</span>
+                            </div>
+                            <p style="margin: 10px 0; font-size: 20px; color: var(--amarelo-vivo); font-weight: bold;">R$ 1.200/ano</p>
+                            <p style="margin: 10px 0; color: #aaa; font-size: 12px;">Inclui: 2 visitas, limpeza e inspeção completa.</p>
+                            <div style="margin: 15px 0; padding-top: 15px; border-top: 1px solid #444;">
+                                <p style="margin: 5px 0; font-size: 12px;"><strong>Contratos:</strong> 54</p>
+                                <p style="margin: 5px 0; font-size: 12px;"><strong>Receita:</strong> R$ 64.800</p>
+                            </div>
+                            <div style="display: flex; gap: 10px; margin-top: 15px;">
+                                <button style="background: #2A8C82; color: #fff; padding: 8px 12px; border: none; border-radius: 4px; cursor: pointer; flex: 1; font-size: 12px;">
+                                    <i class="ph ph-pencil"></i> Editar
+                                </button>
+                                <button style="background: #444; color: #aaa; padding: 8px 12px; border: none; border-radius: 4px; cursor: pointer; flex: 1; font-size: 12px;">
+                                    <i class="ph ph-eye"></i> Ver
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RECEITA POR SERVIÇO -->
+            <div class="dash-grid-main">
+                <div class="dash-card" data-permissao="gerenciar_servicos" style="grid-column: 1 / -1;">
+                    <h3>Receita por Serviço (Últimos 30 dias)</h3>
+                    <canvas id="chart-receita-servicos" style="max-height: 250px;"></canvas>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        // Verificar se é admin
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!ehAdmin()) {
+                window.location.href = 'dashboard.html';
+            }
+
+            // Gráfico de receita
+            const ctx = document.getElementById('chart-receita-servicos')?.getContext('2d');
+            if (ctx) {
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Instalação Padrão', 'Instalação Premium', 'Manutenção', 'Consultoria'],
+                        datasets: [{
+                            label: 'Receita (R$)',
+                            data: [1125000, 1540000, 64800, 45200],
+                            backgroundColor: [var(--amarelo-vivo), '#2A8C82', '#27c93f', '#ff9500']
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        scales: {
+                            y: { beginAtZero: true, ticks: { color: '#aaa' } },
+                            x: { ticks: { color: '#aaa' } }
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

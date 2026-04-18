@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+    <script src="sistema-permissoes.js" defer></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <title>Gestão de Clientes - RTV Solar Admin</title>
+</head>
+<body class="pagina-painel">
+    <header class="nav-bar">
+        <a href="dashboard.html">
+            <img src="imagens/logo-site.png" alt="logo" class="logo">
+            <h3>RTV ENERGIA SOLAR - ADMIN</h3>
+        </a>
+        <div class="topbar-actions">
+            <div class="search-bar">
+                <i class="ph ph-magnifying-glass"></i>
+                <input type="text" placeholder="Buscar clientes..." id="search-clientes">
+            </div>
+            <div class="notification-wrapper">
+                <a href="#" id="btn-notificacoes" style="color: var(--amarelo-vivo); position: relative;">
+                    <i class="ph ph-bell" style="font-size: 24px;"></i>
+                    <span class="notif-badge">5</span>
+                </a>
+                <div class="notif-dropdown" id="notif-dropdown"></div>
+            </div>
+            <a href="#" id="btn-logout" class="btn" style="background-color: #ff5f56; padding: 8px 15px;">Sair</a>
+        </div>
+    </header>
+
+    <div class="dashboard-layout">
+        <aside class="sidebar">
+            <a href="dashboard.html"><i class="ph ph-squares-four"></i> Dashboard</a>
+            <a href="admin-clientes.html" class="active"><i class="ph ph-users"></i> Gestão de Clientes</a>
+            <a href="admin-servicos.html"><i class="ph ph-briefcase"></i> Gestão de Serviços</a>
+            <a href="admin-equipamentos.html"><i class="ph ph-package"></i> Gestão de Equipamentos</a>
+            <a href="admin-relatorios.html"><i class="ph ph-chart-bar"></i> Relatórios</a>
+            <a href="admin-configuracoes.html"><i class="ph ph-gear"></i> Configurações</a>
+            <a href="admin-configuracoes.html"><i class="ph ph-shield-check"></i> Auditoria</a>
+            <a href="dashboard.html" style="margin-top: 30px; color: #aaa;"><i class="ph ph-sign-out"></i> Voltar ao Cliente</a>
+        </aside>
+
+        <main class="dashboard-content">
+            <div class="dash-header">
+                <div>
+                    <h2>Gestão de Clientes</h2>
+                    <p style="color: #aaa;">Gerencie clientes cadastrados, aprovações e informações de contato</p>
+                </div>
+                <a href="#" class="btn" style="background-color: var(--amarelo-vivo); padding: 12px 20px; text-decoration: none;">
+                    <i class="ph ph-plus-circle"></i> Novo Cliente
+                </a>
+            </div>
+
+            <!-- ESTATÍSTICAS RÁPIDAS -->
+            <div class="grid-cards-mini">
+                <div class="dash-card mini" data-permissao="gerenciar_clientes">
+                    <i class="ph ph-users icone-bg" style="color: #2A8C82;"></i>
+                    <h4>Total de Clientes</h4>
+                    <div class="valor" id="total-clientes">147</div>
+                    <span class="status positivo">Ativos</span>
+                </div>
+                <div class="dash-card mini" data-permissao="gerenciar_clientes">
+                    <i class="ph ph-check-circle icone-bg" style="color: #27c93f;"></i>
+                    <h4>Aprovados</h4>
+                    <div class="valor" id="clientes-aprovados">142</div>
+                    <span class="status positivo">Em produção</span>
+                </div>
+                <div class="dash-card mini" data-permissao="gerenciar_clientes">
+                    <i class="ph ph-hourglass icone-bg" style="color: #ff9500;"></i>
+                    <h4>Pendentes</h4>
+                    <div class="valor" id="clientes-pendentes">5</div>
+                    <span class="status alerta">Aguardando análise</span>
+                </div>
+                <div class="dash-card mini" data-permissao="gerenciar_clientes">
+                    <i class="ph ph-x-circle icone-bg" style="color: #ff5f56;"></i>
+                    <h4>Rejeições</h4>
+                    <div class="valor" id="clientes-rejeitos">3</div>
+                    <span class="status negativo">Necessário revisão</span>
+                </div>
+            </div>
+
+            <!-- LISTA DE CLIENTES -->
+            <div class="dash-grid-main">
+                <div class="dash-card" data-permissao="gerenciar_clientes" style="grid-column: 1 / -1;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h3>Clientes Cadastrados</h3>
+                        <select id="filter-status" style="background: #222; color: #aaa; padding: 8px 12px; border: 1px solid #444; border-radius: 4px;">
+                            <option value="">Todos os Status</option>
+                            <option value="aprovado">Aprovados</option>
+                            <option value="pendente">Pendentes</option>
+                            <option value="rejeitado">Rejeitados</option>
+                        </select>
+                    </div>
+
+                    <div style="overflow-x: auto;">
+                        <table style="width: 100%; color: #aaa; font-size: 13px;">
+                            <thead>
+                                <tr style="border-bottom: 1px solid #444;">
+                                    <th style="text-align: left; padding: 10px 0;">Cliente</th>
+                                    <th style="text-align: left; padding: 10px 0;">E-mail</th>
+                                    <th style="text-align: left; padding: 10px 0;">Sistema Instalado</th>
+                                    <th style="text-align: center; padding: 10px 0;">Status</th>
+                                    <th style="text-align: center; padding: 10px 0;">Data de Cadastro</th>
+                                    <th style="text-align: center; padding: 10px 0;">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr style="border-bottom: 1px solid #333;">
+                                    <td style="padding: 12px 0;"><strong>João Silva</strong></td>
+                                    <td>joao.silva@email.com</td>
+                                    <td><span style="color: var(--amarelo-vivo);">10kW - Ativo</span></td>
+                                    <td style="text-align: center;"><span style="background: #27c93f; color: #000; padding: 4px 8px; border-radius: 4px; font-size: 11px;">Aprovado</span></td>
+                                    <td style="text-align: center;">15/03/2024</td>
+                                    <td style="text-align: center;">
+                                        <a href="#" style="color: #2A8C82; margin-right: 10px;"><i class="ph ph-eye"></i></a>
+                                        <a href="#" style="color: var(--amarelo-vivo); margin-right: 10px;"><i class="ph ph-pencil"></i></a>
+                                        <a href="#" style="color: #ff5f56;"><i class="ph ph-trash"></i></a>
+                                    </td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid #333;">
+                                    <td style="padding: 12px 0;"><strong>Maria Santos</strong></td>
+                                    <td>maria.santos@email.com</td>
+                                    <td><span style="color: var(--amarelo-vivo);">8kW - Ativo</span></td>
+                                    <td style="text-align: center;"><span style="background: #27c93f; color: #000; padding: 4px 8px; border-radius: 4px; font-size: 11px;">Aprovado</span></td>
+                                    <td style="text-align: center;">20/04/2024</td>
+                                    <td style="text-align: center;">
+                                        <a href="#" style="color: #2A8C82; margin-right: 10px;"><i class="ph ph-eye"></i></a>
+                                        <a href="#" style="color: var(--amarelo-vivo); margin-right: 10px;"><i class="ph ph-pencil"></i></a>
+                                        <a href="#" style="color: #ff5f56;"><i class="ph ph-trash"></i></a>
+                                    </td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid #333;">
+                                    <td style="padding: 12px 0;"><strong>Pedro Costa</strong></td>
+                                    <td>pedro.costa@email.com</td>
+                                    <td><span style="color: #ff9500;">15kW - Pendente</span></td>
+                                    <td style="text-align: center;"><span style="background: #ff9500; color: #000; padding: 4px 8px; border-radius: 4px; font-size: 11px;">Pendente</span></td>
+                                    <td style="text-align: center;">10/01/2025</td>
+                                    <td style="text-align: center;">
+                                        <a href="#" style="color: #2A8C82; margin-right: 10px;"><i class="ph ph-eye"></i></a>
+                                        <a href="#" style="color: var(--amarelo-vivo); margin-right: 10px;"><i class="ph ph-pencil"></i></a>
+                                        <a href="#" style="color: #ff5f56;"><i class="ph ph-trash"></i></a>
+                                    </td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid #333;">
+                                    <td style="padding: 12px 0;"><strong>Ana Oliveira</strong></td>
+                                    <td>ana.oliveira@email.com</td>
+                                    <td><span style="color: #ff5f56;">6kW - Rejeitado</span></td>
+                                    <td style="text-align: center;"><span style="background: #ff5f56; color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 11px;">Rejeitado</span></td>
+                                    <td style="text-align: center;">05/01/2025</td>
+                                    <td style="text-align: center;">
+                                        <a href="#" style="color: #2A8C82; margin-right: 10px;"><i class="ph ph-eye"></i></a>
+                                        <a href="#" style="color: var(--amarelo-vivo); margin-right: 10px;"><i class="ph ph-pencil"></i></a>
+                                        <a href="#" style="color: #ff5f56;"><i class="ph ph-trash"></i></a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #444; display: flex; justify-content: space-between; align-items: center;">
+                        <p style="font-size: 12px; color: #999;">Mostrando 1-4 de 147 clientes</p>
+                        <div style="display: flex; gap: 10px;">
+                            <button style="background: #222; color: #aaa; padding: 6px 10px; border: 1px solid #444; border-radius: 4px; cursor: pointer;">← Anterior</button>
+                            <button style="background: var(--amarelo-vivo); color: #000; padding: 6px 10px; border: none; border-radius: 4px; cursor: pointer;">1</button>
+                            <button style="background: #222; color: #aaa; padding: 6px 10px; border: 1px solid #444; border-radius: 4px; cursor: pointer;">2</button>
+                            <button style="background: #222; color: #aaa; padding: 6px 10px; border: 1px solid #444; border-radius: 4px; cursor: pointer;">3</button>
+                            <button style="background: #222; color: #aaa; padding: 6px 10px; border: 1px solid #444; border-radius: 4px; cursor: pointer;">Próximo →</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FILTROS E AÇÕES RÁPIDAS -->
+            <div class="dash-grid-main">
+                <div class="dash-card" data-permissao="gerenciar_clientes">
+                    <h3>Filtros Avançados</h3>
+                    <div style="padding: 15px 0;">
+                        <p style="margin: 10px 0;"><strong>Data de Cadastro:</strong></p>
+                        <input type="date" style="background: #222; color: #aaa; padding: 8px; border: 1px solid #444; border-radius: 4px; width: 100%; margin-bottom: 10px;">
+                        
+                        <p style="margin: 10px 0;"><strong>Potência do Sistema:</strong></p>
+                        <select style="background: #222; color: #aaa; padding: 8px; border: 1px solid #444; border-radius: 4px; width: 100%; margin-bottom: 10px;">
+                            <option>Todas</option>
+                            <option>Até 5kW</option>
+                            <option>5-10kW</option>
+                            <option>10-20kW</option>
+                            <option>Acima de 20kW</option>
+                        </select>
+                        
+                        <button style="background: var(--amarelo-vivo); color: #000; padding: 8px 15px; border: none; border-radius: 4px; width: 100%; cursor: pointer; font-weight: bold;">
+                            Aplicar Filtros
+                        </button>
+                    </div>
+                </div>
+
+                <div class="dash-card" data-permissao="gerenciar_clientes">
+                    <h3>Ações Rápidas</h3>
+                    <div style="padding: 15px 0;">
+                        <button style="background: #222; color: #aaa; padding: 10px 15px; border: 1px solid #444; border-radius: 4px; width: 100%; margin-bottom: 10px; cursor: pointer;">
+                            <i class="ph ph-download"></i> Exportar Lista (CSV)
+                        </button>
+                        <button style="background: #222; color: #aaa; padding: 10px 15px; border: 1px solid #444; border-radius: 4px; width: 100%; margin-bottom: 10px; cursor: pointer;">
+                            <i class="ph ph-envelope"></i> Enviar E-mail em Massa
+                        </button>
+                        <button style="background: #222; color: #aaa; padding: 10px 15px; border: 1px solid #444; border-radius: 4px; width: 100%; cursor: pointer;">
+                            <i class="ph ph-warning-circle"></i> Verificar Inativos
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        // Verificar se é admin
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!ehAdmin()) {
+                window.location.href = 'dashboard.html';
+            }
+        });
+    </script>
+</body>
+</html>

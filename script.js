@@ -253,6 +253,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
+            // Verificar se o cliente foi aprovado pelo admin
+            if (!usuarioValido.aprovadoAdmin) {
+                showToast("Sua conta está sob análise. Você receberá um e-mail quando for aprovado.", "error");
+                return;
+            }
+
             localStorage.setItem("rtv_usuario_logado", JSON.stringify({
                 nome: usuarioValido.nome,
                 email: usuarioValido.email,

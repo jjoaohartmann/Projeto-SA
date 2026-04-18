@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
     <script src="script.js" defer></script>
+    <script src="sistema-aprovacoes.js" defer></script>
+    <script src="sistema-permissoes.js" defer></script>
+    <script src="cliente-sistema.js" defer></script>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <title>Painel de Controle - RTV Solar</title>
@@ -35,15 +38,13 @@
     <div class="dashboard-layout">
         <aside class="sidebar">
             <a href="dashboard.html" class="active"><i class="ph ph-squares-four"></i> Visão Geral</a>
-            <a href="monitoramento.html"><i class="ph ph-activity"></i> Monitoramento em Tempo Real</a>
-            <a href="dispositivos.html"><i class="ph ph-cpu"></i> Gestão de Ativos</a>
-            <a href="analytics.html"><i class="ph ph-trend-up"></i> Analytics & KPIs</a>
+            <a href="cliente-geracao.html"><i class="ph ph-lightning"></i> Geração</a>
+            <a href="cliente-consumo.html"><i class="ph ph-activity"></i> Consumo em Tempo Real</a>
+            <a href="cliente-financeiro.html"><i class="ph ph-trend-up"></i> Financeiro & Economia</a>
+            <a href="cliente-contratos.html"><i class="ph ph-chart-line-up"></i> Contratos</a>
             <a href="relatorios.html"><i class="ph ph-chart-line-up"></i> Relatórios Financeiros</a>
             <a href="suporte.html"><i class="ph ph-headset"></i> Suporte & Chamados</a>
-            <a href="manutencao.html"><i class="ph ph-wrench"></i> Agendamentos</a>
-            <a href="auditoria.html"><i class="ph ph-shield-check"></i> Logs e Auditoria</a>
-            <a href="configuracoes.html"><i class="ph ph-gear"></i> Configurações do Sistema</a>
-            <a href="admin.html" class="sidebar-link-admin" style="display: none;"><i class="ph ph-user-gear"></i> Administração</a>
+            <a href="admin-clientes.html" class="sidebar-link-admin" style="display: none;"><i class="ph ph-user-gear"></i> Administração</a>
         </aside>
 
         <main class="dashboard-content">
@@ -64,8 +65,8 @@
             <div class="shortcuts-grid">
                 <a href="suporte.html" class="shortcut-btn"><i class="ph ph-plus-circle"></i> Abrir Chamado</a>
                 <a href="relatorios.html" class="shortcut-btn"><i class="ph ph-file-pdf"></i> Gerar Relatório</a>
-                <a href="dispositivos.html" class="shortcut-btn"><i class="ph ph-cpu"></i> Cadastrar Sensor</a>
-                <a href="manutencao.html" class="shortcut-btn"><i class="ph ph-calendar-plus"></i> Agendar Manutenção</a>
+                <a href="cliente-consumo.html" class="shortcut-btn"><i class="ph ph-activity"></i> Ver Consumo</a>
+                <a href="cliente-contratos.html" class="shortcut-btn"><i class="ph ph-calendar-plus"></i> Meus Contratos</a>
             </div>
 
             <div class="grid-cards-mini">
@@ -80,7 +81,30 @@
             </div>
 
             <div class="dash-grid-main">
-                <div class="chart-container" style="height: 400px;">
+                <div class="grid-cards-mini">
+                <!-- GERAÇÃO SOLAR -->
+                <div class="dash-card mini" data-permissao="ver_geração_propria"><i class="ph ph-sun icone-bg" style="color: var(--amarelo-vivo);"></i><h4>Geração Agora</h4><div class="valor" id="geracao-atual">3.8 kW</div><span class="status positivo">Pico</span></div>
+                <div class="dash-card mini" data-permissao="ver_geração_propria"><i class="ph ph-calendar-blank icone-bg"></i><h4>Geração Hoje</h4><div class="valor" id="geracao-hoje">38.2 kWh</div><span class="status positivo">Acima média</span></div>
+                <div class="dash-card mini" data-permissao="ver_geração_propria"><i class="ph ph-calendar icone-bg"></i><h4>Geração Mês</h4><div class="valor" id="geracao-mes">1.150 kWh</div><span class="status positivo">Ótimo</span></div>
+                
+                <!-- CONSUMO -->
+                <div class="dash-card mini" data-permissao="ver_consumo_proprio"><i class="ph ph-lightning-charge icone-bg"></i><h4>Consumo Agora</h4><div class="valor" id="consumo-atual">1.2 kW</div><span class="status positivo">Estável</span></div>
+                <div class="dash-card mini" data-permissao="ver_consumo_proprio"><i class="ph ph-calendar-blank icone-bg"></i><h4>Consumo Hoje</h4><div class="valor" id="consumo-hoje">14.5 kWh</div><span class="status positivo">Abaixo média</span></div>
+                <div class="dash-card mini" data-permissao="ver_consumo_proprio"><i class="ph ph-calendar icone-bg"></i><h4>Consumo Mês</h4><div class="valor" id="consumo-mes">340 kWh</div><span class="status alerta">Atenção</span></div>
+                
+                <!-- ECONOMIA & CRÉDITOS -->
+                <div class="dash-card mini" data-permissao="ver_consumo_proprio"><i class="ph ph-piggy-bank icone-bg" style="color: #27c93f;"></i><h4>Economia (Mês)</h4><div class="valor" id="economia-mes">R$ 412,50</div><span class="status positivo">Vs rede</span></div>
+                <div class="dash-card mini" data-permissao="ver_consumo_proprio"><i class="ph ph-chart-line-up icone-bg" style="color: #27c93f;"></i><h4>Economia Acum.</h4><div class="valor" id="economia-acumulada">R$ 2.875,00</div><span class="status positivo">Total</span></div>
+                <div class="dash-card mini" data-permissao="ver_consumo_proprio"><i class="ph ph-coins icone-bg" style="color: var(--amarelo-vivo);"></i><h4>Créditos</h4><div class="valor" id="creditos-disponiveis">127.5 kWh</div><span class="status positivo">Disponível</span></div>
+                
+                <!-- IMPACTO AMBIENTAL -->
+                <div class="dash-card mini" data-permissao="ver_geração_propria"><i class="ph ph-leaf icone-bg"></i><h4>CO₂ Evitado</h4><div class="valor" id="co2-evitado">185 kg</div><span class="status positivo">Este mês</span></div>
+                <div class="dash-card mini" data-permissao="ver_geração_propria"><i class="ph ph-tree icone-bg" style="color: #4ade80;"></i><h4>Árvores</h4><div class="valor" id="arvores-equiv">8</div><span class="status positivo">Equivalente</span></div>
+                <div class="dash-card mini" data-permissao="ver_equipamentos_proprios"><i class="ph ph-percent icone-bg"></i><h4>Eficiência</h4><div class="valor" id="eficiencia-global">96.8%</div><span class="status positivo">A+</span></div>
+                
+                <!-- ROI & PAYBACK -->
+                <div class="dash-card mini" data-permissao="ver_equipamentos_proprios"><i class="ph ph-chart-bar icone-bg"></i><h4>Payback</h4><div class="valor" id="payback-estimado">6.2 anos</div><span class="status positivo">ROI</span></div>
+            </div>
                     <div style="display: flex; justify-content: space-between;">
                         <h4 style="margin-top:0;">Curva de Geração vs Consumo (Tempo Real / Previsão)</h4>
                         <select style="background: #1a1a1a; color: white; border: 1px solid #333; border-radius: 5px; padding: 5px;"><option>Hoje</option><option>Semana</option></select>
@@ -117,7 +141,6 @@
                             <tr><td>Medidor Geral</td><td><span class="badge offline">Falha (Error #203)</span></td></tr>
                         </tbody>
                     </table>
-                    <a href="dispositivos.html" style="font-size: 12px; color: var(--verde-agua); display: block; margin-top: 10px;">Ver Inventário Completo →</a>
                 </div>
 
                 <div class="tabela-wrapper">
@@ -139,7 +162,6 @@
                             <tr><td style="color:#aaa;">08:15</td><td style="color:#ff5f56;">Perda de ping (Medidor Geral)</td></tr>
                         </tbody>
                     </table>
-                    <a href="auditoria.html" style="font-size: 12px; color: var(--verde-agua); display: block; margin-top: 10px;">Acessar Log de Auditoria →</a>
                 </div>
             </div>
         </main>

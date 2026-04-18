@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+    <script src="sistema-permissoes.js" defer></script>
+    <script src="cliente-sistema.js" defer></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>Financeiro - RTV Solar</title>
+</head>
+<body class="pagina-painel">
+    <header class="nav-bar">
+        <a href="dashboard.html">
+            <img src="imagens/logo-site.png" alt="logo" class="logo">
+            <h3>RTV ENERGIA SOLAR</h3>
+        </a>
+        <div class="topbar-actions">
+            <div class="search-bar">
+                <i class="ph ph-magnifying-glass"></i>
+                <input type="text" placeholder="Buscar...">
+            </div>
+            <div class="notification-wrapper">
+                <a href="#" id="btn-notificacoes" style="color: var(--amarelo-vivo); position: relative;">
+                    <i class="ph ph-bell" style="font-size: 24px;"></i>
+                    <span class="notif-badge">3</span>
+                </a>
+                <div class="notif-dropdown" id="notif-dropdown"></div>
+            </div>
+            <a href="#" id="btn-logout" class="btn" style="background-color: #ff5f56; padding: 8px 15px;">Sair</a>
+        </div>
+    </header>
+
+    <div class="dashboard-layout">
+        <aside class="sidebar">
+            <a href="dashboard.html"><i class="ph ph-squares-four"></i> Visão Geral</a>
+            <a href="cliente-geracao.html"><i class="ph ph-sun"></i> Geração Solar</a>
+            <a href="cliente-consumo.html"><i class="ph ph-lightning-charge"></i> Consumo</a>
+            <a href="cliente-financeiro.html" class="active"><i class="ph ph-chart-pie"></i> Financeiro</a>
+            <a href="cliente-contratos.html"><i class="ph ph-file-text"></i> Contratos</a>
+            <a href="suporte.html"><i class="ph ph-headset"></i> Suporte</a>
+        </aside>
+
+        <main class="dashboard-content">
+            <div class="dash-header">
+                <div>
+                    <h2>Painel Financeiro</h2>
+                    <p style="color: #aaa;">Acompanhe economia gerada e investimento do seu sistema</p>
+                </div>
+                <div class="weather-widget">
+                    <i class="ph-fill ph-currency-dollar" style="font-size: 32px; color: #27c93f;"></i>
+                    <div class="weather-info">
+                        <h4 id="economia-header">R$ 412,50</h4>
+                        <p id="economia-periodo">Economia este mês</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RESUMO FINANCEIRO -->
+            <div class="grid-cards-mini">
+                <div class="dash-card mini" data-permissao="ver_consumo_proprio">
+                    <i class="ph ph-piggy-bank icone-bg" style="color: #27c93f;"></i>
+                    <h4>Economia (Mês)</h4>
+                    <div class="valor" id="economia-mes">R$ 412,50</div>
+                    <span class="status positivo">Vs. tarifa</span>
+                </div>
+                <div class="dash-card mini" data-permissao="ver_consumo_proprio">
+                    <i class="ph ph-chart-line-up icone-bg" style="color: #27c93f;"></i>
+                    <h4>Economia Acumulada</h4>
+                    <div class="valor" id="economia-acumulada">R$ 2.875,00</div>
+                    <span class="status positivo">Total</span>
+                </div>
+                <div class="dash-card mini" data-permissao="ver_consumo_proprio">
+                    <i class="ph ph-calendar-dots icone-bg" style="color: var(--amarelo-vivo);"></i>
+                    <h4>Payback Estimado</h4>
+                    <div class="valor" id="payback-estimado">6.2 anos</div>
+                    <span class="status positivo">Análise financeira</span>
+                </div>
+                <div class="dash-card mini" data-permissao="ver_consumo_proprio">
+                    <i class="ph ph-percent icone-bg" style="color: #ff9500;"></i>
+                    <h4>ROI Anualizado</h4>
+                    <div class="valor" id="roi-anualizado">16.2%</div>
+                    <span class="status positivo">Rentabilidade</span>
+                </div>
+            </div>
+
+            <!-- INVESTIMENTO E RETORNO -->
+            <div class="dash-grid-main">
+                <div class="dash-card" data-permissao="ver_consumo_proprio">
+                    <h3>Investimento Inicial</h3>
+                    <div style="padding: 15px 0;">
+                        <p><strong>Custo do Sistema:</strong> <span style="color: #ff5f56;">R$ 20.000,00</span></p>
+                        <p><strong>Instalação:</strong> <span style="color: #ff5f56;">R$ 1.500,00</span></p>
+                        <p style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #444;"><strong>Total Investido:</strong> <span style="color: #ff5f56; font-size: 18px;">R$ 21.500,00</span></p>
+                    </div>
+                </div>
+
+                <div class="dash-card" data-permissao="ver_consumo_proprio">
+                    <h3>Tempo de Retorno</h3>
+                    <div style="padding: 15px 0;">
+                        <p><strong>Payback:</strong> <span style="color: #27c93f; font-size: 18px;">6.2 anos</span></p>
+                        <p>Baseado na economia média mensal</p>
+                        <p style="margin-top: 15px; color: #999; font-size: 12px;">
+                            Com tarifa média de R$ 850/mês, seu sistema se pagará em aproximadamente 6 anos e 2 meses.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- GRÁFICOS FINANCEIROS -->
+            <div class="dash-grid-main">
+                <div class="dash-card" data-permissao="ver_consumo_proprio" style="grid-column: 1 / -1;">
+                    <h3>Economia Acumulada ao Longo do Tempo</h3>
+                    <canvas id="chart-economia-acumulada" style="max-height: 300px;"></canvas>
+                </div>
+            </div>
+
+            <div class="dash-grid-main">
+                <div class="dash-card" data-permissao="ver_consumo_proprio">
+                    <h3>Economia (Últimos 12 Meses)</h3>
+                    <canvas id="chart-economia-anual" style="max-height: 250px;"></canvas>
+                </div>
+
+                <div class="dash-card" data-permissao="ver_consumo_proprio">
+                    <h3>Custo vs Economia</h3>
+                    <canvas id="chart-custo-vs-economia" style="max-height: 250px;"></canvas>
+                </div>
+            </div>
+
+            <!-- PREVISÃO FINANCEIRA -->
+            <div class="dash-grid-main">
+                <div class="dash-card" data-permissao="ver_consumo_proprio" style="grid-column: 1 / -1;">
+                    <h3>Projeção Financeira</h3>
+                    <canvas id="chart-projecao-futura" style="max-height: 250px;"></canvas>
+                </div>
+            </div>
+
+            <!-- CRÉDITOS E COMPENSAÇÃO -->
+            <div class="dash-grid-main">
+                <div class="dash-card" data-permissao="ver_consumo_proprio">
+                    <h3>Créditos Disponíveis</h3>
+                    <div style="padding: 15px 0;">
+                        <p><strong>Créditos Gerais:</strong> <span style="color: var(--amarelo-vivo); font-size: 20px;">127.5 kWh</span></p>
+                        <p style="margin-top: 15px; color: #aaa; font-size: 12px;">
+                            Você pode utilizar esses créditos em até 60 meses para compensar seu consumo.
+                        </p>
+                        <p style="margin-top: 10px; color: #ff9500;">
+                            <strong>👉 Próximo vencimento:</strong> 03/01/2025
+                        </p>
+                    </div>
+                </div>
+
+                <div class="dash-card" data-permissao="ver_consumo_proprio">
+                    <h3>Fatura Atual</h3>
+                    <div style="padding: 15px 0;">
+                        <p><strong>Mês:</strong> <span>Janeiro/2025</span></p>
+                        <p><strong>Energia Consumida:</strong> <span style="color: #ff9500;">340 kWh</span></p>
+                        <p><strong>Compensação:</strong> <span style="color: #27c93f;">-127.5 kWh</span></p>
+                        <p style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #444;">
+                            <strong>Custo Final:</strong> <span style="color: #999;">R$ 0,00 (Geração compensa consumo)</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- HISTÓRICO DE FATURAS -->
+            <div class="dash-grid-main">
+                <div class="dash-card" data-permissao="ver_consumo_proprio" style="grid-column: 1 / -1;">
+                    <h3>Histórico de Faturas</h3>
+                    <div style="overflow-x: auto;">
+                        <table style="width: 100%; color: #aaa; font-size: 13px;">
+                            <thead>
+                                <tr style="border-bottom: 1px solid #444;">
+                                    <th style="text-align: left; padding: 10px 0;">Mês</th>
+                                    <th style="text-align: right; padding: 10px 0;">Consumo (kWh)</th>
+                                    <th style="text-align: right; padding: 10px 0;">Geração (kWh)</th>
+                                    <th style="text-align: right; padding: 10px 0;">Economia</th>
+                                    <th style="text-align: right; padding: 10px 0;">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr style="border-bottom: 1px solid #333;">
+                                    <td style="padding: 12px 0;">Janeiro/2025</td>
+                                    <td style="text-align: right;">340</td>
+                                    <td style="text-align: right; color: var(--amarelo-vivo);">1.150</td>
+                                    <td style="text-align: right; color: #27c93f;">R$ 412,50</td>
+                                    <td style="text-align: right;"><span style="color: #27c93f;">✓ Pago</span></td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid #333;">
+                                    <td style="padding: 12px 0;">Dezembro/2024</td>
+                                    <td style="text-align: right;">365</td>
+                                    <td style="text-align: right; color: var(--amarelo-vivo);">950</td>
+                                    <td style="text-align: right; color: #27c93f;">R$ 375,00</td>
+                                    <td style="text-align: right;"><span style="color: #27c93f;">✓ Pago</span></td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid #333;">
+                                    <td style="padding: 12px 0;">Novembro/2024</td>
+                                    <td style="text-align: right;">320</td>
+                                    <td style="text-align: right; color: var(--amarelo-vivo);">1.100</td>
+                                    <td style="text-align: right; color: #27c93f;">R$ 450,00</td>
+                                    <td style="text-align: right;"><span style="color: #27c93f;">✓ Pago</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        // Inicializar página financeira
+        document.addEventListener('DOMContentLoaded', () => {
+            renderizarWidgetsFinanceiros();
+            inicializarGraficosFinanceiros();
+        });
+
+        /**
+         * Renderizar widgets financeiros
+         */
+        function renderizarWidgetsFinanceiros() {
+            const sistema = obterSistemaCliente();
+            if (!sistema) return;
+
+            const ma = sistema.metricas_acumuladas;
+            const fin = sistema.financeiro;
+            const perf = sistema.performance;
+
+            const economiaMes = document.getElementById('economia-mes');
+            if (economiaMes) economiaMes.textContent = 'R$ ' + ma.economiaMes.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+
+            const economiaAcumulada = document.getElementById('economia-acumulada');
+            if (economiaAcumulada) economiaAcumulada.textContent = 'R$ ' + ma.economiaAno.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+
+            const paybackEstimado = document.getElementById('payback-estimado');
+            if (paybackEstimado) paybackEstimado.textContent = fin.paybackEstimado.toFixed(1) + ' anos';
+
+            const roiAnualizado = document.getElementById('roi-anualizado');
+            if (roiAnualizado) roiAnualizado.textContent = fin.roi.toFixed(1) + '%';
+
+            const creditos = document.getElementById('creditos-disponiveis');
+            if (creditos) creditos.textContent = ma.creditosTotais.toFixed(1) + ' kWh';
+        }
+
+        /**
+         * Inicializar gráficos financeiros
+         */
+        function inicializarGraficosFinanceiros() {
+            const sistema = obterSistemaCliente();
+            if (!sistema) return;
+
+            // Gráfico Economia Acumulada
+            const ctxAcumulada = document.getElementById('chart-economia-acumulada')?.getContext('2d');
+            if (ctxAcumulada) {
+                new Chart(ctxAcumulada, {
+                    type: 'line',
+                    data: {
+                        labels: ['Mês 1', 'Mês 2', 'Mês 3', 'Mês 4', 'Mês 5', 'Mês 6', 'Mês 7', 'Mês 8', 'Mês 9', 'Mês 10', 'Mês 11', 'Mês 12'],
+                        datasets: [{
+                            label: 'Economia Acumulada (R$)',
+                            data: [412, 787, 1237, 1650, 2062, 2512, 2925, 3337, 3787, 4200, 4612, 5062],
+                            borderColor: '#27c93f',
+                            backgroundColor: 'rgba(39, 201, 63, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        plugins: {
+                            legend: { display: false }
+                        },
+                        scales: {
+                            y: { beginAtZero: true, ticks: { color: '#aaa' } },
+                            x: { ticks: { color: '#aaa' } }
+                        }
+                    }
+                });
+            }
+
+            // Gráfico Economia Anual
+            const ctxAnual = document.getElementById('chart-economia-anual')?.getContext('2d');
+            if (ctxAnual) {
+                new Chart(ctxAnual, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
+                        datasets: [{
+                            label: 'R$',
+                            data: [412, 375, 450, 412, 475, 425, 450, 412, 375, 395, 412, 325],
+                            backgroundColor: '#27c93f'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        indexAxis: 'x',
+                        plugins: {
+                            legend: { display: false }
+                        },
+                        scales: {
+                            y: { beginAtZero: true, ticks: { color: '#aaa' } },
+                            x: { ticks: { color: '#aaa' } }
+                        }
+                    }
+                });
+            }
+
+            // Gráfico Custo vs Economia
+            const ctxCustoEco = document.getElementById('chart-custo-vs-economia')?.getContext('2d');
+            if (ctxCustoEco) {
+                new Chart(ctxCustoEco, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Economia Gerada', 'Investimento Restante'],
+                        datasets: [{
+                            data: [5062, 16438],
+                            backgroundColor: ['#27c93f', '#555']
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        plugins: {
+                            legend: { position: 'bottom', labels: { color: '#aaa' } }
+                        }
+                    }
+                });
+            }
+
+            // Gráfico Projeção Futura
+            const ctxProjecao = document.getElementById('chart-projecao-futura')?.getContext('2d');
+            if (ctxProjecao) {
+                new Chart(ctxProjecao, {
+                    type: 'line',
+                    data: {
+                        labels: ['Hoje', 'Ano 1', 'Ano 3', 'Ano 5', 'Ano 6.2', 'Ano 10', 'Ano 15', 'Ano 20', 'Ano 25'],
+                        datasets: [{
+                            label: 'Investimento Líquido (R$)',
+                            data: [21500, 16438, 6312, -3812, -21500, -48562, -96000, -143438, -190876],
+                            borderColor: '#ff9500',
+                            backgroundColor: 'rgba(255, 165, 0, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        plugins: {
+                            legend: { display: false }
+                        },
+                        scales: {
+                            y: { ticks: { color: '#aaa' } },
+                            x: { ticks: { color: '#aaa' } }
+                        }
+                    }
+                });
+            }
+        }
+    </script>
+</body>
+</html>

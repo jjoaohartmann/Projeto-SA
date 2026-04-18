@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+    <script src="sistema-permissoes.js" defer></script>
+    <script src="cliente-sistema.js" defer></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>Geração Solar - RTV Solar</title>
+</head>
+<body class="pagina-painel">
+    <header class="nav-bar">
+        <a href="dashboard.html">
+            <img src="imagens/logo-site.png" alt="logo" class="logo">
+            <h3>RTV ENERGIA SOLAR</h3>
+        </a>
+        <div class="topbar-actions">
+            <div class="search-bar">
+                <i class="ph ph-magnifying-glass"></i>
+                <input type="text" placeholder="Buscar...">
+            </div>
+            <div class="notification-wrapper">
+                <a href="#" id="btn-notificacoes" style="color: var(--amarelo-vivo); position: relative;">
+                    <i class="ph ph-bell" style="font-size: 24px;"></i>
+                    <span class="notif-badge">3</span>
+                </a>
+                <div class="notif-dropdown" id="notif-dropdown"></div>
+            </div>
+            <a href="#" id="btn-logout" class="btn" style="background-color: #ff5f56; padding: 8px 15px;">Sair</a>
+        </div>
+    </header>
+
+    <div class="dashboard-layout">
+        <aside class="sidebar">
+            <a href="dashboard.html"><i class="ph ph-squares-four"></i> Visão Geral</a>
+            <a href="cliente-geracao.html" class="active"><i class="ph ph-sun"></i> Geração Solar</a>
+            <a href="cliente-consumo.html"><i class="ph ph-lightning-charge"></i> Consumo</a>
+            <a href="cliente-financeiro.html"><i class="ph ph-chart-pie"></i> Financeiro</a>
+            <a href="cliente-contratos.html"><i class="ph ph-file-text"></i> Contratos</a>
+            <a href="suporte.html"><i class="ph ph-headset"></i> Suporte</a>
+        </aside>
+
+        <main class="dashboard-content">
+            <div class="dash-header">
+                <div>
+                    <h2>Geração Solar em Tempo Real</h2>
+                    <p style="color: #aaa;">Acompanhe detalhes da produção de energia do seu sistema</p>
+                </div>
+                <div class="weather-widget">
+                    <i class="ph-fill ph-cloud-sun" style="font-size: 32px; color: var(--amarelo-vivo);"></i>
+                    <div class="weather-info">
+                        <h4 id="clima-temp">28°C</h4>
+                        <p id="clima-cond">Ensolarado (Alta Geração)</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RESUMO DE GERAÇÃO -->
+            <div class="grid-cards-mini">
+                <div class="dash-card mini" data-permissao="ver_geração_propria">
+                    <i class="ph ph-sun icone-bg" style="color: var(--amarelo-vivo);"></i>
+                    <h4>Geração Agora</h4>
+                    <div class="valor" id="geracao-atual">3.8 kW</div>
+                    <span class="status positivo">Pico</span>
+                </div>
+                <div class="dash-card mini" data-permissao="ver_geração_propria">
+                    <i class="ph ph-calendar-blank icone-bg"></i>
+                    <h4>Geração Hoje</h4>
+                    <div class="valor" id="geracao-hoje">38.2 kWh</div>
+                    <span class="status positivo">Acima média</span>
+                </div>
+                <div class="dash-card mini" data-permissao="ver_geração_propria">
+                    <i class="ph ph-calendar icone-bg"></i>
+                    <h4>Geração Mês</h4>
+                    <div class="valor" id="geracao-mes">1.150 kWh</div>
+                    <span class="status positivo">Ótimo</span>
+                </div>
+                <div class="dash-card mini" data-permissao="ver_geração_propria">
+                    <i class="ph ph-trend-up icone-bg" style="color: #27c93f;"></i>
+                    <h4>Média Diária</h4>
+                    <div class="valor" id="geracao-media">30.5 kWh</div>
+                    <span class="status positivo">Referência</span>
+                </div>
+            </div>
+
+            <!-- GRÁFICOS DE GERAÇÃO -->
+            <div class="dash-grid-main">
+                <div class="dash-card" data-permissao="ver_geração_propria" style="grid-column: 1 / -1;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <h3>Geração Horária de Hoje</h3>
+                        <div style="font-size: 12px; color: #999;">Atualizado a cada 30 segundos</div>
+                    </div>
+                    <canvas id="chart-geracao-horaria" style="max-height: 300px;"></canvas>
+                </div>
+
+                <div class="dash-card" data-permissao="ver_geração_propria">
+                    <h3>Geração Última Semana</h3>
+                    <canvas id="chart-geracao-semana" style="max-height: 250px;"></canvas>
+                </div>
+
+                <div class="dash-card" data-permissao="ver_geração_propria">
+                    <h3>Geração Últimos 12 Meses</h3>
+                    <canvas id="chart-geracao-ano" style="max-height: 250px;"></canvas>
+                </div>
+            </div>
+
+            <!-- EQUIPAMENTOS -->
+            <div class="dash-grid-main">
+                <div class="dash-card" data-permissao="ver_geração_propria" style="grid-column: 1 / -1;">
+                    <h3>Status dos Equipamentos</h3>
+                    <div class="grid-cards-mini">
+                        <div class="dash-card mini">
+                            <i class="ph ph-solar-panel icone-bg" style="color: var(--amarelo-vivo);"></i>
+                            <h4>Painéis Solares</h4>
+                            <div class="valor" id="paineis-qty">24</div>
+                            <span class="status positivo">Online</span>
+                        </div>
+                        <div class="dash-card mini">
+                            <i class="ph ph-cpu icone-bg" style="color: #27c93f;"></i>
+                            <h4>Inversor</h4>
+                            <div class="valor" id="inversor-modelo">Huawei 10kW</div>
+                            <span class="status positivo">Online</span>
+                        </div>
+                        <div class="dash-card mini">
+                            <i class="ph ph-gauge icone-bg" style="color: #2A8C82;"></i>
+                            <h4>Medidor</h4>
+                            <div class="valor" id="medidor-modelo">Schneider</div>
+                            <span class="status positivo">Conectado</span>
+                        </div>
+                        <div class="dash-card mini">
+                            <i class="ph ph-battery-charging-vertical icone-bg" style="color: #ff5f56;"></i>
+                            <h4>Bateria</h4>
+                            <div class="valor" id="bateria-status">Não instalada</div>
+                            <span class="status alerta">N/A</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PERFORMANCE E PREVISÃO -->
+            <div class="dash-grid-main">
+                <div class="dash-card" data-permissao="ver_geração_propria">
+                    <h3>Performance</h3>
+                    <div style="padding: 15px 0;">
+                        <p><strong>Eficiência Global:</strong> <span id="eficiencia-global" style="color: #27c93f;">96.8%</span></p>
+                        <p><strong>Scoring do Sistema:</strong> <span id="scoring" style="color: var(--amarelo-vivo); font-weight: bold;">A+</span></p>
+                        <p><strong>Dias Sem Falha:</strong> <span id="dias-sem-falha" style="color: #27c93f;">147</span> dias</p>
+                    </div>
+                </div>
+
+                <div class="dash-card" data-permissao="ver_geração_propria">
+                    <h3>Previsão Próximos Dias</h3>
+                    <div style="padding: 15px 0;">
+                        <p style="margin: 10px 0;"><strong>Hoje:</strong> <span style="color: #27c93f;">38.2 kWh</span> (Ensolarado)</p>
+                        <p style="margin: 10px 0;"><strong>Amanhã:</strong> <span style="color: var(--amarelo-vivo);">35.5 kWh</span> (Parcialmente Nublado)</p>
+                        <p style="margin: 10px 0;"><strong>Próximo:</strong> <span style="color: #ff9500;">22.0 kWh</span> (Nublado)</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DICAS E OTIMIZAÇÃO -->
+            <div class="dash-grid-main">
+                <div class="dash-card" data-permissao="ver_geração_propria" style="grid-column: 1 / -1;">
+                    <h3>Dicas de Otimização</h3>
+                    <div style="padding: 15px 0;">
+                        <div style="background: rgba(39, 201, 63, 0.1); padding: 12px; margin: 10px 0; border-radius: 6px; border-left: 4px solid #27c93f;">
+                            <p><strong>✓ Ótimo:</strong> Seu sistema está funcionando acima da média. Continue acompanhando a geração.</p>
+                        </div>
+                        <div style="background: rgba(255, 165, 0, 0.1); padding: 12px; margin: 10px 0; border-radius: 6px; border-left: 4px solid #ff9500;">
+                            <p><strong>💡 Sugestão:</strong> Limpe os painéis a cada 3 meses para manter a eficiência máxima.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        // Inicializar página de geração
+        document.addEventListener('DOMContentLoaded', () => {
+            renderizarWidgetsGeração();
+            inicializarGraficosGeracao();
+            
+            // Atualizar widgets a cada 30 segundos
+            setInterval(renderizarWidgetsGeração, 30000);
+            setInterval(atualizarMetricasTempoReal, 30000);
+        });
+
+        /**
+         * Inicializar gráficos de geração
+         */
+        function inicializarGraficosGeracao() {
+            const sistema = obterSistemaCliente();
+            if (!sistema) return;
+
+            const m = sistema.metricas_dia;
+            const ma = sistema.metricas_acumuladas;
+
+            // Gráfico Horário (hoje)
+            const ctxHoraria = document.getElementById('chart-geracao-horaria')?.getContext('2d');
+            if (ctxHoraria) {
+                new Chart(ctxHoraria, {
+                    type: 'line',
+                    data: {
+                        labels: ['00h', '03h', '06h', '09h', '12h', '15h', '18h', '21h'],
+                        datasets: [{
+                            label: 'Geração (kW)',
+                            data: [0, 0, 0.5, 2.1, 4.2, 3.8, 1.5, 0],
+                            borderColor: 'var(--amarelo-vivo)',
+                            backgroundColor: 'rgba(244, 162, 34, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        plugins: {
+                            legend: { display: false }
+                        },
+                        scales: {
+                            y: { beginAtZero: true, ticks: { color: '#aaa' } },
+                            x: { ticks: { color: '#aaa' } }
+                        }
+                    }
+                });
+            }
+
+            // Gráfico Semanal
+            const ctxSemana = document.getElementById('chart-geracao-semana')?.getContext('2d');
+            if (ctxSemana) {
+                new Chart(ctxSemana, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab', 'Dom'],
+                        datasets: [{
+                            label: 'kWh',
+                            data: [38.2, 35.5, 22.0, 40.1, 38.8, 32.5, 28.0],
+                            backgroundColor: 'var(--amarelo-vivo)'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        indexAxis: 'x',
+                        plugins: {
+                            legend: { display: false }
+                        },
+                        scales: {
+                            y: { beginAtZero: true, ticks: { color: '#aaa' } },
+                            x: { ticks: { color: '#aaa' } }
+                        }
+                    }
+                });
+            }
+
+            // Gráfico Anual
+            const ctxAno = document.getElementById('chart-geracao-ano')?.getContext('2d');
+            if (ctxAno) {
+                new Chart(ctxAno, {
+                    type: 'line',
+                    data: {
+                        labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
+                        datasets: [{
+                            label: 'Geração (kWh)',
+                            data: [980, 950, 1100, 1150, 1200, 1050, 1100, 1150, 1000, 980, 850, 850],
+                            borderColor: '#27c93f',
+                            backgroundColor: 'rgba(39, 201, 63, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        plugins: {
+                            legend: { display: false }
+                        },
+                        scales: {
+                            y: { beginAtZero: true, ticks: { color: '#aaa' } },
+                            x: { ticks: { color: '#aaa' } }
+                        }
+                    }
+                });
+            }
+
+            // Preencher dados de equipamentos
+            const eq = sistema.equipamentos;
+            const painelsQty = document.getElementById('paineis-qty');
+            if (painelsQty) painelsQty.textContent = eq.paineis.quantidade || '24';
+
+            const inversorModelo = document.getElementById('inversor-modelo');
+            if (inversorModelo) inversorModelo.textContent = eq.inversor.modelo || 'Huawei 10kW';
+
+            const medidorModelo = document.getElementById('medidor-modelo');
+            if (medidorModelo) medidorModelo.textContent = eq.medidor.modelo || 'Schneider';
+
+            const bateriaStatus = document.getElementById('bateria-status');
+            if (bateriaStatus) bateriaStatus.textContent = eq.bateria.presente ? 'Ativa' : 'Não instalada';
+
+            // Preencher performance
+            const eficienciaGlobal = document.getElementById('eficiencia-global');
+            if (eficienciaGlobal) eficienciaGlobal.textContent = sistema.performance.eficienciaGlobal + '%';
+
+            const scoring = document.getElementById('scoring');
+            if (scoring) scoring.textContent = sistema.performance.scoring;
+
+            const mediaGeracab = document.getElementById('geracao-media');
+            if (mediaGeracao) mediaGeracao.textContent = m.geracaoMedia.toFixed(1) + ' kWh';
+        }
+    </script>
+</body>
+</html>

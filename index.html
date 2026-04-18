@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
     <script src="script.js" defer></script>
+    <script src="sistema-permissoes.js" defer></script>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <title>RTV Solar - A Evolução da Energia</title>
 </head>
@@ -20,7 +21,8 @@
             <li><a href="#solucoes">Soluções</a></li>
             <li><a href="servicos.html">Serviços</a></li>
             <li><a href="#contato">Contatos</a></li>
-            <li><a href="login.html" class="btn" style="padding: 8px 20px; margin-left: 15px;">Área do cliente</a></li>
+            <li><a href="registro.html" class="btn" style="padding: 8px 20px; margin-left: 15px;">Criar Conta</a></li>
+            <li><a href="login.html" class="btn" style="padding: 8px 20px; background: var(--amarelo-vivo); color: #000;">Área do cliente</a></li>
         </ul>
     </header>
 
@@ -98,7 +100,7 @@
                 </div>
 
                 <div style="margin-top: 30px; display: flex; gap: 15px;">
-                    <a href="cadastro.html" class="btn">Simular Assinatura</a>
+                    <a href="registro.html" class="btn">Simular Assinatura</a>
                 </div>
             </div>
         </div>
@@ -163,5 +165,27 @@
             </div>
         </div>
     </footer>
+
+    <script>
+        // Simulador Expresso RTV
+        document.addEventListener("DOMContentLoaded", () => {
+            const inputValor = document.getElementById("calc-input-valor");
+            const resultElemento = document.getElementById("calc-resultado");
+
+            if (inputValor) {
+                inputValor.addEventListener("input", () => {
+                    const valor = parseFloat(inputValor.value) || 0;
+                    // Cálculo: economia de até 95% ao ano (simulação conservadora: 85%)
+                    const economiaAnual = valor * 12 * 0.85;
+                    resultElemento.textContent = "R$ " + economiaAnual.toFixed(2).replace(".", ",");
+                });
+
+                // Inicializar com valor padrão se houver
+                if (inputValor.value) {
+                    inputValor.dispatchEvent(new Event("input"));
+                }
+            }
+        });
+    </script>
 </body>
 </html>

@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+    <script src="sistema-permissoes.js" defer></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <title>Gestão de Equipamentos - RTV Solar Admin</title>
+</head>
+<body class="pagina-painel">
+    <header class="nav-bar">
+        <a href="dashboard.html">
+            <img src="imagens/logo-site.png" alt="logo" class="logo">
+            <h3>RTV ENERGIA SOLAR - ADMIN</h3>
+        </a>
+        <div class="topbar-actions">
+            <div class="search-bar">
+                <i class="ph ph-magnifying-glass"></i>
+                <input type="text" placeholder="Buscar equipamentos...">
+            </div>
+            <div class="notification-wrapper">
+                <a href="#" id="btn-notificacoes" style="color: var(--amarelo-vivo); position: relative;">
+                    <i class="ph ph-bell" style="font-size: 24px;"></i>
+                    <span class="notif-badge">1</span>
+                </a>
+                <div class="notif-dropdown" id="notif-dropdown"></div>
+            </div>
+            <a href="#" id="btn-logout" class="btn" style="background-color: #ff5f56; padding: 8px 15px;">Sair</a>
+        </div>
+    </header>
+
+    <div class="dashboard-layout">
+        <aside class="sidebar">
+            <a href="dashboard.html"><i class="ph ph-squares-four"></i> Dashboard</a>
+            <a href="admin-clientes.html"><i class="ph ph-users"></i> Gestão de Clientes</a>
+            <a href="admin-servicos.html"><i class="ph ph-briefcase"></i> Gestão de Serviços</a>
+            <a href="admin-equipamentos.html" class="active"><i class="ph ph-package"></i> Gestão de Equipamentos</a>
+            <a href="admin-relatorios.html"><i class="ph ph-chart-bar"></i> Relatórios</a>
+            <a href="admin-configuracoes.html"><i class="ph ph-gear"></i> Configurações</a>
+            <a href="admin-configuracoes.html"><i class="ph ph-shield-check"></i> Auditoria</a>
+            <a href="dashboard.html" style="margin-top: 30px; color: #aaa;"><i class="ph ph-sign-out"></i> Voltar ao Cliente</a>
+        </aside>
+
+        <main class="dashboard-content">
+            <div class="dash-header">
+                <div>
+                    <h2>Gestão de Equipamentos</h2>
+                    <p style="color: #aaa;">Gerencie inventário, manutenção e garantias de equipamentos</p>
+                </div>
+                <a href="#" class="btn" style="background-color: var(--amarelo-vivo); padding: 12px 20px; text-decoration: none;">
+                    <i class="ph ph-plus-circle"></i> Novo Equipamento
+                </a>
+            </div>
+
+            <!-- ESTATÍSTICAS RÁPIDAS -->
+            <div class="grid-cards-mini">
+                <div class="dash-card mini" data-permissao="gerenciar_equipamentos">
+                    <i class="ph ph-package icone-bg" style="color: #2A8C82;"></i>
+                    <h4>Total Instalado</h4>
+                    <div class="valor" id="equip-instalados">382</div>
+                    <span class="status positivo">Em produção</span>
+                </div>
+                <div class="dash-card mini" data-permissao="gerenciar_equipamentos">
+                    <i class="ph ph-warning-circle icone-bg" style="color: #ff9500;"></i>
+                    <h4>Manutenção Pendente</h4>
+                    <div class="valor" id="manut-pendente">12</div>
+                    <span class="status alerta">Requer atenção</span>
+                </div>
+                <div class="dash-card mini" data-permissao="gerenciar_equipamentos">
+                    <i class="ph ph-check-circle icone-bg" style="color: #27c93f;"></i>
+                    <h4>Garantias Ativas</h4>
+                    <div class="valor" id="garantias-ativas">367</div>
+                    <span class="status positivo">Protegidos</span>
+                </div>
+                <div class="dash-card mini" data-permissao="gerenciar_equipamentos">
+                    <i class="ph ph-x-circle icone-bg" style="color: #ff5f56;"></i>
+                    <h4>Falhas Relatadas</h4>
+                    <div class="valor" id="falhas-relatadas">3</div>
+                    <span class="status negativo">Investigação</span>
+                </div>
+            </div>
+
+            <!-- TIPOS DE EQUIPAMENTOS -->
+            <div class="dash-grid-main">
+                <div class="dash-card" data-permissao="gerenciar_equipamentos" style="grid-column: 1 / -1;">
+                    <h3>Inventário por Tipo</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+                        <!-- Painéis -->
+                        <div style="background: #222; padding: 20px; border-radius: 8px; border-left: 4px solid var(--amarelo-vivo);">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <h4 style="margin: 0;">Painéis Solares</h4>
+                                <i class="ph ph-solar-panel" style="font-size: 28px; color: var(--amarelo-vivo);"></i>
+                            </div>
+                            <p style="margin: 15px 0 0 0; font-size: 24px; color: var(--amarelo-vivo); font-weight: bold;">9.168</p>
+                            <p style="margin: 10px 0 0 0; color: #999; font-size: 12px;">Total de unidades instaladas</p>
+                            <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #444;">
+                                <p style="margin: 5px 0; font-size: 12px;"><strong>Modelos:</strong> 12 marcas</p>
+                                <p style="margin: 5px 0; font-size: 12px;"><strong>Status:</strong> 98.5% Online</p>
+                            </div>
+                        </div>
+
+                        <!-- Inversores -->
+                        <div style="background: #222; padding: 20px; border-radius: 8px; border-left: 4px solid #2A8C82;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <h4 style="margin: 0;">Inversores</h4>
+                                <i class="ph ph-cpu" style="font-size: 28px; color: #2A8C82;"></i>
+                            </div>
+                            <p style="margin: 15px 0 0 0; font-size: 24px; color: #2A8C82; font-weight: bold;">142</p>
+                            <p style="margin: 10px 0 0 0; color: #999; font-size: 12px;">Total de unidades instaladas</p>
+                            <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #444;">
+                                <p style="margin: 5px 0; font-size: 12px;"><strong>Modelos:</strong> 8 marcas</p>
+                                <p style="margin: 5px 0; font-size: 12px;"><strong>Status:</strong> 100% Online</p>
+                            </div>
+                        </div>
+
+                        <!-- Baterias -->
+                        <div style="background: #222; padding: 20px; border-radius: 8px; border-left: 4px solid #27c93f;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <h4 style="margin: 0;">Baterias</h4>
+                                <i class="ph ph-battery-charging-vertical" style="font-size: 28px; color: #27c93f;"></i>
+                            </div>
+                            <p style="margin: 15px 0 0 0; font-size: 24px; color: #27c93f; font-weight: bold;">28</p>
+                            <p style="margin: 10px 0 0 0; color: #999; font-size: 12px;">Total de unidades instaladas</p>
+                            <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #444;">
+                                <p style="margin: 5px 0; font-size: 12px;"><strong>Modelos:</strong> 3 marcas</p>
+                                <p style="margin: 5px 0; font-size: 12px;"><strong>Status:</strong> 96% Online</p>
+                            </div>
+                        </div>
+
+                        <!-- Medidores -->
+                        <div style="background: #222; padding: 20px; border-radius: 8px; border-left: 4px solid #ff9500;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <h4 style="margin: 0;">Medidores</h4>
+                                <i class="ph ph-gauge" style="font-size: 28px; color: #ff9500;"></i>
+                            </div>
+                            <p style="margin: 15px 0 0 0; font-size: 24px; color: #ff9500; font-weight: bold;">142</p>
+                            <p style="margin: 10px 0 0 0; color: #999; font-size: 12px;">Total de unidades instaladas</p>
+                            <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #444;">
+                                <p style="margin: 5px 0; font-size: 12px;"><strong>Modelos:</strong> 4 marcas</p>
+                                <p style="margin: 5px 0; font-size: 12px;"><strong>Status:</strong> 99% Online</p>
+                            </div>
+                        </div>
+
+                        <!-- Outros -->
+                        <div style="background: #222; padding: 20px; border-radius: 8px; border-left: 4px solid #999;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <h4 style="margin: 0;">Outros</h4>
+                                <i class="ph ph-wrench" style="font-size: 28px; color: #999;"></i>
+                            </div>
+                            <p style="margin: 15px 0 0 0; font-size: 24px; color: #999; font-weight: bold;">1.482</p>
+                            <p style="margin: 10px 0 0 0; color: #999; font-size: 12px;">Acessórios, cabos, etc</p>
+                            <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #444;">
+                                <p style="margin: 5px 0; font-size: 12px;"><strong>Categorias:</strong> 15 tipos</p>
+                                <p style="margin: 5px 0; font-size: 12px;"><strong>Status:</strong> 100% Estoque</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MANUTENÇÃO NECESSÁRIA -->
+            <div class="dash-grid-main">
+                <div class="dash-card" data-permissao="gerenciar_equipamentos" style="grid-column: 1 / -1;">
+                    <h3>Manutenção Programada</h3>
+                    <div style="display: grid; gap: 10px;">
+                        <div style="background: #222; padding: 15px; border-radius: 6px; border-left: 4px solid #ff9500;">
+                            <p><strong>Sistema de João Silva (10kW)</strong> - <span style="color: #ff9500;">Limpeza Urgente</span></p>
+                            <p style="margin: 5px 0 0 0; color: #999; font-size: 12px;">Lastro baixo de painéis pode reduzir produção em 15%</p>
+                        </div>
+                        <div style="background: #222; padding: 15px; border-radius: 6px; border-left: 4px solid #ff9500;">
+                            <p><strong>Sistema de Maria Santos (8kW)</strong> - <span style="color: #ff9500;">Inspeção Agendada</span></p>
+                            <p style="margin: 5px 0 0 0; color: #999; font-size: 12px;">Devido em 7 dias - Manutenção preventiva semestral</p>
+                        </div>
+                        <div style="background: #222; padding: 15px; border-radius: 6px; border-left: 4px solid #ff5f56;">
+                            <p><strong>Inversor Huawei (Lote #3456)</strong> - <span style="color: #ff5f56;">Firmware Outdated</span></p>
+                            <p style="margin: 5px 0 0 0; color: #999; font-size: 12px;">17 equipamentos requerem atualização de firmware</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        // Verificar se é admin
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!ehAdmin()) {
+                window.location.href = 'dashboard.html';
+            }
+        });
+    </script>
+</body>
+</html>

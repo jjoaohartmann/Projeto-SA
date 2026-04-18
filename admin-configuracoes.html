@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+    <script src="sistema-permissoes.js" defer></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <title>Configurações - RTV Solar Admin</title>
+</head>
+<body class="pagina-painel">
+    <header class="nav-bar">
+        <a href="dashboard.html">
+            <img src="imagens/logo-site.png" alt="logo" class="logo">
+            <h3>RTV ENERGIA SOLAR - ADMIN</h3>
+        </a>
+        <div class="topbar-actions">
+            <div class="search-bar">
+                <i class="ph ph-magnifying-glass"></i>
+                <input type="text" placeholder="Buscar configurações...">
+            </div>
+            <div class="notification-wrapper">
+                <a href="#" id="btn-notificacoes" style="color: var(--amarelo-vivo); position: relative;">
+                    <i class="ph ph-bell" style="font-size: 24px;"></i>
+                    <span class="notif-badge">0</span>
+                </a>
+                <div class="notif-dropdown" id="notif-dropdown"></div>
+            </div>
+            <a href="#" id="btn-logout" class="btn" style="background-color: #ff5f56; padding: 8px 15px;">Sair</a>
+        </div>
+    </header>
+
+    <div class="dashboard-layout">
+        <aside class="sidebar">
+            <a href="dashboard.html"><i class="ph ph-squares-four"></i> Dashboard</a>
+            <a href="admin-clientes.html"><i class="ph ph-users"></i> Gestão de Clientes</a>
+            <a href="admin-servicos.html"><i class="ph ph-briefcase"></i> Gestão de Serviços</a>
+            <a href="admin-equipamentos.html"><i class="ph ph-package"></i> Gestão de Equipamentos</a>
+            <a href="admin-relatorios.html"><i class="ph ph-chart-bar"></i> Relatórios</a>
+            <a href="admin-configuracoes.html" class="active"><i class="ph ph-gear"></i> Configurações</a>
+            <a href="admin-configuracoes.html"><i class="ph ph-shield-check"></i> Auditoria</a>
+            <a href="dashboard.html" style="margin-top: 30px; color: #aaa;"><i class="ph ph-sign-out"></i> Voltar ao Cliente</a>
+        </aside>
+
+        <main class="dashboard-content">
+            <div class="dash-header">
+                <div>
+                    <h2>Configurações do Sistema</h2>
+                    <p style="color: #aaa;">Gerencie parâmetros globais, integrações e políticas da plataforma</p>
+                </div>
+            </div>
+
+            <!-- CONFIGURAÇÕES GERAIS -->
+            <div class="dash-grid-main">
+                <div class="dash-card" data-permissao="gerenciar_config" style="grid-column: 1 / -1;">
+                    <h3>Informações Gerais da Plataforma</h3>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div>
+                            <label style="display: block; color: #999; margin-bottom: 5px;">Nome da Empresa</label>
+                            <input type="text" value="RTV Energia Solar" style="background: #222; color: #aaa; border: 1px solid #444; padding: 10px; border-radius: 4px; width: 100%;">
+                        </div>
+                        <div>
+                            <label style="display: block; color: #999; margin-bottom: 5px;">Telefone Principal</label>
+                            <input type="text" value="+55 (11) 3000-0000" style="background: #222; color: #aaa; border: 1px solid #444; padding: 10px; border-radius: 4px; width: 100%;">
+                        </div>
+                        <div>
+                            <label style="display: block; color: #999; margin-bottom: 5px;">E-mail de Suporte</label>
+                            <input type="email" value="suporte@rtvsolar.com.br" style="background: #222; color: #aaa; border: 1px solid #444; padding: 10px; border-radius: 4px; width: 100%;">
+                        </div>
+                        <div>
+                            <label style="display: block; color: #999; margin-bottom: 5px;">Site Oficial</label>
+                            <input type="url" value="https://www.rtvsolar.com.br" style="background: #222; color: #aaa; border: 1px solid #444; padding: 10px; border-radius: 4px; width: 100%;">
+                        </div>
+                    </div>
+                    <div style="margin-top: 20px;">
+                        <button style="background: var(--amarelo-vivo); color: #000; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">
+                            Salvar Alterações
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- POLÍTICAS E CONFIGURAÇÕES -->
+            <div class="dash-grid-main">
+                <div class="dash-card" data-permissao="gerenciar_config">
+                    <h3>Políticas de Acesso</h3>
+                    <div style="padding: 15px 0;">
+                        <div style="margin: 15px 0;">
+                            <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                                <input type="checkbox" checked style="width: 18px; height: 18px;">
+                                <span>Permitir auto-registro de clientes</span>
+                            </label>
+                        </div>
+                        <div style="margin: 15px 0;">
+                            <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                                <input type="checkbox" checked style="width: 18px; height: 18px;">
+                                <span>Exigir e-mail confirmado</span>
+                            </label>
+                        </div>
+                        <div style="margin: 15px 0;">
+                            <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                                <input type="checkbox" style="width: 18px; height: 18px;">
+                                <span>Exigir aprovação prévia para acesso</span>
+                            </label>
+                        </div>
+                        <div style="margin: 15px 0;">
+                            <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                                <input type="checkbox" checked style="width: 18px; height: 18px;">
+                                <span>Ativar 2FA (Autenticação em Dois Fatores)</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dash-card" data-permissao="gerenciar_config">
+                    <h3>Limite de Sessão</h3>
+                    <div style="padding: 15px 0;">
+                        <label style="display: block; color: #999; margin-bottom: 10px;">Tempo de Inatividade (minutos)</label>
+                        <input type="number" value="30" style="background: #222; color: #aaa; border: 1px solid #444; padding: 8px; border-radius: 4px; width: 100%; margin-bottom: 15px;">
+                        
+                        <label style="display: block; color: #999; margin-bottom: 10px;">Tentativas de Login Falhadas</label>
+                        <input type="number" value="5" style="background: #222; color: #aaa; border: 1px solid #444; padding: 8px; border-radius: 4px; width: 100%; margin-bottom: 15px;">
+                        
+                        <label style="display: block; color: #999; margin-bottom: 10px;">Duração do Bloqueio (minutos)</label>
+                        <input type="number" value="15" style="background: #222; color: #aaa; border: 1px solid #444; padding: 8px; border-radius: 4px; width: 100%;">
+                    </div>
+                </div>
+            </div>
+
+            <!-- INTEGRAÇÕES E CONECTORES -->
+            <div class="dash-grid-main">
+                <div class="dash-card" data-permissao="gerenciar_config" style="grid-column: 1 / -1;">
+                    <h3>Integrações Externas</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
+                        <div style="background: #222; padding: 15px; border-radius: 8px; border: 1px solid #444;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                                <h4 style="margin: 0;">API do Banco Medidor</h4>
+                                <span style="background: #27c93f; color: #000; padding: 4px 8px; border-radius: 4px; font-size: 11px;">Ativo</span>
+                            </div>
+                            <p style="margin: 10px 0; color: #999; font-size: 12px;">Conexão com dados de consumo em tempo real</p>
+                            <button style="background: #444; color: #aaa; padding: 8px 12px; border: none; border-radius: 4px; cursor: pointer; width: 100%; margin-top: 10px;">
+                                Configurar
+                            </button>
+                        </div>
+                        <div style="background: #222; padding: 15px; border-radius: 8px; border: 1px solid #444;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                                <h4 style="margin: 0;">Previsão de Geração</h4>
+                                <span style="background: #ff9500; color: #000; padding: 4px 8px; border-radius: 4px; font-size: 11px;">Teste</span>
+                            </div>
+                            <p style="margin: 10px 0; color: #999; font-size: 12px;">API de previsão climática para geração solar</p>
+                            <button style="background: #444; color: #aaa; padding: 8px 12px; border: none; border-radius: 4px; cursor: pointer; width: 100%; margin-top: 10px;">
+                                Configurar
+                            </button>
+                        </div>
+                        <div style="background: #222; padding: 15px; border-radius: 8px; border: 1px solid #444;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                                <h4 style="margin: 0;">Gateway de Pagamento</h4>
+                                <span style="background: #27c93f; color: #000; padding: 4px 8px; border-radius: 4px; font-size: 11px;">Ativo</span>
+                            </div>
+                            <p style="margin: 10px 0; color: #999; font-size: 12px;">Processamento de pagamentos de faturas</p>
+                            <button style="background: #444; color: #aaa; padding: 8px 12px; border: none; border-radius: 4px; cursor: pointer; width: 100%; margin-top: 10px;">
+                                Configurar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BACKUP E SEGURANÇA -->
+            <div class="dash-grid-main">
+                <div class="dash-card" data-permissao="gerenciar_config">
+                    <h3>Backup e Recuperação</h3>
+                    <div style="padding: 15px 0;">
+                        <p><strong>Último Backup:</strong> <span style="color: #27c93f;">20/01/2025 - 02:15 AM</span></p>
+                        <p style="margin-top: 10px;"><strong>Frequência:</strong> Diário</p>
+                        <p style="margin-top: 10px;" style="color: #999; font-size: 12px;">Próximo backup agendado para: 21/01/2025 - 02:15 AM</p>
+                        
+                        <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #444;">
+                            <button style="background: #2A8C82; color: #fff; padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer; margin-right: 10px;">
+                                <i class="ph ph-download"></i> Fazer Backup Agora
+                            </button>
+                            <button style="background: #444; color: #aaa; padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer;">
+                                <i class="ph ph-history"></i> Histórico de Backups
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dash-card" data-permissao="gerenciar_config">
+                    <h3>Certificados e SSL</h3>
+                    <div style="padding: 15px 0;">
+                        <p><strong>Certificado SSL:</strong> <span style="color: #27c93f;">Ativo</span></p>
+                        <p style="margin-top: 10px;"><strong>Validade:</strong> Até 15/03/2026</p>
+                        <p style="margin-top: 10px; color: #999; font-size: 12px;">Seu certificado está valido e auto-renovação está habilitada</p>
+                        
+                        <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #444;">
+                            <button style="background: #444; color: #aaa; padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer; width: 100%;">
+                                <i class="ph ph-clock"></i> Renovar Agora
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- NOTIFICAÇÕES E ALERTAS -->
+            <div class="dash-grid-main">
+                <div class="dash-card" data-permissao="gerenciar_config" style="grid-column: 1 / -1;">
+                    <h3>Preferências de Notificações</h3>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div>
+                            <h4 style="margin: 0 0 15px 0;">Alertas por E-mail</h4>
+                            <div style="margin: 10px 0;">
+                                <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                                    <input type="checkbox" checked style="width: 18px; height: 18px;">
+                                    <span>Novos clientes cadastrados</span>
+                                </label>
+                            </div>
+                            <div style="margin: 10px 0;">
+                                <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                                    <input type="checkbox" checked style="width: 18px; height: 18px;">
+                                    <span>Equipamentos offline</span>
+                                </label>
+                            </div>
+                            <div style="margin: 10px 0;">
+                                <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                                    <input type="checkbox" checked style="width: 18px; height: 18px;">
+                                    <span>Relatórios de segurança</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div>
+                            <h4 style="margin: 0 0 15px 0;">Alertas SMS/Emergência</h4>
+                            <div style="margin: 10px 0;">
+                                <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                                    <input type="checkbox" checked style="width: 18px; height: 18px;">
+                                    <span>Falhas críticas de sistema</span>
+                                </label>
+                            </div>
+                            <div style="margin: 10px 0;">
+                                <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                                    <input type="checkbox" checked style="width: 18px; height: 18px;">
+                                    <span>Tentativas de acesso suspeitas</span>
+                                </label>
+                            </div>
+                            <div style="margin: 10px 0;">
+                                <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                                    <input type="checkbox" style="width: 18px; height: 18px;">
+                                    <span>Chamados prioritários</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="margin-top: 20px;">
+                        <button style="background: var(--amarelo-vivo); color: #000; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">
+                            Salvar Preferências
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- LOG DE ALTERAÇÕES -->
+            <div class="dash-grid-main">
+                <div class="dash-card" data-permissao="gerenciar_config" style="grid-column: 1 / -1;">
+                    <h3>Log de Alterações Recentes</h3>
+                    <div style="overflow-x: auto;">
+                        <table style="width: 100%; color: #aaa; font-size: 12px;">
+                            <thead>
+                                <tr style="border-bottom: 1px solid #444;">
+                                    <th style="text-align: left; padding: 10px 0;">Data/Hora</th>
+                                    <th style="text-align: left; padding: 10px 0;">Administrador</th>
+                                    <th style="text-align: left; padding: 10px 0;">Alteração</th>
+                                    <th style="text-align: left; padding: 10px 0;">Afetado</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr style="border-bottom: 1px solid #333;">
+                                    <td style="padding: 8px 0;">19/01/2025 14:32</td>
+                                    <td>Admin Root</td>
+                                    <td>Alterou limite de tentativas</td>
+                                    <td>Política de Acesso</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid #333;">
+                                    <td style="padding: 8px 0;">18/01/2025 09:15</td>
+                                    <td>Admin RTV</td>
+                                    <td>Habilitou 2FA</td>
+                                    <td>Segurança</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid #333;">
+                                    <td style="padding: 8px 0;">15/01/2025 16:45</td>
+                                    <td>Admin Root</td>
+                                    <td>Atualizou gateway de pagamento</td>
+                                    <td>Integrações</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        // Verificar se é admin
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!ehAdmin()) {
+                window.location.href = 'dashboard.html';
+            }
+        });
+    </script>
+</body>
+</html>

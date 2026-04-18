@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+    <script src="sistema-permissoes.js" defer></script>
+    <script src="cliente-sistema.js" defer></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>Consumo - RTV Solar</title>
+</head>
+<body class="pagina-painel">
+    <header class="nav-bar">
+        <a href="dashboard.html">
+            <img src="imagens/logo-site.png" alt="logo" class="logo">
+            <h3>RTV ENERGIA SOLAR</h3>
+        </a>
+        <div class="topbar-actions">
+            <div class="search-bar">
+                <i class="ph ph-magnifying-glass"></i>
+                <input type="text" placeholder="Buscar...">
+            </div>
+            <div class="notification-wrapper">
+                <a href="#" id="btn-notificacoes" style="color: var(--amarelo-vivo); position: relative;">
+                    <i class="ph ph-bell" style="font-size: 24px;"></i>
+                    <span class="notif-badge">3</span>
+                </a>
+                <div class="notif-dropdown" id="notif-dropdown"></div>
+            </div>
+            <a href="#" id="btn-logout" class="btn" style="background-color: #ff5f56; padding: 8px 15px;">Sair</a>
+        </div>
+    </header>
+
+    <div class="dashboard-layout">
+        <aside class="sidebar">
+            <a href="dashboard.html"><i class="ph ph-squares-four"></i> Visão Geral</a>
+            <a href="cliente-geracao.html"><i class="ph ph-sun"></i> Geração Solar</a>
+            <a href="cliente-consumo.html" class="active"><i class="ph ph-lightning-charge"></i> Consumo</a>
+            <a href="cliente-financeiro.html"><i class="ph ph-chart-pie"></i> Financeiro</a>
+            <a href="cliente-contratos.html"><i class="ph ph-file-text"></i> Contratos</a>
+            <a href="suporte.html"><i class="ph ph-headset"></i> Suporte</a>
+        </aside>
+
+        <main class="dashboard-content">
+            <div class="dash-header">
+                <div>
+                    <h2>Análise de Consumo</h2>
+                    <p style="color: #aaa;">Monitore o consumo de energia da sua propriedade</p>
+                </div>
+                <div class="weather-widget">
+                    <i class="ph-fill ph-lightning-charge" style="font-size: 32px; color: #ff9500;"></i>
+                    <div class="weather-info">
+                        <h4 id="consumo-agora-header">1.2 kW</h4>
+                        <p id="consumo-status">Dentro da previsão</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RESUMO DE CONSUMO -->
+            <div class="grid-cards-mini">
+                <div class="dash-card mini" data-permissao="ver_consumo_proprio">
+                    <i class="ph ph-lightning-charge icone-bg" style="color: #ff9500;"></i>
+                    <h4>Consumo Agora</h4>
+                    <div class="valor" id="consumo-atual">1.2 kW</div>
+                    <span class="status positivo">Estável</span>
+                </div>
+                <div class="dash-card mini" data-permissao="ver_consumo_proprio">
+                    <i class="ph ph-calendar-blank icone-bg"></i>
+                    <h4>Consumo Hoje</h4>
+                    <div class="valor" id="consumo-hoje">14.5 kWh</div>
+                    <span class="status positivo">Abaixo média</span>
+                </div>
+                <div class="dash-card mini" data-permissao="ver_consumo_proprio">
+                    <i class="ph ph-calendar icone-bg"></i>
+                    <h4>Consumo Mês</h4>
+                    <div class="valor" id="consumo-mes">340 kWh</div>
+                    <span class="status alerta">Atenção</span>
+                </div>
+                <div class="dash-card mini" data-permissao="ver_consumo_proprio">
+                    <i class="ph ph-trend-down icone-bg" style="color: #27c93f;"></i>
+                    <h4>Média Diária</h4>
+                    <div class="valor" id="consumo-media">12.3 kWh</div>
+                    <span class="status positivo">Referência</span>
+                </div>
+            </div>
+
+            <!-- GRÁFICOS DE CONSUMO -->
+            <div class="dash-grid-main">
+                <div class="dash-card" data-permissao="ver_consumo_proprio" style="grid-column: 1 / -1;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <h3>Consumo Horário de Hoje</h3>
+                        <div style="font-size: 12px; color: #999;">Atualizado a cada 30 segundos</div>
+                    </div>
+                    <canvas id="chart-consumo-horaria" style="max-height: 300px;"></canvas>
+                </div>
+
+                <div class="dash-card" data-permissao="ver_consumo_proprio">
+                    <h3>Consumo Última Semana</h3>
+                    <canvas id="chart-consumo-semana" style="max-height: 250px;"></canvas>
+                </div>
+
+                <div class="dash-card" data-permissao="ver_consumo_proprio">
+                    <h3>Consumo vs Geração (Mês)</h3>
+                    <canvas id="chart-cons-vs-ger" style="max-height: 250px;"></canvas>
+                </div>
+            </div>
+
+            <!-- COMPARATIVO E METAS -->
+            <div class="dash-grid-main">
+                <div class="dash-card" data-permissao="ver_consumo_proprio">
+                    <h3>Comparativo Período</h3>
+                    <div style="padding: 15px 0;">
+                        <p><strong>Consumo Este Mês:</strong> <span style="color: #ff9500;">340 kWh</span></p>
+                        <p><strong>Mês Anterior:</strong> <span style="color: #999;">365 kWh</span></p>
+                        <p><strong>Diferença:</strong> <span style="color: #27c93f;">-25 kWh (-6.8%)</span></p>
+                    </div>
+                </div>
+
+                <div class="dash-card" data-permissao="ver_consumo_proprio">
+                    <h3>Meta de Consumo</h3>
+                    <div style="padding: 15px 0;">
+                        <p><strong>Meta Mensal:</strong> <span style="color: #2A8C82;">350 kWh</span></p>
+                        <p><strong>Atual:</strong> <span style="color: #ff9500;">340 kWh (97%)</span></p>
+                        <p><strong>Status:</strong> <span style="color: #27c93f;">✓ Dentro da Meta</span></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PICOS DE CONSUMO -->
+            <div class="dash-grid-main">
+                <div class="dash-card" data-permissao="ver_consumo_proprio" style="grid-column: 1 / -1;">
+                    <h3>Dispositivos de Maior Consumo</h3>
+                    <div class="grid-cards-mini">
+                        <div class="dash-card mini">
+                            <i class="ph ph-air-conditioner icone-bg" style="color: #2A8C82;"></i>
+                            <h4>Ar Condicionado</h4>
+                            <div class="valor">45%</div>
+                            <span class="status">Principal</span>
+                        </div>
+                        <div class="dash-card mini">
+                            <i class="ph ph-fire icone-bg" style="color: #ff5f56;"></i>
+                            <h4>Chuveiro Elétrico</h4>
+                            <div class="valor">18%</div>
+                            <span class="status">Secundário</span>
+                        </div>
+                        <div class="dash-card mini">
+                            <i class="ph ph-refrigerator icone-bg" style="color: #999;"></i>
+                            <h4>Geladeira</h4>
+                            <div class="valor">12%</div>
+                            <span class="status">Contínuo</span>
+                        </div>
+                        <div class="dash-card mini">
+                            <i class="ph ph-lightbulb icone-bg" style="color: var(--amarelo-vivo);"></i>
+                            <h4>Iluminação</h4>
+                            <div class="valor">8%</div>
+                            <span class="status">Variável</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RECOMENDAÇÕES DE ECONOMIA -->
+            <div class="dash-grid-main">
+                <div class="dash-card" data-permissao="ver_consumo_proprio" style="grid-column: 1 / -1;">
+                    <h3>Recomendações de Economia</h3>
+                    <div style="padding: 15px 0;">
+                        <div style="background: rgba(42, 140, 130, 0.1); padding: 12px; margin: 10px 0; border-radius: 6px; border-left: 4px solid #2A8C82;">
+                            <p><strong>💡 Dica:</strong> Seu ar condicionado consome 45% da energia. Considere usar o modo econômico em horas menos quentes.</p>
+                        </div>
+                        <div style="background: rgba(255, 165, 0, 0.1); padding: 12px; margin: 10px 0; border-radius: 6px; border-left: 4px solid #ff9500;">
+                            <p><strong>⚡ Oportunidade:</strong> Reduza o consumo entre 11h-17h para apoveitar a máxima geração solar.</p>
+                        </div>
+                        <div style="background: rgba(39, 201, 63, 0.1); padding: 12px; margin: 10px 0; border-radius: 6px; border-left: 4px solid #27c93f;">
+                            <p><strong>✓ Excelente:</strong> Você está consumindo 6.8% menos que o mês anterior. Parabéns!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        // Inicializar página de consumo
+        document.addEventListener('DOMContentLoaded', () => {
+            renderizarWidgetsConsumo();
+            inicializarGraficosConsumo();
+            
+            // Atualizar widgets a cada 30 segundos
+            setInterval(renderizarWidgetsConsumo, 30000);
+            setInterval(atualizarMetricasTempoReal, 30000);
+        });
+
+        /**
+         * Inicializar gráficos de consumo
+         */
+        function inicializarGraficosConsumo() {
+            const sistema = obterSistemaCliente();
+            if (!sistema) return;
+
+            // Gráfico Horário (hoje)
+            const ctxHoraria = document.getElementById('chart-consumo-horaria')?.getContext('2d');
+            if (ctxHoraria) {
+                new Chart(ctxHoraria, {
+                    type: 'line',
+                    data: {
+                        labels: ['00h', '03h', '06h', '09h', '12h', '15h', '18h', '21h'],
+                        datasets: [{
+                            label: 'Consumo (kW)',
+                            data: [0.8, 0.6, 1.2, 1.5, 2.1, 1.8, 2.5, 1.4],
+                            borderColor: '#ff9500',
+                            backgroundColor: 'rgba(255, 165, 0, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        plugins: {
+                            legend: { display: false }
+                        },
+                        scales: {
+                            y: { beginAtZero: true, ticks: { color: '#aaa' } },
+                            x: { ticks: { color: '#aaa' } }
+                        }
+                    }
+                });
+            }
+
+            // Gráfico Semanal
+            const ctxSemana = document.getElementById('chart-consumo-semana')?.getContext('2d');
+            if (ctxSemana) {
+                new Chart(ctxSemana, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab', 'Dom'],
+                        datasets: [{
+                            label: 'kWh',
+                            data: [14.5, 15.2, 13.8, 14.1, 16.2, 18.5, 12.0],
+                            backgroundColor: '#ff9500'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        indexAxis: 'x',
+                        plugins: {
+                            legend: { display: false }
+                        },
+                        scales: {
+                            y: { beginAtZero: true, ticks: { color: '#aaa' } },
+                            x: { ticks: { color: '#aaa' } }
+                        }
+                    }
+                });
+            }
+
+            // Gráfico Consumo vs Geração
+            const ctxConsVsGer = document.getElementById('chart-cons-vs-ger')?.getContext('2d');
+            if (ctxConsVsGer) {
+                new Chart(ctxConsVsGer, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Semana 1', 'Semana 2', 'Semana 3', 'Semana 4'],
+                        datasets: [
+                            {
+                                label: 'Geração (kWh)',
+                                data: [268, 250, 308, 324],
+                                backgroundColor: 'var(--amarelo-vivo)'
+                            },
+                            {
+                                label: 'Consumo (kWh)',
+                                data: [95, 105, 98, 42],
+                                backgroundColor: '#ff9500'
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        indexAxis: 'x',
+                        scales: {
+                            y: { beginAtZero: true, ticks: { color: '#aaa' } },
+                            x: { ticks: { color: '#aaa' } }
+                        }
+                    }
+                });
+            }
+
+            // Preencher consumo médio
+            const consumoMedia = document.getElementById('consumo-media');
+            if (consumoMedia) consumoMedia.textContent = sistema.metricas_dia.consumoMedia.toFixed(1) + ' kWh';
+        }
+    </script>
+</body>
+</html>

@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
     <script src="script.js"></script>
+    <script src="sistema-permissoes.js" defer></script>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <title>Login - RTV Solar</title>
 </head>
@@ -24,9 +25,9 @@
     </header>
 
     <main class="auth-container">
-        <div class="auth-box">
+        <div class="auth-box" style="max-width: 500px;">
             <h2>Área do cliente</h2>
-            <p>Acesso ao painel após contratação e ativação do sistema RTV.</p>
+            <p>Acesso ao painel para clientes com conta ativa e aprovada.</p>
 
             <form id="form-login" class="auth-form">
                 <div class="input-group">
@@ -47,6 +48,10 @@
                 <span>ou continue com</span>
             </div>
 
+            <p style="text-align: center; color: #aaa; margin-top: 20px; font-size: 13px;">
+                Ainda não tem conta? <a href="registro.html" style="color: var(--verde-agua); font-weight: bold;">Criar cadastro aqui</a>
+            </p>
+
             <div class="social-login">
                 <button class="btn-social btn-google">
                     <i class="ph-fill ph-google-logo"></i> Google
@@ -59,7 +64,7 @@
                 </button>
             </div>
 
-            <p class="auth-footer">Não tem uma conta? <a href="cadastro.html">Cadastre-se</a></p>
+            <p class="auth-footer">Não tem uma conta? <a href="registro.html">Cadastre-se</a></p>
             <p class="auth-footer">Ainda não contratou? <a href="servicos.html">Serviços e orçamento</a></p>
             <p class="auth-footer">Equipa RTV? <a href="login-admin.html">Acesso administrativo</a></p>
         </div>

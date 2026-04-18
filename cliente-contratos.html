@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+    <script src="sistema-permissoes.js" defer></script>
+    <script src="cliente-sistema.js" defer></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <title>Contratos - RTV Solar</title>
+</head>
+<body class="pagina-painel">
+    <header class="nav-bar">
+        <a href="dashboard.html">
+            <img src="imagens/logo-site.png" alt="logo" class="logo">
+            <h3>RTV ENERGIA SOLAR</h3>
+        </a>
+        <div class="topbar-actions">
+            <div class="search-bar">
+                <i class="ph ph-magnifying-glass"></i>
+                <input type="text" placeholder="Buscar contratos...">
+            </div>
+            <div class="notification-wrapper">
+                <a href="#" id="btn-notificacoes" style="color: var(--amarelo-vivo); position: relative;">
+                    <i class="ph ph-bell" style="font-size: 24px;"></i>
+                    <span class="notif-badge">3</span>
+                </a>
+                <div class="notif-dropdown" id="notif-dropdown"></div>
+            </div>
+            <a href="#" id="btn-logout" class="btn" style="background-color: #ff5f56; padding: 8px 15px;">Sair</a>
+        </div>
+    </header>
+
+    <div class="dashboard-layout">
+        <aside class="sidebar">
+            <a href="dashboard.html"><i class="ph ph-squares-four"></i> Visão Geral</a>
+            <a href="cliente-geracao.html"><i class="ph ph-sun"></i> Geração Solar</a>
+            <a href="cliente-consumo.html"><i class="ph ph-lightning-charge"></i> Consumo</a>
+            <a href="cliente-financeiro.html"><i class="ph ph-chart-pie"></i> Financeiro</a>
+            <a href="cliente-contratos.html" class="active"><i class="ph ph-file-text"></i> Contratos</a>
+            <a href="suporte.html"><i class="ph ph-headset"></i> Suporte</a>
+        </aside>
+
+        <main class="dashboard-content">
+            <div class="dash-header">
+                <div>
+                    <h2>Gestão de Contratos</h2>
+                    <p style="color: #aaa;">Acesse seus contratos, termos de serviço e documentação legal</p>
+                </div>
+                <div class="weather-widget">
+                    <i class="ph-fill ph-file-text" style="font-size: 32px; color: #2A8C82;"></i>
+                    <div class="weather-info">
+                        <h4 id="total-docs">3 Documentos</h4>
+                        <p id="docs-status">Todos validados</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RESUMO DE CONTRATOS -->
+            <div class="grid-cards-mini">
+                <div class="dash-card mini" data-permissao="ver_consumo_proprio">
+                    <i class="ph ph-file-text icone-bg" style="color: #2A8C82;"></i>
+                    <h4>Contrato de Serviço</h4>
+                    <div class="valor">Ativo</div>
+                    <span class="status positivo">Válido até 2027</span>
+                </div>
+                <div class="dash-card mini" data-permissao="ver_consumo_proprio">
+                    <i class="ph ph-handshake icone-bg" style="color: var(--amarelo-vivo);"></i>
+                    <h4>Acordo de Compensação</h4>
+                    <div class="valor">Ativo</div>
+                    <span class="status positivo">60 meses</span>
+                </div>
+                <div class="dash-card mini" data-permissao="ver_consumo_proprio">
+                    <i class="ph ph-shield-check icone-bg" style="color: #27c93f;"></i>
+                    <h4>Garantia de Equipamentos</h4>
+                    <div class="valor">25 anos</div>
+                    <span class="status positivo">Painéis solares</span>
+                </div>
+                <div class="dash-card mini" data-permissao="ver_consumo_proprio">
+                    <i class="ph ph-wrench icone-bg" style="color: #ff9500;"></i>
+                    <h4>Manutenção Preventiva</h4>
+                    <div class="valor">Incluída</div>
+                    <span class="status positivo">2 vezes/ano</span>
+                </div>
+            </div>
+
+            <!-- CONTRATOS E DOCUMENTOS -->
+            <div class="dash-grid-main">
+                <div class="dash-card" data-permissao="ver_consumo_proprio" style="grid-column: 1 / -1;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h3>Meus Contratos e Documentação</h3>
+                        <a href="#" class="btn" style="background-color: var(--amarelo-vivo); padding: 8px 15px; text-decoration: none;">
+                            <i class="ph ph-download"></i> Baixar Todos
+                        </a>
+                    </div>
+
+                    <div style="display: grid; gap: 15px;">
+                        <!-- Contrato Principal -->
+                        <div style="background: #222; padding: 15px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; border-left: 4px solid #2A8C82;">
+                            <div style="flex: 1;">
+                                <h4 style="margin: 0 0 5px 0;">Contrato de Serviço de Energia Solar</h4>
+                                <p style="margin: 0; color: #999; font-size: 12px;">
+                                    Assinado em: 15/03/2024 | Validade: 36 meses | Status: <span style="color: #27c93f;">✓ Ativo</span>
+                                </p>
+                                <p style="margin: 8px 0 0 0; color: #aaa; font-size: 11px;">
+                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore...
+                                </p>
+                            </div>
+                            <div style="display: flex; gap: 10px; margin-left: 20px;">
+                                <a href="#" class="btn" style="background-color: var(--amarelo-vivo); padding: 8px 12px; text-decoration: none; font-size: 12px;">
+                                    <i class="ph ph-eye"></i> Ver
+                                </a>
+                                <a href="#" class="btn" style="background-color: #2A8C82; padding: 8px 12px; text-decoration: none; font-size: 12px;">
+                                    <i class="ph ph-download"></i> Download
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Acordo de Compensação -->
+                        <div style="background: #222; padding: 15px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; border-left: 4px solid: var(--amarelo-vivo);">
+                            <div style="flex: 1;">
+                                <h4 style="margin: 0 0 5px 0;">Acordo de Compensação de Energia</h4>
+                                <p style="margin: 0; color: #999; font-size: 12px;">
+                                    Assinado em: 15/03/2024 | Validade: 60 meses | Status: <span style="color: #27c93f;">✓ Ativo</span>
+                                </p>
+                                <p style="margin: 8px 0 0 0; color: #aaa; font-size: 11px;">
+                                    Define os termos de compensação de energia gerada e direitos de crédito adquiridos pela geração...
+                                </p>
+                            </div>
+                            <div style="display: flex; gap: 10px; margin-left: 20px;">
+                                <a href="#" class="btn" style="background-color: var(--amarelo-vivo); padding: 8px 12px; text-decoration: none; font-size: 12px;">
+                                    <i class="ph ph-eye"></i> Ver
+                                </a>
+                                <a href="#" class="btn" style="background-color: #2A8C82; padding: 8px 12px; text-decoration: none; font-size: 12px;">
+                                    <i class="ph ph-download"></i> Download
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Termo de Garantia -->
+                        <div style="background: #222; padding: 15px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; border-left: 4px solid #27c93f;">
+                            <div style="flex: 1;">
+                                <h4 style="margin: 0 0 5px 0;">Termo de Garantia de Equipamentos</h4>
+                                <p style="margin: 0; color: #999; font-size: 12px;">
+                                    Emitido em: 15/03/2024 | Validade: 25 anos | Status: <span style="color: #27c93f;">✓ Vigente</span>
+                                </p>
+                                <p style="margin: 8px 0 0 0; color: #aaa; font-size: 11px;">
+                                    Cobertura completa para painéis solares, inversor e demais equipamentos contra defeitos de fabricação...
+                                </p>
+                            </div>
+                            <div style="display: flex; gap: 10px; margin-left: 20px;">
+                                <a href="#" class="btn" style="background-color: var(--amarelo-vivo); padding: 8px 12px; text-decoration: none; font-size: 12px;">
+                                    <i class="ph ph-eye"></i> Ver
+                                </a>
+                                <a href="#" class="btn" style="background-color: #2A8C82; padding: 8px 12px; text-decoration: none; font-size: 12px;">
+                                    <i class="ph ph-download"></i> Download
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Plano de Manutenção -->
+                        <div style="background: #222; padding: 15px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; border-left: 4px solid #ff9500;">
+                            <div style="flex: 1;">
+                                <h4 style="margin: 0 0 5px 0;">Plano de Manutenção Preventiva</h4>
+                                <p style="margin: 0; color: #999; font-size: 12px;">
+                                    Vigência: 2024-2025 | Frequência: 2 visitas/ano | Status: <span style="color: #27c93f;">✓ Ativo</span>
+                                </p>
+                                <p style="margin: 8px 0 0 0; color: #aaa; font-size: 11px;">
+                                    Manutenção preventiva semestral com limpeza de painéis, inspeção de fiação e verificação de performance...
+                                </p>
+                            </div>
+                            <div style="display: flex; gap: 10px; margin-left: 20px;">
+                                <a href="#" class="btn" style="background-color: var(--amarelo-vivo); padding: 8px 12px; text-decoration: none; font-size: 12px;">
+                                    <i class="ph ph-eye"></i> Ver
+                                </a>
+                                <a href="#" class="btn" style="background-color: #2A8C82; padding: 8px 12px; text-decoration: none; font-size: 12px;">
+                                    <i class="ph ph-download"></i> Download
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- INFORMAÇÕES LEGAIS -->
+            <div class="dash-grid-main">
+                <div class="dash-card" data-permissao="ver_consumo_proprio">
+                    <h3>Informações Legais</h3>
+                    <div style="padding: 15px 0;">
+                        <p><strong>Cliente:</strong> <span id="cliente-nome">João Silva</span></p>
+                        <p><strong>CPF/CNPJ:</strong> <span id="cliente-cpf">123.456.789-00</span></p>
+                        <p><strong>Data de Ativação:</strong> <span>15/03/2024</span></p>
+                        <p><strong>Próxima Revisão:</strong> <span style="color: var(--amarelo-vivo);">15/03/2027</span></p>
+                    </div>
+                </div>
+
+                <div class="dash-card" data-permissao="ver_consumo_proprio">
+                    <h3>Histórico de Atualizações</h3>
+                    <div style="padding: 15px 0;">
+                        <p><strong>Versão Atual:</strong> 2.1</p>
+                        <p><strong>Útima Atualização:</strong> 20/12/2024</p>
+                        <p><strong>Próxima Revisão:</strong> 20/06/2025</p>
+                        <p style="margin-top: 15px; color: #999; font-size: 12px;">
+                            Atualizações periódicas são realizadas conforme mudanças na legislação ou termos de serviço.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ATENDIMENTO E SUPORTE -->
+            <div class="dash-grid-main">
+                <div class="dash-card" data-permissao="ver_consumo_proprio" style="grid-column: 1 / -1;">
+                    <h3>Dúvidas sobre Contratos?</h3>
+                    <div style="padding: 15px 0;">
+                        <p style="margin-bottom: 20px;">
+                            Se tiver dúvidas sobre qualquer cláusula ou documento, entre em contato conosco:
+                        </p>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                            <div style="background: #222; padding: 15px; border-radius: 8px;">
+                                <p><strong>📞 Telefone</strong></p>
+                                <p style="color: #999; font-size: 14px;">+55 (11) 3000-0000</p>
+                            </div>
+                            <div style="background: #222; padding: 15px; border-radius: 8px;">
+                                <p><strong>✉️ E-mail</strong></p>
+                                <p style="color: #999; font-size: 14px;">contratos@rtvsolar.com.br</p>
+                            </div>
+                            <div style="background: #222; padding: 15px; border-radius: 8px;">
+                                <p><strong>💬 Chat</strong></p>
+                                <p style="color: #999; font-size: 14px;">Seg-Sex, 9h-18h</p>
+                            </div>
+                            <div style="background: #222; padding: 15px; border-radius: 8px;">
+                                <p><strong>🏢 Sede</strong></p>
+                                <p style="color: #999; font-size: 14px;">São Paulo, SP</p>
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 20px; padding: 15px; background: rgba(42, 140, 130, 0.1); border-radius: 8px; border-left: 4px solid #2A8C82;">
+                            <p><strong>ℹ️ Aviso Importante:</strong> Todos os contratos são armazenados com segurança. Se não conseguir localizar um documento, 
+                                solicite uma segunda via através do suporte.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        // Inicializar página de contratos
+        document.addEventListener('DOMContentLoaded', () => {
+            const usuario = obterUsuarioLogado();
+            if (usuario) {
+                const nomeElement = document.getElementById('cliente-nome');
+                if (nomeElement) nomeElement.textContent = usuario.nome || 'Cliente';
+
+                const cpfElement = document.getElementById('cliente-cpf');
+                if (cpfElement) cpfElement.textContent = usuario.cpf || 'Não informado';
+            }
+        });
+    </script>
+</body>
+</html>
