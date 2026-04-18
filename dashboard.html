@@ -4,9 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
-    <script src="script.js"></script>
+    <script src="script.js" defer></script>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <title>Dashboard - RTV Solar</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>Painel de Controle - RTV Solar</title>
 </head>
 <body class="pagina-painel">
     <header class="nav-bar">
@@ -14,61 +15,132 @@
             <img src="imagens/logo-site.png" alt="logo" class="logo">
             <h3>RTV ENERGIA SOLAR</h3>
         </a>
-        <ul class="topic">
-            <li><a href="#" style="color: var(--amarelo-vivo);"><i class="ph ph-bell"></i></a></li>
-            <li><a href="#" id="btn-logout" style="background-color: #ff5f56; color: white;">Sair</a></li>
-        </ul>
+        <div class="topbar-actions">
+            <div class="search-bar">
+                <i class="ph ph-magnifying-glass"></i>
+                <input type="text" placeholder="Buscar dispositivos, chamados...">
+            </div>
+            <div class="notification-wrapper">
+                <a href="#" id="btn-notificacoes" style="color: var(--amarelo-vivo); position: relative;">
+                    <i class="ph ph-bell" style="font-size: 24px;"></i>
+                    <span class="notif-badge">3</span>
+                </a>
+                <div class="notif-dropdown" id="notif-dropdown">
+                    </div>
+            </div>
+            <a href="#" id="btn-logout" class="btn" style="background-color: #ff5f56; padding: 8px 15px;">Sair</a>
+        </div>
     </header>
 
     <div class="dashboard-layout">
         <aside class="sidebar">
             <a href="dashboard.html" class="active"><i class="ph ph-squares-four"></i> Visão Geral</a>
-            <a href="monitoramento.html"><i class="ph ph-activity"></i> Monitoramento</a>
-            <a href="relatorios.html"><i class="ph ph-chart-line-up"></i> Relatórios</a>
+            <a href="monitoramento.html"><i class="ph ph-activity"></i> Monitoramento em Tempo Real</a>
+            <a href="dispositivos.html"><i class="ph ph-cpu"></i> Gestão de Ativos</a>
+            <a href="analytics.html"><i class="ph ph-trend-up"></i> Analytics & KPIs</a>
+            <a href="relatorios.html"><i class="ph ph-chart-line-up"></i> Relatórios Financeiros</a>
             <a href="suporte.html"><i class="ph ph-headset"></i> Suporte & Chamados</a>
-            <a href="manutencao.html"><i class="ph ph-wrench"></i> Manutenção</a>
-            <a href="configuracoes.html"><i class="ph ph-gear"></i> Configurações</a>
+            <a href="manutencao.html"><i class="ph ph-wrench"></i> Agendamentos</a>
+            <a href="auditoria.html"><i class="ph ph-shield-check"></i> Logs e Auditoria</a>
+            <a href="configuracoes.html"><i class="ph ph-gear"></i> Configurações do Sistema</a>
+            <a href="admin.html" class="sidebar-link-admin" style="display: none;"><i class="ph ph-user-gear"></i> Administração</a>
         </aside>
 
         <main class="dashboard-content">
             <div class="dash-header">
                 <div>
-                    <h2 id="saudacao-dash">Olá, Usuário!</h2>
-                    <p style="color: #aaa;">Acompanhe o desempenho do seu sistema em tempo real.</p>
+                    <h2 id="saudacao-dash">Painel de Controle</h2>
+                    <p style="color: #aaa;">Status Geral do Sistema: <strong style="color: #27c93f;">Operacional e Otimizado</strong></p>
                 </div>
-                <button class="btn" onclick="window.print()"><i class="ph ph-download-simple"></i> Exportar PDF</button>
-            </div>
-
-            <div class="grid-cards">
-                <div class="dash-card">
-                    <i class="ph ph-lightning icone-bg"></i>
-                    <h4>Geração Hoje</h4>
-                    <div class="valor">18.4 kWh</div>
-                    <span class="status positivo"><i class="ph ph-trend-up"></i> +5% em relação a ontem</span>
-                </div>
-                <div class="dash-card">
-                    <i class="ph ph-plug icone-bg"></i>
-                    <h4>Consumo Atual</h4>
-                    <div class="valor">1.2 kW</div>
-                    <span class="status alerta">Pico às 14:00</span>
-                </div>
-                <div class="dash-card">
-                    <i class="ph ph-piggy-bank icone-bg"></i>
-                    <h4>Economia no Mês</h4>
-                    <div class="valor">R$ 450,20</div>
-                    <span class="status positivo">Projeção: R$ 510,00</span>
-                </div>
-                <div class="dash-card">
-                    <i class="ph ph-cloud-sun icone-bg"></i>
-                    <h4>Eficiência do Painel</h4>
-                    <div class="valor">94%</div>
-                    <span class="status positivo">Status Ideal</span>
+                <div class="weather-widget">
+                    <i class="ph-fill ph-cloud-sun" style="font-size: 32px; color: var(--amarelo-vivo);"></i>
+                    <div class="weather-info">
+                        <h4 id="clima-temp">28°C</h4>
+                        <p id="clima-cond">Ensolarado (Alta Geração)</p>
+                    </div>
                 </div>
             </div>
 
-            <div class="chart-container">
-                <h4 style="margin-top:0;">Geração vs Consumo Semanal</h4>
-                <canvas id="energiaChart"></canvas>
+            <div class="shortcuts-grid">
+                <a href="suporte.html" class="shortcut-btn"><i class="ph ph-plus-circle"></i> Abrir Chamado</a>
+                <a href="relatorios.html" class="shortcut-btn"><i class="ph ph-file-pdf"></i> Gerar Relatório</a>
+                <a href="dispositivos.html" class="shortcut-btn"><i class="ph ph-cpu"></i> Cadastrar Sensor</a>
+                <a href="manutencao.html" class="shortcut-btn"><i class="ph ph-calendar-plus"></i> Agendar Manutenção</a>
+            </div>
+
+            <div class="grid-cards-mini">
+                <div class="dash-card mini"><i class="ph ph-lightning icone-bg"></i><h4>Consumo Agora</h4><div class="valor">1.2 kW</div><span class="status positivo">Estável</span></div>
+                <div class="dash-card mini"><i class="ph ph-calendar-blank icone-bg"></i><h4>Consumo Hoje</h4><div class="valor">14.5 kWh</div><span class="status positivo">Abaixo da média</span></div>
+                <div class="dash-card mini"><i class="ph ph-calendar icone-bg"></i><h4>Consumo Mês</h4><div class="valor">340 kWh</div><span class="status alerta">Atenção à meta</span></div>
+                <div class="dash-card mini"><i class="ph ph-currency-dollar icone-bg"></i><h4>Custo Estimado</h4><div class="valor">R$ 280,00</div><span class="status positivo">Bandeira Verde</span></div>
+                <div class="dash-card mini"><i class="ph ph-piggy-bank icone-bg"></i><h4>Economia Gerada</h4><div class="valor">R$ 412,50</div><span class="status positivo">No mês atual</span></div>
+                <div class="dash-card mini"><i class="ph ph-leaf icone-bg"></i><h4>CO₂ Evitado</h4><div class="valor">185 kg</div><span class="status positivo">Equivale a 8 árvores</span></div>
+                <div class="dash-card mini"><i class="ph ph-percent icone-bg"></i><h4>Eficiência Global</h4><div class="valor">96.8%</div><span class="status positivo">Scoring A+</span></div>
+                <div class="dash-card mini" style="border-color: #ff5f56;"><i class="ph ph-warning-circle icone-bg"></i><h4>Alertas Ativos</h4><div class="valor" style="color: #ff5f56;">1</div><span class="status negativo">Dispositivo Offline</span></div>
+            </div>
+
+            <div class="dash-grid-main">
+                <div class="chart-container" style="height: 400px;">
+                    <div style="display: flex; justify-content: space-between;">
+                        <h4 style="margin-top:0;">Curva de Geração vs Consumo (Tempo Real / Previsão)</h4>
+                        <select style="background: #1a1a1a; color: white; border: 1px solid #333; border-radius: 5px; padding: 5px;"><option>Hoje</option><option>Semana</option></select>
+                    </div>
+                    <canvas id="chartPrincipal"></canvas>
+                </div>
+
+                <div class="dash-card">
+                    <h3 style="color: var(--verde-agua); margin-top:0;"><i class="ph-fill ph-brain"></i> RTV Intelligence</h3>
+                    <p style="font-size: 13px; color: #aaa;">Analisamos seus padrões de consumo para sugerir melhorias.</p>
+                    
+                    <div class="ai-box">
+                        <i class="ph-fill ph-lightbulb" style="font-size: 24px; color: var(--amarelo-vivo);"></i>
+                        <div><strong>Recomendação:</strong> Desloque o uso de máquinas pesadas para entre 11h e 14h, pico de irradiação solar atual. Economia estimada: R$ 45,00.</div>
+                    </div>
+                    <div class="ai-box" style="border-color: #ff5f56; background: rgba(255,95,86,0.1);">
+                        <i class="ph-fill ph-warning" style="font-size: 24px; color: #ff5f56;"></i>
+                        <div><strong>Anomalia Detectada:</strong> Consumo atípico noturno (Ar-condicionado Sala 2).</div>
+                    </div>
+
+                    <h4 style="margin-top: 20px;">Meta de Consumo Mensal</h4>
+                    <div style="display: flex; justify-content: space-between; font-size: 12px; color: #aaa;"><span>Atual: 340 kWh</span><span>Teto: 400 kWh</span></div>
+                    <div class="progress-container"><div class="progress-bar warning" style="width: 85%;"></div></div>
+                </div>
+            </div>
+
+            <div class="dash-grid-triple">
+                <div class="tabela-wrapper">
+                    <h4 style="margin-top:0; color: var(--verde-agua);">Sensores e Equipamentos</h4>
+                    <table>
+                        <tbody>
+                            <tr><td>Inversor RTV-X1</td><td><span class="badge online">Online</span></td></tr>
+                            <tr><td>Painel String A</td><td><span class="badge online">Online</span></td></tr>
+                            <tr><td>Medidor Geral</td><td><span class="badge offline">Falha (Error #203)</span></td></tr>
+                        </tbody>
+                    </table>
+                    <a href="dispositivos.html" style="font-size: 12px; color: var(--verde-agua); display: block; margin-top: 10px;">Ver Inventário Completo →</a>
+                </div>
+
+                <div class="tabela-wrapper">
+                    <h4 style="margin-top:0; color: var(--verde-agua);">Fila de Operações</h4>
+                    <table>
+                        <tbody>
+                            <tr><td>Limpeza de Placas</td><td><span class="badge aberto">Em 2 dias</span></td></tr>
+                            <tr><td>Ticket #10024</td><td><span class="badge aberto">Aguardando Peça</span></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="tabela-wrapper">
+                    <h4 style="margin-top:0; color: var(--verde-agua);">Atividade Recente</h4>
+                    <table style="font-size: 12px;">
+                        <tbody>
+                            <tr><td style="color:#aaa;">10:45</td><td>Login realizado (IP: 192...)</td></tr>
+                            <tr><td style="color:#aaa;">09:30</td><td>Backup automático do banco</td></tr>
+                            <tr><td style="color:#aaa;">08:15</td><td style="color:#ff5f56;">Perda de ping (Medidor Geral)</td></tr>
+                        </tbody>
+                    </table>
+                    <a href="auditoria.html" style="font-size: 12px; color: var(--verde-agua); display: block; margin-top: 10px;">Acessar Log de Auditoria →</a>
+                </div>
             </div>
         </main>
     </div>

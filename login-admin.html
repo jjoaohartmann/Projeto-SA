@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="style.css">
     <script src="script.js"></script>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    <title>Login - RTV Solar</title>
+    <title>Acesso administrativo - RTV Solar</title>
 </head>
 
 <body>
@@ -18,50 +18,37 @@
         </a>
         <ul class="topic">
             <li><a href="servicos.html">Serviços</a></li>
-            <li><a href="#contato">Contatos</a></li>
+            <li><a href="index.html#contato">Contatos</a></li>
             <li><a href="login.html">Área do cliente</a></li>
         </ul>
     </header>
 
     <main class="auth-container">
         <div class="auth-box">
-            <h2>Área do cliente</h2>
-            <p>Acesso ao painel após contratação e ativação do sistema RTV.</p>
+            <h2>Acesso administrativo</h2>
+            <p>Reservado à equipa RTV após contratação e implantação do sistema junto ao cliente.</p>
 
-            <form id="form-login" class="auth-form">
+            <form id="form-login-admin" class="auth-form">
                 <div class="input-group">
-                    <label for="email">E-mail</label>
-                    <input type="email" id="email" placeholder="Seu e-mail" required>
+                    <label for="email-admin">E-mail</label>
+                    <input type="email" id="email-admin" placeholder="E-mail da equipa" required>
                 </div>
 
                 <div class="input-group senha-group">
-                    <label for="senha">Senha</label>
-                    <input type="password" id="senha" placeholder="Sua senha" required>
-                    <i class="ph ph-eye toggle-password" id="toggle-senha"></i>
+                    <label for="senha-admin">Senha</label>
+                    <input type="password" id="senha-admin" placeholder="Senha" required>
+                    <i class="ph ph-eye toggle-password" id="toggle-senha-admin"></i>
                 </div>
 
-                <button type="submit" class="btn btn-full">Entrar</button>
+                <button type="submit" class="btn btn-full">Entrar como administrador</button>
             </form>
 
-            <div class="divider">
-                <span>ou continue com</span>
-            </div>
+            <p class="auth-footer" style="color:#777; font-size: 12px; margin-top: 20px;">
+                Demonstração: <strong>admin@rtvsolar.com</strong> / <strong>admin123</strong>
+            </p>
 
-            <div class="social-login">
-                <button class="btn-social btn-google">
-                    <i class="ph-fill ph-google-logo"></i> Google
-                </button>
-                <button class="btn-social btn-facebook">
-                    <i class="ph-fill ph-facebook-logo"></i> Facebook
-                </button>
-                <button class="btn-social btn-apple">
-                    <i class="ph-fill ph-apple-logo"></i> Apple
-                </button>
-            </div>
-
-            <p class="auth-footer">Não tem uma conta? <a href="cadastro.html">Cadastre-se</a></p>
-            <p class="auth-footer">Ainda não contratou? <a href="servicos.html">Serviços e orçamento</a></p>
-            <p class="auth-footer">Equipa RTV? <a href="login-admin.html">Acesso administrativo</a></p>
+            <p class="auth-footer">É cliente com sistema ativo? <a href="login.html">Área do cliente</a></p>
+            <p class="auth-footer">Quer contratar? <a href="servicos.html">Serviços e orçamento</a></p>
         </div>
     </main>
 
