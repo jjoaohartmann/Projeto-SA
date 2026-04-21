@@ -18,14 +18,10 @@
             <h3>RTV ENERGIA SOLAR</h3>
         </a>
         <div class="topbar-actions">
-            <div class="search-bar">
-                <i class="ph ph-magnifying-glass"></i>
-                <input type="text" placeholder="Buscar...">
-            </div>
             <div class="notification-wrapper">
                 <a href="#" id="btn-notificacoes" style="color: var(--amarelo-vivo); position: relative;">
                     <i class="ph ph-bell" style="font-size: 24px;"></i>
-                    <span class="notif-badge">3</span>
+                    <span class="notif-badge" id="notif-count" style="display: none;">0</span>
                 </a>
                 <div class="notif-dropdown" id="notif-dropdown"></div>
             </div>
@@ -41,6 +37,8 @@
             <a href="cliente-financeiro.html"><i class="ph ph-chart-pie"></i> Financeiro</a>
             <a href="cliente-contratos.html"><i class="ph ph-file-text"></i> Contratos</a>
             <a href="suporte.html"><i class="ph ph-headset"></i> Suporte</a>
+            <hr style="margin: 15px 0; border: none; border-top: 1px solid #444;">
+            <a href="admin-clientes.html" class="sidebar-link-admin" style="display: none; color: #F4A222; font-weight: bold;"><i class="ph ph-user-gear"></i> 🔧 Gestão de Clientes</a>
         </aside>
 
         <main class="dashboard-content">
@@ -185,10 +183,60 @@
             renderizarWidgetsGeração();
             inicializarGraficosGeracao();
             
+            // Setup logout
+            document.getElementById('btn-logout').addEventListener('click', (e) => {
+                e.preventDefault();
+                localStorage.removeItem('rtv_usuario_logado');
+                window.location.href = 'login.html';
+            });
+            
             // Atualizar widgets a cada 30 segundos
             setInterval(renderizarWidgetsGeração, 30000);
-            setInterval(atualizarMetricasTempoReal, 30000);
         });
+
+        /**
+         * Renderizar widgets de geração (dados dinâmicos)
+         */
+        function renderizarWidgetsGeração() {
+            const sistema = obterSistemaCliente();
+            if (!sistema) return;
+
+            const m = sistema.metricas_dia;
+            const eq = sistema.equipamentos;
+
+            // Atualizar valores de geração
+            const geracaoAtual = document.getElementById('geracao-atual');
+            if (geracaoAtual) geracaoAtual.textContent = m.geracaoAgora.toFixed(1) + ' kW';
+
+            const geracaoHoje = document.getElementById('geracao-hoje');
+            if (geracaoHoje) geracaoHoje.textContent = m.geracaoHoje.toFixed(1) + ' kWh';
+
+            const geracaoMes = document.getElementById('geracao-mes');
+            if (geracaoMes) geracaoMes.textContent = sistema.metricas_acumuladas.geracaoMes.toFixed(0) + ' kWh';
+
+            const mediaGeracao = document.getElementById('geracao-media');
+            if (mediaGeracao) mediaGeracao.textContent = m.geracaoMedia.toFixed(1) + ' kWh';
+
+            // Preencher dados de equipamentos
+            const painelsQty = document.getElementById('paineis-qty');
+            if (painelsQty) painelsQty.textContent = eq.paineis.quantidade || '24';
+
+            const inversorModelo = document.getElementById('inversor-modelo');
+            if (inversorModelo) inversorModelo.textContent = eq.inversor.modelo || 'Huawei 10kW';
+
+            const medidorModelo = document.getElementById('medidor-modelo');
+            if (medidorModelo) medidorModelo.textContent = eq.medidor.modelo || 'Schneider';
+
+            const bateriaStatus = document.getElementById('bateria-status');
+            if (bateriaStatus) bateriaStatus.textContent = eq.bateria.presente ? 'Ativa' : 'Não instalada';
+
+            // Preencher performance
+            const eficienciaGlobal = document.getElementById('eficiencia-global');
+            if (eficienciaGlobal) eficienciaGlobal.textContent = (sistema.performance.eficienciaGlobal || 96.8).toFixed(1) + '%';
+
+            const scoring = document.getElementById('scoring');
+            if (scoring) scoring.textContent = sistema.performance.scoring;
+        }
 
         /**
          * Inicializar gráficos de geração

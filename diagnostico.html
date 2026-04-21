@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Diagnóstico RTV</title>
+    <style>
+        body {
+            background: #1a1a1a;
+            color: #aaa;
+            font-family: monospace;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #222;
+            padding: 20px;
+            border-radius: 4px;
+        }
+        h1 {
+            color: #F4A222;
+        }
+        h2 {
+            color: #2A8C82;
+            margin-top: 30px;
+        }
+        .ok {
+            color: #27c93f;
+        }
+        .error {
+            color: #ff5f56;
+        }
+        pre {
+            background: #1a1a1a;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-size: 11px;
+        }
+        button {
+            background: #F4A222;
+            color: #000;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Diagnóstico RTV Solar</h1>
+        
+        <div id="diagnostico"></div>
+        
+        <button onclick="location.reload()">Recarregar</button>
+        <button onclick="window.open('wizard-setup.html')">Abrir Setup Wizard</button>
+    </div>
+
+    <script src="script.js" defer></script>
+    <script src="admin-clientes.js" defer></script>
+    <script src="sistema-permissoes.js" defer></script>
+    
+    <script>
+        setTimeout(() => {
+            let html = "";
+            
+            // 1. localStorage
+            html += "<h2>localStorage Status</h2>";
+            const usuarios = JSON.parse(localStorage.getItem("rtv_usuarios")) || [];
+            const usuarioLogado = JSON.parse(localStorage.getItem("rtv_usuario_logado")) || null;
+            
+            html += `<p><span class="${usuarios.length > 0 ? 'ok' : 'error'}">• rtv_usuarios: ${usuarios.length} registros</span></p>`;
+            html += `<p><span class="${usuarioLogado ? 'ok' : 'error'}">• rtv_usuario_logado: ${usuarioLogado ? 'SIM' : 'NÃO'}</span></p>`;
+            
+            // 2. Usuário autenticado
+            html += "<h2>Autenticação</h2>";
+            const logado = obterUsuarioLogado();
+            if (logado) {
+                html += `<p class="ok">✓ Usuário: ${logado.nome}</p>`;
+                html += `<p class="ok">✓ Email: ${logado.email}</p>`;
+                html += `<p class="ok">✓ Role: ${logado.role}</p>`;
+                html += `<p class="${logado.role === 'admin' ? 'ok' : 'error'}">✓ É Admin: ${logado.role === 'admin' ? 'SIM' : 'NÃO'}</p>`;
+            } else {
+                html += `<p class="error">✗ Nenhum usuário autenticado</p>`;
+            }
+            
+            // 3. APIs
+            html += "<h2>APIs Carregadas</h2>";
+            html += `<p><span class="${typeof AdminClientesAPI !== 'undefined' ? 'ok' : 'error'}">• AdminClientesAPI: ${typeof AdminClientesAPI !== 'undefined' ? 'OK' : 'NÃO ENCONTRADA'}</span></p>`;
+            html += `<p><span class="${typeof ehAdmin === 'function' ? 'ok' : 'error'}">• ehAdmin(): ${typeof ehAdmin === 'function' ? 'OK' : 'NÃO ENCONTRADA'}</span></p>`;
+            html += `<p><span class="${typeof seedUsuariosPadrao === 'function' ? 'ok' : 'error'}">• seedUsuariosPadrao(): ${typeof seedUsuariosPadrao === 'function' ? 'OK' : 'NÃO ENCONTRADA'}</span></p>`;
+            
+            // 4. Clientes
+            if (typeof AdminClientesAPI !== "undefined") {
+                html += "<h2>Clientes Carregados</h2>";
+                const clientes = AdminClientesAPI.obterClientes();
+                html += `<p>${clientes.length} clientes encontrados</p>`;
+                
+                if (clientes.length > 0) {
+                    html += "<pre>";
+                    clientes.forEach((c, i) => {
+                        html += `${i+1}. ${c.nome}\n`;
+                        html += `   Email: ${c.email}\n`;
+                        html += `   Aprovado: ${c.aprovadoAdmin}\n`;
+                        html += `   ID: ${c.id}\n\n`;
+                    });
+                    html += "</pre>";
+                } else {
+                    html += `<p class="error">✗ Nenhum cliente no localStorage</p>`;
+                }
+                
+                // 5. Estatísticas
+                const stats = AdminClientesAPI.obterEstatisticas();
+                html += "<h2>Estatísticas</h2>";
+                html += `<p>Total: ${stats.totalClientes}</p>`;
+                html += `<p>Aprovados: ${stats.aprovados}</p>`;
+                html += `<p>Pendentes: ${stats.pendentes}</p>`;
+            }
+            
+            // 6. Dados brutos
+            html += "<h2>Dados Brutos (localStorage)</h2>";
+            html += `<pre>${JSON.stringify(usuarios, null, 2)}</pre>`;
+            
+            document.getElementById("diagnostico").innerHTML = html;
+        }, 1000);
+    </script>
+</body>
+</html>

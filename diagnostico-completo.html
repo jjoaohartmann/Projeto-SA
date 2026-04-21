@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Diagnóstico Completo - Admin Clientes</title>
+    <style>
+        body {
+            background: #1a1a1a;
+            color: #aaa;
+            font-family: monospace;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #F4A222;
+        }
+        h2 {
+            color: #2A8C82;
+            margin-top: 30px;
+        }
+        .ok {
+            color: #27c93f;
+            font-weight: bold;
+        }
+        .error {
+            color: #ff5f56;
+            font-weight: bold;
+        }
+        .warning {
+            color: #ff9500;
+            font-weight: bold;
+        }
+        pre {
+            background: #222;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+            border-left: 4px solid #F4A222;
+        }
+        .section {
+            background: #222;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        button {
+            background: #F4A222;
+            color: #000;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 5px;
+            font-family: Arial;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Diagnóstico Completo - Admin Clientes</h1>
+        
+        <div id="resultado"></div>
+        
+        <div style="margin-top: 30px;">
+            <button onclick="location.href='wizard-setup.html'">🔧 Setup Wizard</button>
+            <button onclick="location.href='admin-clientes.html'">📊 Ir para Gestão Clientes</button>
+            <button onclick="location.reload()">🔄 Recarregar</button>
+        </div>
+    </div>
+
+    <script src="script.js" defer></script>
+    <script src="admin-clientes.js" defer></script>
+    <script src="sistema-permissoes.js" defer></script>
+    
+    <script>
+        setTimeout(() => {
+            let html = "";
+            
+            try {
+                // 1. localStorage
+                html += "<h2>1️⃣ localStorage Status</h2>";
+                const usuarios = JSON.parse(localStorage.getItem("rtv_usuarios")) || [];
+                const usuarioLogado = JSON.parse(localStorage.getItem("rtv_usuario_logado")) || null;
+                
+                html += `<div class="section">`;
+                html += `<p><span class="${usuarios.length > 0 ? 'ok' : 'error'}">✓ rtv_usuarios: ${usuarios.length} registros</span></p>`;
+                
+                const clientes = usuarios.filter(u => u.role === "cliente");
+                html += `<p><span class="${clientes.length > 0 ? 'ok' : 'error'}">✓ Clientes filtrados: ${clientes.length}</span></p>`;
+                
+                html += `<p><span class="${usuarioLogado ? 'ok' : 'error'}">✓ Usuario logado: ${usuarioLogado ? 'SIM' : 'NÃO'}</span></p>`;
+                if (usuarioLogado) {
+                    html += `  - Nome: ${usuarioLogado.nome}<br>`;
+                    html += `  - Role: ${usuarioLogado.role}<br>`;
+                    html += `  - É Admin: ${usuarioLogado.role === 'admin' ? 'SIM' : 'NÃO'}`;
+                }
+                html += `</div>`;
+                
+                // 2. APIs Carregadas
+                html += "<h2>2️⃣ APIs JavaScript</h2>";
+                html += `<div class="section">`;
+                html += `<p><span class="${typeof AdminClientesAPI !== 'undefined' ? 'ok' : 'error'}">✓ AdminClientesAPI: ${typeof AdminClientesAPI !== 'undefined' ? 'CARREGADA' : 'NÃO ENCONTRADA'}</span></p>`;
+                html += `<p><span class="${typeof ehAdmin === 'function' ? 'ok' : 'error'}">✓ ehAdmin(): ${typeof ehAdmin === 'function' ? 'CARREGADA' : 'NÃO ENCONTRADA'}</span></p>`;
+                html += `<p><span class="${typeof seedUsuariosPadrao === 'function' ? 'ok' : 'error'}">✓ seedUsuariosPadrao(): ${typeof seedUsuariosPadrao === 'function' ? 'CARREGADA' : 'NÃO ENCONTRADA'}</span></p>`;
+                html += `<p><span class="${typeof obterUsuarioLogado === 'function' ? 'ok' : 'error'}">✓ obterUsuarioLogado(): ${typeof obterUsuarioLogado === 'function' ? 'CARREGADA' : 'NÃO ENCONTRADA'}</span></p>`;
+                html += `</div>`;
+                
+                // 3. AdminClientesAPI Testes
+                if (typeof AdminClientesAPI !== 'undefined') {
+                    html += "<h2>3️⃣ Testes da API</h2>";
+                    html += `<div class="section">`;
+                    
+                    try {
+                        const stats = AdminClientesAPI.obterEstatisticas();
+                        html += `<p class="ok">✓ obterEstatisticas() funcionando</p>`;
+                        html += `<pre>Total: ${stats.totalClientes}
+Aprovados: ${stats.aprovados}
+Pendentes: ${stats.pendentes}
+Rejeitados: ${stats.rejeitados}</pre>`;
+                    } catch (e) {
+                        html += `<p class="error">✗ obterEstatisticas() ERROR: ${e.message}</p>`;
+                    }
+                    
+                    try {
+                        const clientesAPI = AdminClientesAPI.obterClientes();
+                        html += `<p class="ok">✓ obterClientes() retornou ${clientesAPI.length} clientes</p>`;
+                        if (clientesAPI.length > 0) {
+                            html += `<pre>`;
+                            clientesAPI.slice(0, 3).forEach((c, i) => {
+                                html += `${i+1}. ${c.nome} (${c.email})\n`;
+                                html += `   ID: ${c.id}\n`;
+                                html += `   Aprovado: ${c.aprovadoAdmin}\n\n`;
+                            });
+                            html += `</pre>`;
+                        }
+                    } catch (e) {
+                        html += `<p class="error">✗ obterClientes() ERROR: ${e.message}</p>`;
+                    }
+                    
+                    html += `</div>`;
+                }
+                
+                // 4. Dados Brutos
+                html += "<h2>4️⃣ Dados Brutos localStorage</h2>";
+                html += `<div class="section">`;
+                html += `<p style="color: #F4A222; margin-bottom: 10px;"><strong>rtv_usuarios (${usuarios.length} registros):</strong></p>`;
+                html += `<pre>${JSON.stringify(usuarios, null, 2).substring(0, 2000)}</pre>`;
+                html += `</div>`;
+                
+                // 5. Problemas Identificados
+                html += "<h2>5️⃣ Análise de Problemas</h2>";
+                html += `<div class="section">`;
+                
+                const problemas = [];
+                
+                if (usuarios.length === 0) {
+                    problemas.push("❌ Nenhum usuário no localStorage - execute o Setup Wizard");
+                }
+                if (clientes.length === 0 && usuarios.length > 0) {
+                    problemas.push("❌ Não há clientes (role='cliente') - execute o Setup Wizard");
+                }
+                if (!usuarioLogado) {
+                    problemas.push("❌ Nenhum usuário autenticado - faça login primeiro");
+                }
+                if (usuarioLogado && usuarioLogado.role !== "admin") {
+                    problemas.push("❌ Usuário não é admin - precisa estar logado como admin");
+                }
+                if (typeof AdminClientesAPI === 'undefined') {
+                    problemas.push("❌ AdminClientesAPI não está carregada - verificar admin-clientes.js");
+                }
+                
+                if (problemas.length === 0) {
+                    html += `<p class="ok">✅ TUDO PARECE OK! Vá para admin-clientes.html</p>`;
+                } else {
+                    problemas.forEach(p => {
+                        html += `<p class="error">${p}</p>`;
+                    });
+                }
+                
+                html += `</div>`;
+                
+            } catch (e) {
+                html += `<p class="error">❌ ERRO: ${e.message}</p>`;
+                html += `<pre>${e.stack}</pre>`;
+            }
+            
+            document.getElementById("resultado").innerHTML = html;
+        }, 1500);
+    </script>
+</body>
+</html>

@@ -6,6 +6,14 @@
     <link rel="stylesheet" href="style.css">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <title>Gestão de Clientes - RTV Solar Admin</title>
+    <style>
+        .grid-cards-mini {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+    </style>
 </head>
 <body class="pagina-admin pagina-painel">
     <header class="nav-bar">
@@ -47,7 +55,7 @@
             </div>
 
             <!-- ESTATÍSTICAS RÁPIDAS -->
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 30px;">
+            <div class="grid-cards-mini">
                 <div class="dash-card mini" data-permissao="gerenciar_clientes">
                     <i class="ph ph-users icone-bg" style="color: #2A8C82;"></i>
                     <h4>Total de Clientes</h4>
@@ -117,113 +125,65 @@
     <script src="admin-clientes.js" defer></script>
     
     <script>
-        // ========================================
-        // GESTÃO DE CLIENTES - INICIALIZAÇÃO
-        // ========================================
+        console.log("🚀 Script de inicialização começando...");
         
+        // Aguardar que tudo esteja carregado
         function inicializar() {
-            // 1. Executar seed para garantir dados no localStorage
-            if (typeof seedUsuariosPadrao === "function") {
-                seedUsuariosPadrao();
+            console.log("📋 Inicializando admin-clientes.html");
+            
+            // Verificar se está logado como admin
+            try {
+                const usuarioLogado = obterUsuarioLogado();
+                console.log("👤 Usuário logado:", usuarioLogado);
+                
+                if (!usuarioLogado) {
+                    console.error("❌ Nenhum usuário logado");
+                    window.location.href = "login.html";
+                    return;
+                }
+                
+                const isAdmin = ehAdmin();
+                console.log("👑 É admin:", isAdmin);
+                
+                if (!isAdmin) {
+                    console.error("❌ Usuário não é admin");
+                    window.location.href = "dashboard.html";
+                    return;
+                }
+            } catch (e) {
+                console.warn("⚠️ Erro ao verificar autenticação:", e);
             }
             
-            // 2. Aguardar que AdminClientesAPI esteja disponível
-            if (typeof AdminClientesAPI === "undefined") {
-                setTimeout(inicializar, 100);
-                return;
-            }
-            
-            // 3. Atualizar estatísticas
+            // Atualizar estatísticas
             atualizarEstatisticas();
             
-            // 4. Renderizar clientes
+            // Renderizar clientes
             renderizarClientes();
             
-            // 5. Adicionar listeners
-            configurarListeners();
-        }
-        
-        function atualizarEstatisticas() {
-            const stats = AdminClientesAPI.obterEstatisticas();
-            document.getElementById("total-clientes").textContent = stats.totalClientes;
-            document.getElementById("clientes-aprovados").textContent = stats.aprovados;
-            document.getElementById("clientes-pendentes").textContent = stats.pendentes;
-            document.getElementById("clientes-rejeitos").textContent = stats.rejeitados;
-        }
-        
-        function renderizarClientes(filtro = "") {
-            const clientes = AdminClientesAPI.obterClientes(filtro);
-            const tbody = document.getElementById("tabela-clientes");
-            if (!tbody) return;
-            
-            if (clientes.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 20px; color: #888;">Nenhum cliente encontrado</td></tr>';
-                return;
-            }
-            
-            tbody.innerHTML = clientes.map(c => {
-                let status = "Pendente", cor = "#ff9500";
-                if (c.aprovadoAdmin === true) { status = "✓ Aprovado"; cor = "#27c93f"; }
-                else if (c.rejeitado === true) { status = "✗ Rejeitado"; cor = "#ff5f56"; }
-                
-                return `<tr style="border-bottom: 1px solid #333;">
-                    <td style="padding: 12px 0;"><strong>${c.nome}</strong></td>
-                    <td>${c.email}</td>
-                    <td>${c.cpf || "—"}</td>
-                    <td style="text-align: center;"><span style="background: ${cor}; color: #000; padding: 4px 8px; border-radius: 4px; font-size: 11px;">${status}</span></td>
-                    <td style="text-align: center;">${c.dataCadastro || "—"}</td>
-                    <td style="text-align: center;">
-                        ${c.aprovadoAdmin === false && !c.rejeitado ? `
-                            <a href="#" class="btn-aprovar" data-cliente-id="${c.id}" style="color: #27c93f; margin-right: 8px; cursor: pointer;">✓</a>
-                            <a href="#" class="btn-rejeitar" data-cliente-id="${c.id}" style="color: #ff5f56; margin-right: 8px; cursor: pointer;">✗</a>
-                        ` : '—'}
-                        <a href="#" class="btn-deletar" data-cliente-id="${c.id}" style="color: #888; cursor: pointer;">🗑</a>
-                    </td>
-                </tr>`;
-            }).join("");
-        }
-        
-        function configurarListeners() {
-            // Filtro de status
+            // Listeners
             const filterStatus = document.getElementById("filter-status");
             if (filterStatus) {
                 filterStatus.addEventListener("change", (e) => {
+                    console.log("🔍 Filtro:", e.target.value);
                     renderizarClientes(e.target.value);
                 });
             }
             
-            // Ações em clientes
+            // Deletar cliente
             document.addEventListener("click", (e) => {
-                if (e.target.classList.contains("btn-aprovar")) {
+                if (e.target.closest(".btn-deletar-cliente")) {
                     e.preventDefault();
-                    const id = e.target.getAttribute("data-cliente-id");
-                    const cliente = AdminClientesAPI.obterCliente(id);
-                    if (cliente && confirm(`Aprovar ${cliente.nome}?`)) {
-                        AdminClientesAPI.aprovarCliente(id);
-                        atualizarEstatisticas();
-                        renderizarClientes(filterStatus.value);
-                    }
-                }
-                if (e.target.classList.contains("btn-rejeitar")) {
-                    e.preventDefault();
-                    const id = e.target.getAttribute("data-cliente-id");
-                    const cliente = AdminClientesAPI.obterCliente(id);
-                    if (cliente && confirm(`Rejeitar ${cliente.nome}?`)) {
-                        AdminClientesAPI.rejeitarCliente(id);
-                        atualizarEstatisticas();
-                        renderizarClientes(filterStatus.value);
-                    }
-                }
-                if (e.target.classList.contains("btn-deletar")) {
-                    e.preventDefault();
-                    const id = e.target.getAttribute("data-cliente-id");
-                    if (confirm("Deletar cliente?")) {
-                        AdminClientesAPI.deletarCliente(id);
-                        atualizarEstatisticas();
-                        renderizarClientes(filterStatus.value);
-                    }
+                    const id = e.target.closest(".btn-deletar-cliente").getAttribute("data-cliente-id");
+                    deletarCliente(id);
                 }
             });
+            
+            // Auto-refresh
+            setInterval(() => {
+                console.log("🔄 Auto-refresh");
+                atualizarEstatisticas();
+                renderizarClientes(document.getElementById("filter-status").value || "");
+            }, 10000);
             
             // Logout
             const btnLogout = document.getElementById("btn-logout");
@@ -234,14 +194,130 @@
                     window.location.href = "login.html";
                 });
             }
+            
+            console.log("✅ Inicialização concluída");
         }
         
-        // Iniciar após DOM estar pronto e scripts carregados
+        function atualizarEstatisticas() {
+            try {
+                if (typeof AdminClientesAPI === "undefined") {
+                    console.warn("⚠️ AdminClientesAPI não carregada");
+                    return;
+                }
+                
+                const stats = AdminClientesAPI.obterEstatisticas();
+                console.log("📊 Estatísticas:", stats);
+                
+                document.getElementById("total-clientes").textContent = stats.totalClientes;
+                document.getElementById("clientes-aprovados").textContent = stats.aprovados;
+                document.getElementById("clientes-pendentes").textContent = stats.pendentes;
+                document.getElementById("clientes-rejeitos").textContent = stats.rejeitados;
+            } catch (e) {
+                console.error("❌ Erro ao atualizar estatísticas:", e);
+            }
+        }
+        
+        function renderizarClientes(filtro = "") {
+            try {
+                if (typeof AdminClientesAPI === "undefined") {
+                    console.error("❌ AdminClientesAPI não carregada");
+                    return;
+                }
+                
+                let clientes = AdminClientesAPI.obterClientes();
+                console.log(`📋 Clientes obtidos: ${clientes.length}`);
+                
+                if (filtro) {
+                    clientes = clientes.filter(c => {
+                        if (filtro === "aprovado") return c.aprovadoAdmin === true;
+                        if (filtro === "pendente") return c.aprovadoAdmin === false;
+                        if (filtro === "rejeitado") return c.status === "rejeitado";
+                        return true;
+                    });
+                    console.log(`📋 Após filtro: ${clientes.length}`);
+                }
+                
+                const tbody = document.getElementById("tabela-clientes");
+                if (!tbody) {
+                    console.error("❌ tbody não encontrada");
+                    return;
+                }
+                
+                if (clientes.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 20px; color: #888;">Nenhum cliente encontrado</td></tr>';
+                    return;
+                }
+                
+                tbody.innerHTML = clientes.map(c => {
+                    let status = "Pendente";
+                    let cor = "#ff9500";
+                    
+                    if (c.aprovadoAdmin === true) {
+                        status = "✓ Aprovado";
+                        cor = "#27c93f";
+                    } else if (c.aprovadoAdmin === false) {
+                        status = "⏱ Pendente";
+                        cor = "#ff9500";
+                    }
+                    
+                    return `
+                        <tr style="border-bottom: 1px solid #333;">
+                            <td style="padding: 12px 0;"><strong>${c.nome}</strong></td>
+                            <td>${c.email}</td>
+                            <td>${c.cpf || "—"}</td>
+                            <td style="text-align: center;">
+                                <span style="background: ${cor}; color: #000; padding: 4px 8px; border-radius: 4px; font-size: 11px;">
+                                    ${status}
+                                </span>
+                            </td>
+                            <td style="text-align: center;">${c.dataCadastro || "—"}</td>
+                            <td style="text-align: center;">
+                                <a href="#" style="color: #ff5f56; cursor: pointer;" class="btn-deletar-cliente" data-cliente-id="${c.id}" title="Deletar">
+                                    <i class="ph ph-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    `;
+                }).join("");
+                
+                console.log("✅ Tabela renderizada");
+            } catch (e) {
+                console.error("❌ Erro ao renderizar:", e);
+            }
+        }
+        
+        function deletarCliente(id) {
+            try {
+                if (typeof AdminClientesAPI === "undefined") return;
+                
+                const cliente = AdminClientesAPI.obterCliente(id);
+                if (!cliente) return;
+                
+                if (!confirm(`Deletar ${cliente.nome}?`)) return;
+                
+                AdminClientesAPI.deletarCliente(id);
+                atualizarEstatisticas();
+                renderizarClientes(document.getElementById("filter-status").value || "");
+                console.log("✅ Cliente deletado");
+            } catch (e) {
+                console.error("❌ Erro ao deletar:", e);
+            }
+        }
+        
+        // Iniciar quando tudo estiver pronto
         if (document.readyState === "loading") {
             document.addEventListener("DOMContentLoaded", inicializar);
         } else {
             inicializar();
         }
+        
+        // Extra: dar tempo para scripts carregarem
+        setTimeout(() => {
+            if (typeof AdminClientesAPI === "undefined") {
+                console.warn("⚠️ AdminClientesAPI ainda não carregada, tentando novamente...");
+                inicializar();
+            }
+        }, 2000);
     </script>
 </body>
 </html>

@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+    <script src="sistema-permissoes.js" defer></script>
+    <script src="cliente-sistema.js" defer></script>
+    <script src="workflow-aprovacoes.js" defer></script>
+    <script src="admin-funcoes.js" defer></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <title>Logs e Auditoria - RTV Solar Admin</title>
+</head>
+<body class="pagina-admin pagina-painel">
+    <header class="nav-bar">
+        <a href="dashboard.html">
+            <img src="imagens/logo-site.png" alt="logo" class="logo">
+            <h3>RTV ENERGIA SOLAR</h3>
+        </a>
+        <div class="topbar-actions">
+            <div class="notification-wrapper">
+                <a href="#" id="btn-notificacoes" style="color: var(--amarelo-vivo); position: relative;">
+                    <i class="ph ph-bell" style="font-size: 24px;"></i>
+                    <span class="notif-badge" id="notif-count" style="display: none;">0</span>
+                </a>
+                <div class="notif-dropdown" id="notif-dropdown"></div>
+            </div>
+            <a href="#" id="btn-logout" class="btn" style="background-color: #ff5f56; padding: 8px 15px;">Sair</a>
+        </div>
+    </header>
+
+    <div class="dashboard-layout">
+        <aside class="sidebar">
+            <a href="admin.html"><i class="ph ph-squares-four"></i> Painel Admin</a>
+            <a href="admin-clientes.html"><i class="ph ph-users"></i> Gestão de Clientes</a>
+            <a href="admin-servicos.html"><i class="ph ph-package"></i> Gestão de Serviços</a>
+            <a href="suporte.html"><i class="ph ph-headset"></i> Suporte & Chamados</a>
+            <a href="admin-equipamentos.html"><i class="ph ph-cpu"></i> Gestão de Equipamentos</a>
+            <a href="admin-relatorios.html"><i class="ph ph-chart-line-up"></i> Relatórios Globais</a>
+            <a href="auditoria.html" class="active"><i class="ph ph-shield-check"></i> Logs e Auditoria</a>
+            <a href="admin-configuracoes.html"><i class="ph ph-gear"></i> Configurações</a>
+        </aside>
+
+        <main class="dashboard-content">
+            <div class="dash-header">
+                <div>
+                    <h2>Logs e Auditoria do Sistema</h2>
+                    <p style="color: #aaa;">Visualize o histórico completo de ações administrativas e do sistema</p>
+                </div>
+            </div>
+
+            <!-- ESTATÍSTICAS DE AUDITORIA -->
+            <div class="dash-grid-main">
+                <div class="dash-card">
+                    <h4 style="color: var(--verde-agua); margin: 0 0 10px 0;">Total de Logs</h4>
+                    <div style="text-align: center;">
+                        <div class="valor" style="font-size: 32px;" id="total-logs">0</div>
+                        <p style="color: #999; margin: 5px 0 0 0;">registros no sistema</p>
+                    </div>
+                </div>
+
+                <div class="dash-card">
+                    <h4 style="color: var(--amarelo-vivo); margin: 0 0 10px 0;">Últimas 24h</h4>
+                    <div style="text-align: center;">
+                        <div class="valor" style="font-size: 32px; color: var(--amarelo-vivo);" id="logs-24h">0</div>
+                        <p style="color: #999; margin: 5px 0 0 0;">ações realizadas</p>
+                    </div>
+                </div>
+
+                <div class="dash-card">
+                    <h4 style="color: #27c93f; margin: 0 0 10px 0;">Usuários Ativos</h4>
+                    <div style="text-align: center;">
+                        <div class="valor" style="font-size: 32px; color: #27c93f;" id="usuarios-ativos">0</div>
+                        <p style="color: #999; margin: 5px 0 0 0;">no histórico</p>
+                    </div>
+                </div>
+
+                <div class="dash-card">
+                    <h4 style="color: #ff9500; margin: 0 0 10px 0;">Ações por Categoria</h4>
+                    <div style="text-align: center;">
+                        <div class="valor" style="font-size: 32px; color: #ff9500;" id="categorias-totais">0</div>
+                        <p style="color: #999; margin: 5px 0 0 0;">tipos diferentes</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SEÇÃO DE SOLICITAÇÕES PENDENTES -->
+            <div class="dash-card" style="grid-column: 1 / -1; margin-top: 20px; border-color: var(--amarelo-vivo);">
+                <h3 style="color: var(--amarelo-vivo); margin: 0 0 20px 0;"><i class="ph ph-warning"></i> Solicitações Pendentes de Aprovação</h3>
+                <table class="comparativo-table" style="width: 100%; margin: 0;">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Tipo</th>
+                            <th>Cliente</th>
+                            <th>Data</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabela-solicitacoes-pendentes">
+                        <tr>
+                            <td colspan="6" style="color: #888; text-align: center;">Carregando...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- FILTROS -->
+            <div class="dash-grid-main">
+                <div class="dash-card" style="grid-column: 1 / -1;">
+                    <h3>Filtrar Logs</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                        <div>
+                            <label style="display: block; color: #999; margin-bottom: 8px; font-size: 12px;">Tipo de Ação</label>
+                            <select id="filter-acao" style="background: #222; color: #aaa; border: 1px solid #444; padding: 10px; border-radius: 4px; width: 100%; cursor: pointer;">
+                                <option value="">Todos</option>
+                                <option value="LOGIN">Login</option>
+                                <option value="LOGOUT">Logout</option>
+                                <option value="CLIENTE_APROVADO">Cliente Aprovado</option>
+                                <option value="CLIENTE_REJEITADO">Cliente Rejeitado</option>
+                                <option value="CONFIG_ATUALIZADA">Config Atualizada</option>
+                                <option value="BACKUP_EXECUTADO">Backup Executado</option>
+                                <option value="MANUTENCAO_AGENDADA">Manutenção Agendada</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label style="display: block; color: #999; margin-bottom: 8px; font-size: 12px;">Usuário</label>
+                            <select id="filter-usuario" style="background: #222; color: #aaa; border: 1px solid #444; padding: 10px; border-radius: 4px; width: 100%; cursor: pointer;">
+                                <option value="">Todos</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label style="display: block; color: #999; margin-bottom: 8px; font-size: 12px;">Período</label>
+                            <select id="filter-periodo" style="background: #222; color: #aaa; border: 1px solid #444; padding: 10px; border-radius: 4px; width: 100%; cursor: pointer;">
+                                <option value="">Todos</option>
+                                <option value="24h">Últimas 24h</option>
+                                <option value="7d">Últimos 7 dias</option>
+                                <option value="30d">Últimos 30 dias</option>
+                                <option value="90d">Últimos 90 dias</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label style="display: block; color: #999; margin-bottom: 8px; font-size: 12px;">Severidade</label>
+                            <select id="filter-severidade" style="background: #222; color: #aaa; border: 1px solid #444; padding: 10px; border-radius: 4px; width: 100%; cursor: pointer;">
+                                <option value="">Todas</option>
+                                <option value="info">Info</option>
+                                <option value="aviso">Aviso</option>
+                                <option value="erro">Erro</option>
+                                <option value="critico">Crítico</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div style="margin-top: 15px;">
+                        <button id="btn-filtrar-logs" class="btn" style="padding: 10px 20px; margin-right: 10px;">
+                            <i class="ph ph-funnel"></i> Filtrar
+                        </button>
+                        <button id="btn-limpar-filtros" class="btn-secundario" style="padding: 10px 20px; margin-right: 10px;">
+                            <i class="ph ph-x"></i> Limpar
+                        </button>
+                        <button id="btn-export-logs" class="btn-secundario" style="padding: 10px 20px;">
+                            <i class="ph ph-download"></i> Exportar CSV
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TABELA DE LOGS -->
+            <div class="dash-grid-main">
+                <div class="dash-card" style="grid-column: 1 / -1;">
+                    <h3>Histórico de Logs</h3>
+                    <div style="overflow-x: auto;">
+                        <table class="comparativo-table" style="width: 100%; font-size: 12px;">
+                            <thead>
+                                <tr>
+                                    <th>Data/Hora</th>
+                                    <th>Usuário</th>
+                                    <th>Ação</th>
+                                    <th>Detalhes</th>
+                                    <th>IP/Origem</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabela-logs">
+                                <tr>
+                                    <td colspan="5" style="color: #888; text-align: center;">Carregando logs...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PAGINAÇÃO -->
+            <div class="dash-grid-main">
+                <div class="dash-card" style="grid-column: 1 / -1;">
+                    <div style="display: flex; justify-content: center; gap: 10px; align-items: center;">
+                        <button id="btn-primeira-pag" class="btn-secundario" style="padding: 8px 12px;">Primeira</button>
+                        <button id="btn-anterior-pag" class="btn-secundario" style="padding: 8px 12px;">← Anterior</button>
+                        <span id="info-paginacao" style="color: #aaa; min-width: 120px; text-align: center;">Página 1 de 1</span>
+                        <button id="btn-proxima-pag" class="btn-secundario" style="padding: 8px 12px;">Próxima →</button>
+                        <button id="btn-ultima-pag" class="btn-secundario" style="padding: 8px 12px;">Última</button>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        // ==========================================
+        // GERENCIADOR DE AUDITORIA
+        // ==========================================
+
+        let auditoriaPaginaAtual = 0;
+        const LOGS_POR_PAGINA = 20;
+
+        function obterTodosOsLogs() {
+            return JSON.parse(localStorage.getItem("rtv_logs_auditoria")) || [];
+        }
+
+        function filtrarLogs() {
+            const acao = document.getElementById("filter-acao").value;
+            const usuario = document.getElementById("filter-usuario").value;
+            const periodo = document.getElementById("filter-periodo").value;
+            const severidade = document.getElementById("filter-severidade").value;
+
+            let logs = obterTodosOsLogs();
+
+            // Filtrar por tipo de ação
+            if (acao) {
+                logs = logs.filter(log => log.acao.includes(acao));
+            }
+
+            // Filtrar por usuário
+            if (usuario) {
+                logs = logs.filter(log => log.user === usuario);
+            }
+
+            // Filtrar por período
+            if (periodo) {
+                const agora = new Date();
+                const dataLimite = new Date();
+                
+                if (periodo === "24h") dataLimite.setHours(agora.getHours() - 24);
+                else if (periodo === "7d") dataLimite.setDate(agora.getDate() - 7);
+                else if (periodo === "30d") dataLimite.setDate(agora.getDate() - 30);
+                else if (periodo === "90d") dataLimite.setDate(agora.getDate() - 90);
+
+                logs = logs.filter(log => new Date(log.data) >= dataLimite);
+            }
+
+            return logs;
+        }
+
+        function renderizarLogs(pagina = 0) {
+            const logs = filtrarLogs();
+            const totalPaginas = Math.ceil(logs.length / LOGS_POR_PAGINA);
+            
+            if (pagina >= totalPaginas && totalPaginas > 0) pagina = totalPaginas - 1;
+            if (pagina < 0) pagina = 0;
+
+            auditoriaPaginaAtual = pagina;
+
+            const inicio = pagina * LOGS_POR_PAGINA;
+            const fim = inicio + LOGS_POR_PAGINA;
+            const logsPagina = logs.slice(inicio, fim);
+
+            const tbody = document.getElementById("tabela-logs");
+            if (logsPagina.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="color: #888; text-align: center;">Nenhum log encontrado</td></tr>';
+            } else {
+                tbody.innerHTML = logsPagina.map(log => `
+                    <tr>
+                        <td>${log.data}</td>
+                        <td>${log.user || "Sistema"}</td>
+                        <td><span style="background: var(--verde-agua); color: #000; padding: 3px 8px; border-radius: 3px; font-size: 11px;">${log.acao}</span></td>
+                        <td>${typeof log === 'object' && log.detalhes ? JSON.stringify(log.detalhes).substring(0, 60) : '—'}</td>
+                        <td>${log.ip || "—"}</td>
+                    </tr>
+                `).join("");
+            }
+
+            document.getElementById("info-paginacao").textContent = `Página ${pagina + 1} de ${totalPaginas || 1}`;
+            document.getElementById("btn-anterior-pag").disabled = pagina === 0;
+            document.getElementById("btn-proxima-pag").disabled = pagina >= totalPaginas - 1;
+            document.getElementById("btn-primeira-pag").disabled = pagina === 0;
+            document.getElementById("btn-ultima-pag").disabled = pagina >= totalPaginas - 1;
+        }
+
+        function atualizarEstatisticas() {
+            const todosLogs = obterTodosOsLogs();
+            const agora = new Date();
+            const data24hAtras = new Date(agora.getTime() - 24 * 60 * 60 * 1000);
+
+            const logs24h = todosLogs.filter(log => new Date(log.data) >= data24hAtras).length;
+            const usuariosUnicos = new Set(todosLogs.map(log => log.user)).size;
+            const acoes = new Set(todosLogs.map(log => log.acao)).size;
+
+            document.getElementById("total-logs").textContent = todosLogs.length;
+            document.getElementById("logs-24h").textContent = logs24h;
+            document.getElementById("usuarios-ativos").textContent = usuariosUnicos;
+            document.getElementById("categorias-totais").textContent = acoes;
+        }
+
+        function popularFiltroUsuarios() {
+            const todosLogs = obterTodosOsLogs();
+            const usuarios = [...new Set(todosLogs.map(log => log.user))];
+            
+            const select = document.getElementById("filter-usuario");
+            usuarios.forEach(usuario => {
+                const option = document.createElement("option");
+                option.value = usuario;
+                option.textContent = usuario;
+                select.appendChild(option);
+            });
+        }
+
+        function exportarCSV() {
+            const logs = filtrarLogs();
+            if (logs.length === 0) {
+                alert("Nenhum log para exportar");
+                return;
+            }
+
+            let csv = "Data,Usuário,Ação,Detalhes,IP\n";
+            logs.forEach(log => {
+                const detalhes = typeof log === 'object' && log.detalhes ? JSON.stringify(log.detalhes) : '';
+                csv += `"${log.data}","${log.user || 'Sistema'}","${log.acao}","${detalhes}","${log.ip || ''}"\n`;
+            });
+
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `auditoria_${new Date().toISOString().slice(0,10)}.csv`;
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+
+        // ==========================================
+        // EVENT LISTENERS
+        // ==========================================
+
+        document.addEventListener("DOMContentLoaded", () => {
+            atualizarEstatisticas();
+            popularFiltroUsuarios();
+            renderizarLogs(0);
+
+            document.getElementById("btn-filtrar-logs").addEventListener("click", () => {
+                renderizarLogs(0);
+            });
+
+            document.getElementById("btn-limpar-filtros").addEventListener("click", () => {
+                document.getElementById("filter-acao").value = "";
+                document.getElementById("filter-usuario").value = "";
+                document.getElementById("filter-periodo").value = "";
+                document.getElementById("filter-severidade").value = "";
+                renderizarLogs(0);
+            });
+
+            document.getElementById("btn-export-logs").addEventListener("click", exportarCSV);
+
+            document.getElementById("btn-anterior-pag").addEventListener("click", () => {
+                renderizarLogs(auditoriaPaginaAtual - 1);
+            });
+
+            document.getElementById("btn-proxima-pag").addEventListener("click", () => {
+                renderizarLogs(auditoriaPaginaAtual + 1);
+            });
+
+            document.getElementById("btn-primeira-pag").addEventListener("click", () => {
+                renderizarLogs(0);
+            });
+
+            document.getElementById("btn-ultima-pag").addEventListener("click", () => {
+                const logs = filtrarLogs();
+                const totalPaginas = Math.ceil(logs.length / LOGS_POR_PAGINA);
+                renderizarLogs(totalPaginas - 1);
+            });
+
+            document.getElementById("btn-logout").addEventListener("click", (e) => {
+                e.preventDefault();
+                localStorage.removeItem("rtv_usuario_logado");
+                window.location.href = "login.html";
+            });
+
+            // Auto-refresh a cada 30 segundos
+            setInterval(() => {
+                atualizarEstatisticas();
+                renderizarLogs(auditoriaPaginaAtual);
+            }, 30000);
+        });
+    </script>
+</body>
+</html>

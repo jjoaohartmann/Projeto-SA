@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Setup RTV - Gestão de Clientes</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #1a1a1a;
+            color: #aaa;
+            font-family: Arial, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .wizard {
+            background: #222;
+            border: 1px solid #444;
+            border-radius: 8px;
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+        }
+        h1 {
+            color: #F4A222;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .step {
+            display: none;
+            margin-bottom: 30px;
+        }
+        .step.active {
+            display: block;
+        }
+        .step-title {
+            color: #F4A222;
+            font-weight: bold;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+        .step-content {
+            background: #2a2a2a;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+        button {
+            background: #F4A222;
+            color: #000;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            width: 100%;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        button:hover {
+            opacity: 0.9;
+        }
+        .status-ok {
+            color: #27c93f;
+            font-weight: bold;
+        }
+        .status-error {
+            color: #ff5f56;
+            font-weight: bold;
+        }
+        .progress {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            gap: 10px;
+        }
+        .progress-dot {
+            flex: 1;
+            height: 8px;
+            background: #444;
+            border-radius: 4px;
+        }
+        .progress-dot.active {
+            background: #F4A222;
+        }
+        .progress-dot.completed {
+            background: #27c93f;
+        }
+        pre {
+            background: #1a1a1a;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-size: 12px;
+            max-height: 150px;
+        }
+    </style>
+</head>
+<body>
+    <div class="wizard">
+        <h1>⚙️ Setup RTV Solar</h1>
+        
+        <div class="progress">
+            <div class="progress-dot active" id="dot-1"></div>
+            <div class="progress-dot" id="dot-2"></div>
+            <div class="progress-dot" id="dot-3"></div>
+            <div class="progress-dot" id="dot-4"></div>
+        </div>
+        
+        <!-- STEP 1: Limpar -->
+        <div class="step active" id="step-1">
+            <div class="step-title">Passo 1: Limpar Dados Antigos</div>
+            <div class="step-content">
+                <p>Remover dados antigos para começar do zero</p>
+            </div>
+            <button onclick="step1()">✓ Limpar localStorage</button>
+        </div>
+        
+        <!-- STEP 2: Criar dados -->
+        <div class="step" id="step-2">
+            <div class="step-title">Passo 2: Criar Dados de Exemplo</div>
+            <div class="step-content" id="step2-content">
+                <p>Criando 4 clientes de exemplo...</p>
+            </div>
+            <button onclick="step2()">✓ Criar Dados</button>
+        </div>
+        
+        <!-- STEP 3: Login -->
+        <div class="step" id="step-3">
+            <div class="step-title">Passo 3: Fazer Login como Admin</div>
+            <div class="step-content">
+                <p>Email: <strong>admin@rtvsolar.com</strong></p>
+                <p>Role: <strong>admin</strong></p>
+            </div>
+            <button onclick="step3()">✓ Fazer Login</button>
+        </div>
+        
+        <!-- STEP 4: Abrir -->
+        <div class="step" id="step-4">
+            <div class="step-title">Passo 4: Abrir Gestão de Clientes</div>
+            <div class="step-content" id="step4-content">
+                <p>Pronto! Vamos abrir a página...</p>
+            </div>
+            <button onclick="step4()">✓ Abrir Gestão de Clientes</button>
+        </div>
+    </div>
+
+    <script src="script.js" defer></script>
+    <script>
+        let currentStep = 1;
+        
+        function updateUI() {
+            // Esconder todos os steps
+            for (let i = 1; i <= 4; i++) {
+                document.getElementById(`step-${i}`).classList.remove("active");
+                document.getElementById(`dot-${i}`).classList.remove("active");
+                if (i < currentStep) {
+                    document.getElementById(`dot-${i}`).classList.add("completed");
+                } else if (i === currentStep) {
+                    document.getElementById(`dot-${i}`).classList.add("active");
+                }
+            }
+            // Mostrar step atual
+            document.getElementById(`step-${currentStep}`).classList.add("active");
+        }
+        
+        function step1() {
+            localStorage.clear();
+            sessionStorage.clear();
+            currentStep = 2;
+            updateUI();
+        }
+        
+        function step2() {
+            try {
+                if (typeof seedUsuariosPadrao === "function") {
+                    seedUsuariosPadrao();
+                    const usuarios = JSON.parse(localStorage.getItem("rtv_usuarios")) || [];
+                    const clientes = usuarios.filter(u => u.role === "cliente");
+                    document.getElementById("step2-content").innerHTML = 
+                        `<span class="status-ok">✓ ${clientes.length} clientes criados com sucesso!</span>`;
+                } else {
+                    document.getElementById("step2-content").innerHTML = 
+                        `<span class="status-error">✗ Erro: seedUsuariosPadrao não carregada</span>`;
+                    return;
+                }
+            } catch (e) {
+                document.getElementById("step2-content").innerHTML = 
+                    `<span class="status-error">✗ Erro: ${e.message}</span>`;
+                return;
+            }
+            currentStep = 3;
+            updateUI();
+        }
+        
+        function step3() {
+            localStorage.setItem("rtv_usuario_logado", JSON.stringify({
+                nome: "Administrador RTV",
+                email: "admin@rtvsolar.com",
+                senha: "admin123",
+                role: "admin"
+            }));
+            currentStep = 4;
+            updateUI();
+        }
+        
+        function step4() {
+            window.location.href = "admin-clientes.html";
+        }
+        
+        // Auto-inicializar
+        setTimeout(() => {
+            updateUI();
+        }, 100);
+    </script>
+</body>
+</html>

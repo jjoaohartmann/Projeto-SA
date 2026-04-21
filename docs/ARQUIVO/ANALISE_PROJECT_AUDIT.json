@@ -1,0 +1,729 @@
+{
+  "project_name": "RTV Solar - Sistema de Gestão de Energia",
+  "analysis_date": "2026-04-18",
+  "status": "⚠️ CRÍTICO - Múltiplos problemas de arquitetura e dados fake",
+  
+  "issues": [
+    {
+      "id": "IS-01",
+      "categoria": "Dados Hardcoded/Fake",
+      "severidade": "CRÍTICA",
+      "descricao": "Dashboard e páginas de cliente usam APENAS dados hardcoded em HTML/localStorage",
+      "locais": [
+        {
+          "arquivo": "dashboard.html",
+          "linhas": "60-200",
+          "problema": "14 cards com valores fixos: 'Consumo Agora: 1.2 kW', 'Geração Hoje: 38.2 kWh', 'CO₂ Evitado: 185 kg', etc",
+          "exemplo": "<div class=\"valor\">1.2 kW</div>, <div class=\"valor\">38.2 kWh</div>"
+        },
+        {
+          "arquivo": "cliente-consumo.html",
+          "linhas": "90-150",
+          "problema": "Dados de consumo hardcoded: 'Consumo Agora: 1.2 kW', 'Consumo Hoje: 14.5 kWh', 'Consumo Mês: 340 kWh'",
+          "exemplo": "<div class=\"valor\" id=\"consumo-atual\">1.2 kW</div>"
+        },
+        {
+          "arquivo": "cliente-geracao.html",
+          "linhas": "50-130",
+          "problema": "Geração fake: 'Geração Agora: 3.8 kW', 'Geração Hoje: 38.2 kWh', 'Geração Mês: 1.150 kWh'",
+          "exemplo": "<div class=\"valor\" id=\"geracao-atual\">3.8 kW</div>"
+        },
+        {
+          "arquivo": "cliente-financeiro.html",
+          "linhas": "60-120",
+          "problema": "Economia fake: 'R$ 412,50/mês', 'Payback: 6.2 anos', 'ROI: 16.2%'",
+          "exemplo": "<div class=\"valor\" id=\"economia-mes\">R$ 412,50</div>"
+        },
+        {
+          "arquivo": "relatorios.html",
+          "linhas": "40-80",
+          "problema": "Tabela com dados mockados de 3 meses: Mar/Fev/Jan 2026 com valores pré-definidos",
+          "exemplo": "<td>510 kWh</td><td>R$ 459,00</td>"
+        },
+        {
+          "arquivo": "cliente-sistema.js",
+          "linhas": "30-80",
+          "problema": "ESTRUTURA_SISTEMA_SOLAR com valores hardcoded na estrutura base",
+          "exemplo": "geracaoAgora: 3.8, consumoAgora: 1.2, economiaHoje: 412.50"
+        }
+      ],
+      "impacto": "Cliente NUNCA vê dados reais. Sistema é basicamente um mockup visual"
+    },
+    
+    {
+      "id": "IS-02",
+      "categoria": "Dados Duplicados/Redundantes",
+      "severidade": "ALTA",
+      "descricao": "Mesmos widgets e valores aparecem em múltiplas páginas sem ligação de dados",
+      "locais": [
+        {
+          "arquivo": "dashboard.html vs cliente-consumo.html vs cliente-financeiro.html",
+          "problema": "Widget de 'Consumo Agora: 1.2 kW' Repetido 3x com ID diferentes",
+          "ids": ["consumo-atual", "consumo-atual", "consumo-atual"],
+          "status": "Cada página renderiza seus próprios valores INDEPENDENTES"
+        },
+        {
+          "arquivo": "dashboard.html vs cliente-geracao.html",
+          "problema": "Cards de geração duplicados com valores idênticos",
+          "duplicados": [
+            "Geração Agora: 3.8 kW",
+            "Geração Hoje: 38.2 kWh",
+            "Geração Mês: 1.150 kWh"
+          ]
+        },
+        {
+          "arquivo": "cliente-contratos.html",
+          "linhas": "60-200",
+          "problema": "4 contratos com dados de PLACEHOLDER 'Lorem ipsum' escritos em HTML",
+          "exemplo": "Lorem ipsum dolor sit amet, consectetur adipiscing elit..."
+        },
+        {
+          "arquivo": "suporte.html",
+          "linhas": "80-120",
+          "problema": "2 chamados exemplo hardcoded (#10024, #09871) misturados com dados de localStorage"
+        }
+      ],
+      "impacto": "Alteração em um lugar não atualiza outros. Informações inconsistentes"
+    },
+
+    {
+      "id": "IS-03",
+      "categoria": "Sistema de Autenticação Fake",
+      "severidade": "CRÍTICA",
+      "descricao": "Autenticação baseada 100% em localStorage sem validação real",
+      "locais": [
+        {
+          "arquivo": "script.js",
+          "linhas": "180-240",
+          "funcoes": ["formLogin", "formLoginAdmin", "formCadastro"],
+          "problema": "Credenciais armazenadas em PLAIN TEXT em localStorage. Senha padrão: 'admin123'"
+        },
+        {
+          "arquivo": "script.js",
+          "linhas": "120-150",
+          "funcao": "seedUsuariosPadrao()",
+          "problema": "Admin padrão hardcoded: email='admin@rtvsolar.com', senha='admin123'",
+          "risco": "SEM CRIPTOGRAFIA, SEM SALT, SEM HASH"
+        },
+        {
+          "arquivo": "sistema-aprovacoes.js",
+          "linhas": "100-150",
+          "problema": "Bloqueia cliente não aprovado com mensagem visual, mas NÃO há validação real no servidor"
+        }
+      ],
+      "impacto": "Qualquer pessoa pode acessar dados de qualquer cliente editando localStorage"
+    },
+
+    {
+      "id": "IS-04",
+      "categoria": "Botões e Elementos Sem Função",
+      "severidade": "ALTA",
+      "descricao": "Muitos botões mostram toast 'modo demonstração' em vez de funcionar",
+      "locais": [
+        {
+          "arquivo": "dashboard.html",
+          "linhas": "40-60",
+          "elementos": [
+            "Buscar dispositivos (search-bar) - renderiza mas sem busca",
+            "Botão de Notificações - abre dropdown vazio",
+            "Links em shortcuts-grid - redirecionam apenas para outras páginas (sem ação)"
+          ]
+        },
+        {
+          "arquivo": "cliente-contratos.html",
+          "linhas": "120-180",
+          "elementos": [
+            "Botão 'Baixar Todos' (href='#')",
+            "Botões 'Ver' em cada contrato (href='#')",
+            "Botões 'Download' em cada contrato (href='#')"
+          ],
+          "acao": "Clica → mostra toast: 'Ação (modo demonstração)' - NÃO FUNCIONA"
+        },
+        {
+          "arquivo": "cliente-geracao.html",
+          "linhas": "150-180",
+          "elementos": [
+            "Dicas de Otimização - apenas texto, sem interação"
+          ]
+        },
+        {
+          "arquivo": "script.js",
+          "linhas": "80-120",
+          "codigo": "Click em href='#' dispara: showToast(label + ' (modo demonstração)', 'success')",
+          "problema": "Captura QUALQUER link com href='#' e mostra fake message"
+        }
+      ],
+      "impacto": "UI parece funcional mas é apenas visual - MOCK"
+    },
+
+    {
+      "id": "IS-05",
+      "categoria": "Gráficos Não Funcionam com Dados Reais",
+      "severidade": "MÉDIA",
+      "descricao": "Charts.js carregados mas renderizam DADOS FIXOS, nunca dados do cliente",
+      "locais": [
+        {
+          "arquivo": "cliente-consumo.html",
+          "linhas": "180-220",
+          "funcao": "inicializarGraficosConsumo()",
+          "problema": "Canvas IDs definidos (chart-consumo-horaria, chart-consumo-semana) mas funções NÃO implementadas no script"
+        },
+        {
+          "arquivo": "cliente-geracao.html",
+          "linhas": "200-240",
+          "funcao": "inicializarGraficosGeracao()",
+          "problema": "Canvas IDs definidos mas função INCOMPLETA"
+        },
+        {
+          "arquivo": "cliente-financeiro.html",
+          "linhas": "160-200",
+          "canvas": ["chart-economia-acumulada", "chart-economia-anual", "chart-custo-vs-economia", "chart-projecao-futura"],
+          "problema": "4 gráficos faltando implementação de renderização"
+        }
+      ],
+      "impacto": "Gráficos aparecem vazios ou com erro no console"
+    },
+
+    {
+      "id": "IS-06",
+      "categoria": "Permissões (RBAC) Não Reais",
+      "severidade": "ALTA",
+      "descricao": "Sistema de permissões definido em JS mas NÃO é verificado no backend",
+      "locais": [
+        {
+          "arquivo": "sistema-permissoes.js",
+          "linhas": "1-100",
+          "problema": "Roles definidas (admin, cliente) com permissões listadas",
+          "exemplo": "['ver_geração_propria', 'ver_consumo_proprio', 'abrir_chamado']"
+        },
+        {
+          "arquivo": "dashboard.html",
+          "linhas": "90-200",
+          "uso": "data-permissao='ver_geração_propria'",
+          "problema": "Atributo HTML define permissão MAS NÃO há verificação real"
+        },
+        {
+          "arquivo": "cliente-sistema.js",
+          "linhas": "1-50",
+          "funcoes": ["temPermissao()", "temAlgumaPermissao()", "temTodasPermissoes()"],
+          "problema": "Funções NUNCA são chamadas nas páginas"
+        }
+      ],
+      "impacto": "Cliente pode forçar acesso a dados editando HTML ou localStorage"
+    },
+
+    {
+      "id": "IS-07",
+      "categoria": "Formulários que Não Enviam",
+      "severidade": "ALTA",
+      "descricao": "Formulários salvam em localStorage (fake) em vez de enviar para API",
+      "locais": [
+        {
+          "arquivo": "suporte.html",
+          "linhas": "60-100",
+          "formulario": "form-novo-chamado",
+          "problema": "Form submit salva em localStorage com ID aleatório",
+          "codigo": "localStorage.setItem('rtv_chamados', JSON.stringify(chamados))"
+        },
+        {
+          "arquivo": "script.js",
+          "linhas": "410-450",
+          "funcao": "Salvar Novo Chamado",
+          "problema": "Gera ID fake: '#' + Math.floor(Math.random() * 90000 + 10000)"
+        },
+        {
+          "arquivo": "admin-clientes.html",
+          "linhas": "100-140",
+          "elementos": [
+            "Botão 'Novo Cliente' - abre modal mas não há lógica de salvamento",
+            "Filtros (filter-status) - não filtram nada"
+          ]
+        }
+      ],
+      "impacto": "Dados nunca persistem. Página recarrega = dados perdidos"
+    },
+
+    {
+      "id": "IS-08",
+      "categoria": "Hierarquia Confusa de Informações",
+      "severidade": "MÉDIA",
+      "descricao": "Dashboard mistura visão geral com detalhes. Páginas cliente repetem informações",
+      "estrutura": [
+        {
+          "problema": "Dashboard especial cliente tem 14 cards que repetem dados de 4 páginas específicas",
+          "resultado": "Usuário confuso: qual é a página 'real'? dashboard vs cliente-consumo vs cliente-geracao?"
+        },
+        {
+          "arquivo": "dashboard.html",
+          "secoes_confusas": [
+            "grid-cards-mini (8 cards iniciais)",
+            "dash-grid-main com mais 12 cards de geração/consumo/economia",
+            "RTV Intelligence (box com IA recomendação fake)",
+            "Sensores e Equipamentos (tabela hardcoded)",
+            "Fila de Operações (dados fake)",
+            "Atividade Recente (IPs fake)"
+          ]
+        },
+        {
+          "arquivo": "relatorios.html",
+          "problema": "Página chamada 'Relatórios de Desempenho' mas mostra apenas 3 meses de dados e button 'window.print()'"
+        }
+      ],
+      "impacto": "UX confusa. Usuário não sabe onde encontrar informação específica"
+    },
+
+    {
+      "id": "IS-09",
+      "categoria": "Dados de Usuário Inconsistentes",
+      "severidade": "MÉDIA",
+      "descricao": "Diferentes estruturas de usuário em diferentes contextos",
+      "locais": [
+        {
+          "arquivo": "script.js",
+          "linhas": "150-180",
+          "funcao": "obterUsuarioLogado()",
+          "problema": "Usuário em localStorage pode não ter ID. Campo .id não é setado no cadastro",
+          "codigo": "const found = usuarios.find(x => x.email === u.email); if (found && found.role) { u.role = found.role; }"
+        },
+        {
+          "arquivo": "cliente-sistema.js",
+          "linhas": "80-100",
+          "funcao": "obterSistemaCliente()",
+          "problema": "Procura user.id mas NUNCA é setado em script.js",
+          "resultado": "sistema = null para TODOS os usuários"
+        },
+        {
+          "arquivo": "sistema-aprovacoes.js",
+          "linhas": "15-50",
+          "campos": ["nome", "email", "senha", "role", "aprovadoAdmin", "dataAprovacao", "telefone", "servico", "dataCadastro"],
+          "problema": "Estrutura de usuário heterogênea. Nem todos campos são preenchidos"
+        }
+      ],
+      "impacto": "Dados faltando ou inconsistentes. Sistema quebra silenciosamente"
+    },
+
+    {
+      "id": "IS-10",
+      "categoria": "Scripts Carregados Desnecessariamente",
+      "severidade": "BAIXA",
+      "descricao": "Muitos scripts importados em páginas que não usam",
+      "locais": [
+        {
+          "arquivo": "cliente-consumo.html",
+          "linhas": "10-18",
+          "scripts_carregados": [
+            "script.js ✓ (necessário)",
+            "sistema-permissoes.js ✓ (necessário)",
+            "cliente-sistema.js ? (não há chamadas em HTML)",
+            "Chart.js ✓ (necessário)"
+          ]
+        },
+        {
+          "arquivo": "relatorios.html",
+          "linhas": "10-16",
+          "scripts_desnecessarios": [
+            "sistema-permissoes.js - NÃO há data-permissao no HTML"
+          ]
+        },
+        {
+          "arquivo": "suporte.html",
+          "linhas": "10-16",
+          "scripts": [
+            "script.js (necessário - tem botões e forms)",
+            "sistema-permissoes.js (desnecessário - não usa permissões)"
+          ]
+        }
+      ],
+      "impacto": "Pequeno. Apenas aumenta tamanho da página (~20KB extra)"
+    }
+  ],
+
+  "redundancias": [
+    {
+      "tipo": "Cards Duplicados",
+      "exemplo": "Consumo Agora: 1.2 kW",
+      "onde": ["dashboard.html (linha 60)", "cliente-consumo.html (linha 90)", "dashboard.html grid-cards-mini (linha 95)"],
+      "impacto": "Dados não sincronizados entre páginas"
+    },
+    {
+      "tipo": "Widgets Geração",
+      "exemplo": "Geração Mês: 1.150 kWh",
+      "onde": ["dashboard.html (grid x12)", "cliente-geracao.html (grid x4)"],
+      "impacto": "Informação duplicada em múltiplos IDs HTML"
+    },
+    {
+      "tipo": "Gráficos de Economia",
+      "exemplo": "Chart de economia acumulada",
+      "canvases": [
+        "chart-economia-acumulada (cliente-financeiro.html linha 130)",
+        "chartPrincipal (dashboard.html linha 110) - renderiza geração vs consumo, não economia"
+      ],
+      "problema": "Canvas IDs usados mas gráficos nunca renderizados"
+    },
+    {
+      "tipo": "Headers Repetidos",
+      "onde": [
+        "Cada página (dashboard, cliente-*) tem header idêntico com search, notificações, logout",
+        "Cada página tem sidebar idêntica com navegação"
+      ],
+      "sugestao": "Usar template/componente reutilizável"
+    },
+    {
+      "tipo": "Funções JS Duplicadas",
+      "funcoes": [
+        "renderizarWidgets* (renderizarWidgetsGeração, renderizarWidgetsConsumo, renderizarWidgetsEconomia, renderizarWidgetsAmbiente)",
+        "atualizarMetricasTempoReal - definida mas NUNCA chamada"
+      ]
+    },
+    {
+      "tipo": "Dados Hardcoded de Contrato",
+      "problema": "cliente-contratos.html tem 4 contratos com 'Lorem ipsum' em HTML",
+      "devum_ser": "Renderizados dinamicamente de um array JS"
+    }
+  ],
+
+  "arquivos_obsoletos": [
+    {
+      "arquivo": "index.html",
+      "status": "⚠️ CONFLITO",
+      "problema": "Landing page com duplicação de conteúdo de login.html e registro.html",
+      "conclusao": "Remover ou consolidar"
+    },
+    {
+      "arquivo": "registro.html",
+      "status": "✓ NECESSÁRIO",
+      "problema": "Apesar do nome, é a página de cadastro de novo cliente",
+      "nota": "Nomear melhor: cliente-cadastro.html"
+    },
+    {
+      "arquivo": "servicos.html",
+      "status": "✓ NECESSÁRIO",
+      "problema": "Página de serviços para cliente ver pacotes disponíveis",
+      "nota": "Diferente de admin-servicos.html (gestão)"
+    },
+    {
+      "arquivo": "relatorios.html",
+      "status": "⚠️ INCOMPLETO",
+      "problema": "Tem apenas 3 meses de dados hardcoded. Sem gráficos. Sem interatividade",
+      "conclusao": "Integrar com cliente-financeiro.html ou remover"
+    },
+    {
+      "arquivo": "admin-clientes.js",
+      "status": "❌ NÃO EXISTE",
+      "problema": "admin-clientes.html existe mas script não foi criado",
+      "funcionalidades_faltando": ["Renderizar clientes", "Aprovar/Rejeitar", "Filtrar", "Deletar"]
+    },
+    {
+      "arquivo": "admin-servicos.js",
+      "status": "❌ NÃO EXISTE",
+      "problema": "admin-servicos.html existe mas script não foi criado"
+    },
+    {
+      "arquivo": "admin-equipamentos.js",
+      "status": "❌ NÃO EXISTE",
+      "problema": "admin-equipamentos.html existe mas script não foi criado"
+    },
+    {
+      "arquivo": "admin-relatorios.js",
+      "status": "❌ NÃO EXISTE",
+      "problema": "admin-relatorios.html existe mas script não foi criado"
+    },
+    {
+      "arquivo": "ARQUITETURA.md, BACKEND_API.md, etc",
+      "status": "⚠️ DESATUALIZADO",
+      "problema": "Documentação descreve backend que NÃO existe"
+    }
+  ],
+
+  "fluxos_incompletos": [
+    {
+      "fluxo": "Cadastro de Cliente",
+      "etapas": [
+        "✓ Form em registro.html coleta dados",
+        "✓ Script salva em localStorage (fake)",
+        "⚠️ Admin aprova em admin-clientes.html MAS não há botão real",
+        "❌ Cliente recebe email de aprovação? NÃO (sem backend)"
+      ],
+      "problema": "Pipeline incompleto. Admin painel UI existe mas sem lógica"
+    },
+    {
+      "fluxo": "Abrir Chamado de Suporte",
+      "etapas": [
+        "✓ suporte.html mostra form 'Novo Chamado'",
+        "✓ Form submit salva em localStorage",
+        "❌ Admin NÃO vê chamado em dashboard",
+        "❌ Email de confirmação? NÃO",
+        "❌ Resposta ao cliente? NÃO"
+      ]
+    },
+    {
+      "fluxo": "Importação de Equipamentos",
+      "etapas": [
+        "✓ cliente-sistema.js tem obterDispositivos()",
+        "✓ renderTabelaDispositivos() renderiza tabela",
+        "❌ MAS dados são mocks iniciais, nunca atualizados",
+        "❌ Ações 'Configurar' / 'Reiniciar' não fazem nada"
+      ]
+    },
+    {
+      "fluxo": "Geração de Relatório",
+      "etapas": [
+        "✓ relatorios.html tem botão 'Baixar Relatório Mensal'",
+        "❌ onclick=window.print() MAS não há CSS de impressão",
+        "❌ Dados são values hardcoded (510 kWh, R$ 459,00)",
+        "❌ Exportar para PDF? NÃO existe"
+      ]
+    },
+    {
+      "fluxo": "2FA (Two-Factor Authentication)",
+      "etapas": [
+        "❌ NÃO implementado",
+        "📄 Documentação promete em docs/2FA.md MAS código não existe"
+      ]
+    }
+  ],
+
+  "prioridade": [
+    {
+      "ranking": 1,
+      "problema": "Dados hardcoded em localStorage - TUDO é fake",
+      "impacto": "CRÍTICO",
+      "acao": "Necessário backend/API real. Sem isso, todo teste é inutilizado"
+    },
+    {
+      "ranking": 2,
+      "problema": "Autenticação em plain text sem encriptação",
+      "impacto": "CRÍTICO - RISCO DE SEGURANÇA",
+      "acao": "Implementar JWT/OAuth. Criptografia de senha (bcrypt)"
+    },
+    {
+      "ranking": 3,
+      "problema": "Gráficos não renderizam dados reais",
+      "impacto": "ALTA",
+      "acao": "Conectar Chart.js a dados de API vs dados fixos"
+    },
+    {
+      "ranking": 4,
+      "problema": "Permissões (RBAC) não são verificadas",
+      "impacto": "ALTA - RISCO DE SEGURANÇA",
+      "acao": "Adicionar verificação real de permissões no backend"
+    },
+    {
+      "ranking": 5,
+      "problema": "Botões sem função mostram toast de 'modo demonstração'",
+      "impacto": "MÉDIA",
+      "acao": "Remover ou implementar funcionalidades reais"
+    },
+    {
+      "ranking": 6,
+      "problema": "admin-*.js scripts estão faltando",
+      "impacto": "ALTA - Admin não funciona",
+      "acao": "Criar admin-clientes.js, admin-servicos.js, etc"
+    },
+    {
+      "ranking": 7,
+      "problema": "Dados de usuário inconsistentes (falta user.id)",
+      "impacto": "MÉDIA",
+      "acao": "Padronizar estrutura de usuário. Sempre setär ID no cadastro"
+    },
+    {
+      "ranking": 8,
+      "problema": "Páginas cliente repetem informações do dashboard",
+      "impacto": "BAIXA - UX confusa",
+      "acao": "Refatorar arquitetura de dados. Dashboard como agregador"
+    },
+    {
+      "ranking": 9,
+      "problema": "Documentação desatualizada",
+      "impacto": "BAIXA",
+      "acao": "Atualizar docs/ para refletir estado real do código"
+    },
+    {
+      "ranking": 10,
+      "problema": "Scripts desnecessários carregados em páginas",
+      "impacto": "MUITO BAIXA",
+      "acao": "Remover imports não usados"
+    }
+  ],
+
+  "recomendacoes": [
+    {
+      "id": "REC-01",
+      "titulo": "Implementar Backend Real",
+      "descricao": "TODO o projeto hoje é frontend mockado. Necessário:",
+      "items": [
+        "API REST (Node.js/Express, Python/Flask ou similar)",
+        "Banco de dados real (PostgreSQL, MongoDB)",
+        "Autenticação JWT com refresh tokens",
+        "Endpoints para: usuários, chamados, equipamentos, métricas, relatórios",
+        "Websocket para dados 'tempo real' de geração/consumo"
+      ],
+      "esforco": "🔴 MUITO ALTO (40-60 horas)",
+      "timeline": "2-3 sprints"
+    },
+
+    {
+      "id": "REC-02",
+      "titulo": "Refatorar Estrutura de Dados",
+      "descricao": "Hoje: IDs aleatórios, dados espalhados em localStorage",
+      "mudancas": [
+        "Todas as métricas devem vir de UMA fonte (obterSistemaCliente())",
+        "Paginas cliente são views. Dashboard é agregador",
+        "Consolidar usuario.id em TODAS estruturas",
+        "Criar schema consistente para usuários, sistemas, chamados"
+      ],
+      "esforco": "🟡 MÉDIO (8-12 horas)",
+      "impacto": "Reduz redundância em 80%"
+    },
+
+    {
+      "id": "REC-03",
+      "titulo": "Criar Scripts Admin Faltantes",
+      "descricao": "admin-clientes.js, admin-servicos.js, admin-equipamentos.js, admin-relatorios.js",
+      "funcoes_necessarias": [
+        "renderPainelAdminClientes() - com aprovação/rejeição",
+        "renderPainelAdminServicos() - CRUD de serviços",
+        "renderPainelAdminEquipamentos() - inventário e status",
+        "renderPainelAdminRelatorios() - gráficos agregados",
+        "filtros, busca, paginação"
+      ],
+      "esforco": "🟡 MEDIANO (12-16 horas)",
+      "impacto": "Admin fica funcional"
+    },
+
+    {
+      "id": "REC-04",
+      "titulo": "Implementar Gráficos Reais",
+      "descricao": "Today: Canvas.js carregados mas vazios",
+      "mudancas": [
+        "Integrar dados de api em inicializarGraficos*()",
+        "Adicionar real-time updates (WebSocket)",
+        "Implementar exports PDF/CSV",
+        "Adicionar seletor de data/período"
+      ],
+      "esforco": "🟡 MÉDIO (10-14 horas)",
+      "impacto": "Dashboard + 4 páginas cliente ficam visual"
+    },
+
+    {
+      "id": "REC-05",
+      "titulo": "Implementar Autenticação Real",
+      "descricao": "Hoje: Plain text em localStorage. Risco crítico de segurança",
+      "mudancas": [
+        "JWT tokens com expiração",
+        "Password hashing (bcrypt)",
+        "2FA (Google Authenticator/SMS)",
+        "Session management",
+        "Rate limiting em endpoints"
+      ],
+      "esforco": "🔴 ALTO (16-20 horas)",
+      "impacto": "Segurança crítica"
+    },
+
+    {
+      "id": "REC-06",
+      "titulo": "Consolidar Páginas Cliente",
+      "descricao": "dashboard.html tem 14+ cards que repetem cliente-*",
+      "opcoes": [
+        "Opção A: Dashboard mostra RESUMO, links para cliente-*.html (detalhes)",
+        "Opção B: Uma página 'dashboard-cliente.html' com abas (Geração/Consumo/Financeiro/Contratos)",
+        "Opção C: SPA (Single Page App) com Vue/React + routing"
+      ],
+      "esforco": "🟡 MÉDIO (12-18 horas)",
+      "impacto": "Reduz confusão UX. Mantém dados centralizados"
+    },
+
+    {
+      "id": "REC-07",
+      "titulo": "Remover Elementos Fake/Mock",
+      "descricao": "Dashboard tem elementos decorativos sem função",
+      "remover": [
+        "RTV Intelligence box (recomendações AI fake)",
+        "Sensores e Equipamentos (tabela hardcoded)",
+        "Fila de Operações (demo data)",
+        "Atividade Recente (IPs fake 192.168...)",
+        "Botões com toast 'modo demonstração'"
+      ],
+      "esforco": "🟢 BAIXO (2-3 horas)",
+      "impacto": "Interface mais honesta"
+    },
+
+    {
+      "id": "REC-08",
+      "titulo": "Implementar RBAC Real",
+      "descricao": "Permissões definidas em JS mas nunca verificadas",
+      "mudancas": [
+        "Mover verificação de permissões para backend",
+        "Validar data-permissao em cliente-side (para UX)",
+        "Validar SEMPRE em server-side (segurança)",
+        "Usar middleware de autenticação em todas rotas"
+      ],
+      "esforco": "🟡 MÉDIO (10-12 horas)",
+      "impacto": "Segurança + UX melhorada"
+    },
+
+    {
+      "id": "REC-09",
+      "titulo": "Atualizar Documentação",
+      "descricao": "docs/ fala de backend que não existe",
+      "ações": [
+        "Atualizar ARQUITETURA.md com estado real",
+        "Remover/atualizar BACKEND_API.md",
+        "Criar ROADMAP.md realista",
+        "Documentar estrutura de dados atual",
+        "Guia de setup para developers"
+      ],
+      "esforco": "🟢 BAIXO (4-6 horas)",
+      "impacto": "Clareza para novos devs"
+    },
+
+    {
+      "id": "REC-10",
+      "titulo": "Adicionar Testes",
+      "descricao": "Projeto sem testes automatizados",
+      "sugestao": [
+        "Unit tests para funções JS (localStorage, permissões)",
+        "Integration tests para pages",
+        "E2E tests com Selenium/Cypress",
+        "Coverage alvo: 60%+"
+      ],
+      "esforco": "🔴 ALTO (20-30 horas)",
+      "impacto": "Qualidade e manutenibilidade"
+    }
+  ],
+
+  "summary": {
+    "health_score": "25/100 - CRÍTICO",
+    "status_resumido": "Projeto é 95% MOCKUP. Frontend bem estruturado visualmente, mas sem funcionalidade real",
+    
+    "o_que_funciona": [
+      "✓ Interface visual (CSS, layout, responsividade)",
+      "✓ Navegação entre páginas",
+      "✓ Sistema de autenticação (fake, mas UI funciona)",
+      "✓ localStorage para manter dados na sessão",
+      "✓ Permissões (estrutura definida, não validada)",
+      "✓ Formulário de chamados (salva em localStorage)"
+    ],
+
+    "o_que_nao_funciona": [
+      "❌ Dados reais (TUDO é hardcoded)",
+      "❌ Backend/API",
+      "❌ Banco de dados",
+      "❌ Gráficos com dados reais",
+      "❌ Autoridades (RBAC não validado)",
+      "❌ 2FA",
+      "❌ Email notifications",
+      "❌ Exportação de relatórios",
+      "❌ Admin workflows",
+      "❌ Websocket/real-time"
+    ],
+
+    "proximos_passos_criticos": [
+      "1️⃣ Decida: continuar com backend fake OU implementar API real",
+      "2️⃣ Se API real: setup Node/Express + PostgreSQL",
+      "3️⃣ Se continuar fake: documentar como MOCKUP/DEMO",
+      "4️⃣ Criar admin-*.js scripts para painel funcionar",
+      "5️⃣ Implementar segurança real (JWT, bcrypt)"
+    ]
+  }
+}

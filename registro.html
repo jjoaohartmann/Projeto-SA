@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
     <script src="script.js" defer></script>
+    <script src="workflow-aprovacoes.js" defer></script>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <title>Cadastro - RTV Solar</title>
 </head>
@@ -136,8 +137,9 @@
                 senha: document.getElementById('senha-registro').value,
                 role: 'cliente',
                 aprovadoAdmin: false,
+                rejeitado: false,
                 servicosAdquiridos: [],
-                dataCadastro: new Date().toLocaleString('pt-BR'),
+                dataCadastro: new Date().toLocaleDateString('pt-BR'),
                 dataAprovacao: null
             };
 
@@ -151,6 +153,37 @@
             // Adicionar à lista de usuários
             usuarios.push(novoCliente);
             localStorage.setItem("rtv_usuarios", JSON.stringify(usuarios));
+
+            // Criar solicitação de cadastro para o admin aprovar
+            if (typeof WorkflowAPI !== 'undefined') {
+                try {
+                    // Simular usuário logado temporariamente para criar solicitação
+                    const usuarioLogadoAnterior = localStorage.getItem("rtv_usuario_logado");
+                    const usuarioTemp = {
+                        email: novoCliente.email,
+                        nome: novoCliente.nome
+                    };
+                    localStorage.setItem("rtv_usuario_logado", JSON.stringify(usuarioTemp));
+                    
+                    WorkflowAPI.criarSolicitacao("cadastro", {
+                        cliente_nome: novoCliente.nome,
+                        cliente_email: novoCliente.email,
+                        telefone: novoCliente.telefone,
+                        endereco: novoCliente.endereco,
+                        cpf: novoCliente.cpf,
+                        servico: novoCliente.servico
+                    });
+                    
+                    // Restaurar usuário anterior
+                    if (usuarioLogadoAnterior) {
+                        localStorage.setItem("rtv_usuario_logado", usuarioLogadoAnterior);
+                    } else {
+                        localStorage.removeItem("rtv_usuario_logado");
+                    }
+                } catch (err) {
+                    console.error("Erro ao criar solicitação de cadastro:", err);
+                }
+            }
 
             // Registrar auditoria
             registrarAuditoria(`Novo cliente cadastrado: ${novoCliente.nome} (${novoCliente.email}) - Aguardando aprovação`);

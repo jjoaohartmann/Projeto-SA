@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+    <script src="sistema-permissoes.js" defer></script>
+    <script src="admin-clientes.js" defer></script>
+    <title>Teste Gestão de Clientes - RTV</title>
+</head>
+<body class="pagina-admin pagina-painel">
+    <div class="dashboard-layout">
+        <main class="dashboard-content" style="padding: 40px;">
+            <h2>🔍 Teste da Gestão de Clientes</h2>
+            
+            <div style="background: #222; padding: 20px; border-radius: 4px; margin: 20px 0; color: #aaa;">
+                <h3>Status da Aplicação:</h3>
+                <div id="status" style="font-family: monospace; line-height: 1.8;"></div>
+            </div>
+            
+            <div style="background: #222; padding: 20px; border-radius: 4px; margin: 20px 0; color: #aaa;">
+                <h3>Dados Brutos (localStorage):</h3>
+                <pre id="dados" style="font-family: monospace; font-size: 12px; max-height: 400px; overflow-y: auto;"></pre>
+            </div>
+            
+            <button onclick="testar()" style="background: #F4A222; color: #000; padding: 12px 30px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">
+                Executar Teste
+            </button>
+        </main>
+    </div>
+
+    <script>
+        function testar() {
+            let html = "";
+            
+            // 1. Verificar se está logado
+            const usuarioLogado = obterUsuarioLogado();
+            html += `✓ Usuário logado: ${usuarioLogado ? usuarioLogado.nome + " (" + usuarioLogado.role + ")" : "NENHUM"}<br>`;
+            
+            // 2. Verificar se é admin
+            const eAdmin = ehAdmin();
+            html += `${eAdmin ? "✓" : "✗"} É admin: ${eAdmin}<br>`;
+            
+            // 3. Verificar AdminClientesAPI
+            const temAPI = typeof AdminClientesAPI !== "undefined";
+            html += `${temAPI ? "✓" : "✗"} AdminClientesAPI carregada<br>`;
+            
+            if (temAPI) {
+                // 4. Obter estatísticas
+                const stats = AdminClientesAPI.obterEstatisticas();
+                html += `<br><strong>Estatísticas:</strong><br>`;
+                html += `  Total: ${stats.totalClientes}<br>`;
+                html += `  Aprovados: ${stats.aprovados}<br>`;
+                html += `  Pendentes: ${stats.pendentes}<br>`;
+                html += `  Rejeitados: ${stats.rejeitados}<br>`;
+                
+                // 5. Listar clientes
+                const clientes = AdminClientesAPI.obterClientes();
+                html += `<br><strong>Clientes Obtidos:</strong><br>`;
+                if (clientes.length === 0) {
+                    html += `  ✗ NENHUM cliente encontrado!<br>`;
+                } else {
+                    clientes.forEach((c, i) => {
+                        html += `  ${i+1}. ${c.nome} (${c.email}) - Aprovado: ${c.aprovadoAdmin}<br>`;
+                    });
+                }
+            }
+            
+            document.getElementById("status").innerHTML = html;
+            
+            // Mostrar dados brutos
+            const usuarios = JSON.parse(localStorage.getItem("rtv_usuarios")) || [];
+            document.getElementById("dados").textContent = JSON.stringify(usuarios, null, 2);
+        }
+        
+        // Executar ao carregar
+        setTimeout(() => {
+            testar();
+        }, 500);
+    </script>
+</body>
+</html>

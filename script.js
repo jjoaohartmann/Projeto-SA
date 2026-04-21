@@ -1,17 +1,104 @@
 function seedUsuariosPadrao() {
     let usuarios = JSON.parse(localStorage.getItem("rtv_usuarios")) || [];
-    usuarios.forEach((u) => {
-        if (!u.role) u.role = "cliente";
-    });
+    
+    // Padronizar usuários existentes: garantir que todos têm role, aprovadoAdmin e rejeitado
+    usuarios = usuarios.map(u => ({
+        ...u,
+        role: u.role || "cliente",
+        aprovadoAdmin: u.aprovadoAdmin ?? false,
+        rejeitado: u.rejeitado ?? false,
+        dataCadastro: u.dataCadastro || new Date().toLocaleDateString('pt-BR')
+    }));
+    
+    // Garantir que existe um admin
     const temAdmin = usuarios.some((u) => u.role === "admin");
     if (!temAdmin) {
         usuarios.push({
+            id: 'admin_1',
             nome: "Administrador RTV",
             email: "admin@rtvsolar.com",
             senha: "admin123",
-            role: "admin"
+            role: "admin",
+            aprovadoAdmin: true,
+            rejeitado: false
         });
     }
+    
+    // Clientes de exemplo
+    const clientesExemplo = [
+        {
+            id: 'cli_1',
+            nome: "João Silva",
+            email: "joao.silva@email.com",
+            telefone: "(48) 99123-4567",
+            endereco: "Rua A, 123 - Brusque, SC",
+            cpf: "123.456.789-00",
+            servico: "energia-solar",
+            senha: "senha123",
+            role: "cliente",
+            aprovadoAdmin: true,
+            rejeitado: false,
+            servicosAdquiridos: ["energia-solar"],
+            dataCadastro: "15/03/2024",
+            dataAprovacao: "16/03/2024"
+        },
+        {
+            id: 'cli_2',
+            nome: "Maria Santos",
+            email: "maria.santos@email.com",
+            telefone: "(48) 98765-4321",
+            endereco: "Rua B, 456 - Brusque, SC",
+            cpf: "987.654.321-00",
+            servico: "hibrido",
+            senha: "senha123",
+            role: "cliente",
+            aprovadoAdmin: true,
+            rejeitado: false,
+            servicosAdquiridos: ["hibrido"],
+            dataCadastro: "20/04/2024",
+            dataAprovacao: "21/04/2024"
+        },
+        {
+            id: 'cli_3',
+            nome: "Pedro Costa",
+            email: "pedro.costa@email.com",
+            telefone: "(48) 99876-5432",
+            endereco: "Rua C, 789 - Brusque, SC",
+            cpf: "456.789.123-00",
+            servico: "assinatura",
+            senha: "senha123",
+            role: "cliente",
+            aprovadoAdmin: false,
+            rejeitado: false,
+            servicosAdquiridos: [],
+            dataCadastro: "10/01/2025",
+            dataAprovacao: null
+        },
+        {
+            id: 'cli_4',
+            nome: "Ana Oliveira",
+            email: "ana.oliveira@email.com",
+            telefone: "(48) 98765-1234",
+            endereco: "Rua D, 321 - Brusque, SC",
+            cpf: "321.654.987-00",
+            servico: "energia-solar",
+            senha: "senha123",
+            role: "cliente",
+            aprovadoAdmin: false,
+            rejeitado: false,
+            servicosAdquiridos: [],
+            dataCadastro: "05/01/2025",
+            dataAprovacao: null
+        }
+    ];
+    
+    // Adicionar clientes de exemplo se não existem
+    clientesExemplo.forEach(clienteExemplo => {
+        if (!usuarios.some(u => u.id === clienteExemplo.id)) {
+            usuarios.push(clienteExemplo);
+        }
+    });
+    
     localStorage.setItem("rtv_usuarios", JSON.stringify(usuarios));
 }
 

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+    <script src="sistema-permissoes.js" defer></script>
+    <title>Instruções de Admin - RTV Solar</title>
+</head>
+<body class="pagina-painel">
+    <header class="nav-bar">
+        <a href="dashboard.html">
+            <img src="imagens/logo-site.png" alt="logo" class="logo">
+            <h3>RTV ENERGIA SOLAR - ADMIN</h3>
+        </a>
+    </header>
+
+    <div class="dashboard-layout">
+        <aside class="sidebar">
+            <a href="dashboard.html"><i class="ph ph-squares-four"></i> Dashboard</a>
+            <a href="admin-clientes.html" class="active"><i class="ph ph-users"></i> Gestão de Clientes</a>
+            <a href="admin-servicos.html"><i class="ph ph-briefcase"></i> Gestão de Serviços</a>
+            <a href="admin-equipamentos.html"><i class="ph ph-package"></i> Gestão de Equipamentos</a>
+            <a href="admin-relatorios.html"><i class="ph ph-chart-bar"></i> Relatórios</a>
+            <a href="admin-configuracoes.html"><i class="ph ph-gear"></i> Configurações</a>
+            <a href="dashboard.html" style="margin-top: 30px; color: #aaa;"><i class="ph ph-sign-out"></i> Voltar ao Cliente</a>
+        </aside>
+
+        <main class="dashboard-content">
+            <div class="dash-header">
+                <h2>📖 Instruções de Acesso Admin</h2>
+                <p style="color: #aaa;">Como acessar a Gestão de Clientes no site</p>
+            </div>
+
+            <div class="dash-grid-main">
+                <!-- OPÇÃO 1 -->
+                <div class="dash-card" style="grid-column: 1 / -1;">
+                    <h3>🔧 Opção 1: Via Menu Lateral</h3>
+                    <p style="color: #aaa; margin: 15px 0;">Quando você está autenticado como <strong>ADMIN</strong>, um link aparece automaticamente no menu lateral de qualquer página:</p>
+                    
+                    <div style="background: #222; padding: 15px; border-radius: 4px; margin: 15px 0; border-left: 4px solid #F4A222;">
+                        <p style="color: #F4A222; font-weight: bold;">🔧 Gestão de Clientes</p>
+                        <p style="color: #aaa; font-size: 12px; margin-top: 5px;">Clique neste link para gerenciar todos os clientes cadastrados</p>
+                    </div>
+
+                    <p style="color: #aaa; font-size: 13px;">
+                        ✓ O link aparece em <strong>todas as páginas</strong> quando você é admin<br>
+                        ✓ Está localizado no final do menu lateral<br>
+                        ✓ Tem cor <strong>amarela</strong> para destaque
+                    </p>
+                </div>
+
+                <!-- OPÇÃO 2 -->
+                <div class="dash-card" style="grid-column: 1 / -1;">
+                    <h3>🎯 Opção 2: Acessar Diretamente</h3>
+                    <p style="color: #aaa; margin: 15px 0;">Você também pode acessar direto pelo URL:</p>
+                    
+                    <div style="background: #222; padding: 15px; border-radius: 4px; margin: 15px 0; font-family: monospace; color: #27c93f;">
+                        admin-clientes.html
+                    </div>
+
+                    <a href="admin-clientes.html" class="btn" style="display: inline-block; background: #F4A222; color: #000; padding: 12px 30px; border-radius: 4px; text-decoration: none; font-weight: bold; margin-top: 10px;">
+                        ➜ Acessar Gestão de Clientes
+                    </a>
+                </div>
+
+                <!-- FUNCIONALIDADES -->
+                <div class="dash-card" style="grid-column: 1 / -1;">
+                    <h3>⚙️ Funcionalidades Disponíveis</h3>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-top: 15px;">
+                        <div style="background: #222; padding: 15px; border-radius: 4px;">
+                            <p style="color: #2A8C82; font-weight: bold;">👥 Visualizar Clientes</p>
+                            <p style="color: #aaa; font-size: 12px; margin-top: 8px;">Ver lista completa de todos os clientes cadastrados com nome, email, CPF e status</p>
+                        </div>
+
+                        <div style="background: #222; padding: 15px; border-radius: 4px;">
+                            <p style="color: #ff9500; font-weight: bold;">📊 Filtrar por Status</p>
+                            <p style="color: #aaa; font-size: 12px; margin-top: 8px;">Filtrar clientes por: Aprovados, Pendentes ou Rejeitados</p>
+                        </div>
+
+                        <div style="background: #222; padding: 15px; border-radius: 4px;">
+                            <p style="color: #27c93f; font-weight: bold;">✓ Estatísticas</p>
+                            <p style="color: #aaa; font-size: 12px; margin-top: 8px;">Ver métricas rápidas: total, aprovados, pendentes, rejeitados</p>
+                        </div>
+
+                        <div style="background: #222; padding: 15px; border-radius: 4px;">
+                            <p style="color: #ff5f56; font-weight: bold;">🗑️ Excluir Cliente</p>
+                            <p style="color: #aaa; font-size: 12px; margin-top: 8px;">Remover um cliente do sistema com confirmação</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STATUS -->
+                <div class="dash-card" style="grid-column: 1 / -1;">
+                    <h3>🎨 Cores de Status</h3>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 15px;">
+                        <div style="background: #222; padding: 15px; border-radius: 4px; border-left: 4px solid #27c93f;">
+                            <p style="color: #27c93f; font-weight: bold;">✓ Aprovado</p>
+                            <p style="color: #aaa; font-size: 12px; margin-top: 8px;">Cliente foi aprovado pelo admin</p>
+                        </div>
+
+                        <div style="background: #222; padding: 15px; border-radius: 4px; border-left: 4px solid #ff9500;">
+                            <p style="color: #ff9500; font-weight: bold;">⏱ Pendente</p>
+                            <p style="color: #aaa; font-size: 12px; margin-top: 8px;">Aguardando aprovação do admin</p>
+                        </div>
+
+                        <div style="background: #222; padding: 15px; border-radius: 4px; border-left: 4px solid #ff5f56;">
+                            <p style="color: #ff5f56; font-weight: bold;">✗ Rejeitado</p>
+                            <p style="color: #aaa; font-size: 12px; margin-top: 8px;">Solicitação foi rejeitada</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+</body>
+</html>

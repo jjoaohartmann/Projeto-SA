@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+    <script src="sistema-permissoes.js" defer></script>
+    <script src="cliente-sistema.js" defer></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <title>Configurações - RTV Solar</title>
+</head>
+<body class="pagina-painel">
+    <header class="nav-bar">
+        <a href="dashboard.html">
+            <img src="imagens/logo-site.png" alt="logo" class="logo">
+            <h3>RTV ENERGIA SOLAR</h3>
+        </a>
+        <div class="topbar-actions">
+            <div class="notification-wrapper">
+                <a href="#" id="btn-notificacoes" style="color: var(--amarelo-vivo); position: relative;">
+                    <i class="ph ph-bell" style="font-size: 24px;"></i>
+                    <span class="notif-badge" id="notif-count" style="display: none;">0</span>
+                </a>
+                <div class="notif-dropdown" id="notif-dropdown"></div>
+            </div>
+            <a href="#" id="btn-logout" class="btn" style="background-color: #ff5f56; padding: 8px 15px;">Sair</a>
+        </div>
+    </header>
+
+    <div class="dashboard-layout">
+        <aside class="sidebar">
+            <a href="dashboard.html"><i class="ph ph-squares-four"></i> Visão Geral</a>
+            <a href="configuracoes.html" class="active"><i class="ph ph-gear"></i> Configurações</a>
+            <a href="cliente-geracao.html"><i class="ph ph-sun"></i> Geração</a>
+            <a href="cliente-consumo.html"><i class="ph ph-lightning-charge"></i> Consumo</a>
+            <a href="cliente-financeiro.html"><i class="ph ph-chart-pie"></i> Financeiro</a>
+            <a href="suporte.html"><i class="ph ph-headset"></i> Suporte</a>
+        </aside>
+
+        <main class="dashboard-content">
+            <div class="dash-header">
+                <div>
+                    <h2>Configurações</h2>
+                    <p style="color: #aaa;">Personalize suas preferências e configurações do sistema</p>
+                </div>
+            </div>
+
+            <!-- SEÇÃO: PREFERÊNCIAS GERAIS -->
+            <div class="dash-card" style="border-color: var(--verde-agua);">
+                <h3 style="color: var(--verde-agua); margin: 0 0 20px 0;"><i class="ph ph-toggle-right"></i> Preferências Gerais</h3>
+                <div class="input-group" style="margin-bottom: 20px;">
+                    <label>Tema</label>
+                    <select style="width: 100%; max-width: 300px;">
+                        <option>Escuro (Padrão)</option>
+                        <option>Claro</option>
+                        <option>Automático</option>
+                    </select>
+                </div>
+                <div class="input-group" style="margin-bottom: 20px;">
+                    <label>Unidade de Medida</label>
+                    <select style="width: 100%; max-width: 300px;">
+                        <option>kW (Kilowatt) - Padrão</option>
+                        <option>W (Watt)</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>
+                        <input type="checkbox" checked> Notificações por Email
+                    </label>
+                </div>
+            </div>
+
+            <!-- SEÇÃO: NOTIFICAÇÕES -->
+            <div class="dash-card" style="margin-top: 20px; border-color: var(--amarelo-vivo);">
+                <h3 style="color: var(--amarelo-vivo); margin: 0 0 20px 0;"><i class="ph ph-bell"></i> Notificações</h3>
+                <div style="display: flex; flex-direction: column; gap: 15px;">
+                    <div class="input-group">
+                        <label style="display: flex; gap: 10px;">
+                            <input type="checkbox" checked id="notif-geração">
+                            <span>Alertas de Geração Baixa</span>
+                        </label>
+                    </div>
+                    <div class="input-group">
+                        <label style="display: flex; gap: 10px;">
+                            <input type="checkbox" checked id="notif-consumo">
+                            <span>Alertas de Consumo Elevado</span>
+                        </label>
+                    </div>
+                    <div class="input-group">
+                        <label style="display: flex; gap: 10px;">
+                            <input type="checkbox" checked id="notif-manutencao">
+                            <span>Lembretes de Manutenção</span>
+                        </label>
+                    </div>
+                    <div class="input-group">
+                        <label style="display: flex; gap: 10px;">
+                            <input type="checkbox" id="notif-newsletter">
+                            <span>Newsletter da RTV Solar</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SEÇÃO: PRIVACIDADE E SEGURANÇA -->
+            <div class="dash-card" style="margin-top: 20px; border-color: #ff5f56;">
+                <h3 style="color: #ff5f56; margin: 0 0 20px 0;"><i class="ph ph-lock"></i> Privacidade e Segurança</h3>
+                <div style="display: flex; gap: 15px;">
+                    <button class="btn" style="padding: 12px 24px;"><i class="ph ph-key"></i> Alterar Senha</button>
+                    <button class="btn" style="padding: 12px 24px; background-color: transparent; border: 2px solid #ff5f56; color: #ff5f56;"><i class="ph ph-sign-out"></i> Encerrar Todas as Sessões</button>
+                </div>
+            </div>
+
+            <!-- SEÇÃO: DADOS E PRIVACIDADE -->
+            <div class="dash-card" style="margin-top: 20px; border-color: var(--verde-agua);">
+                <h3 style="color: var(--verde-agua); margin: 0 0 20px 0;"><i class="ph ph-file"></i> Dados e Privacidade</h3>
+                <p style="color: #aaa; margin-bottom: 20px;">Gerenciar suas informações pessoais e dados do sistema.</p>
+                <div style="display: flex; gap: 15px;">
+                    <button class="btn" style="padding: 12px 24px;"><i class="ph ph-download"></i> Baixar Meus Dados</button>
+                    <button class="btn" style="padding: 12px 24px; background-color: transparent; border: 2px solid var(--verde-agua); color: var(--verde-agua);"><i class="ph ph-trash"></i> Deletar Conta</button>
+                </div>
+            </div>
+
+            <!-- BOTÕES DE AÇÃO -->
+            <div style="display: flex; gap: 15px; margin-top: 30px;">
+                <button class="btn" style="padding: 12px 32px;"><i class="ph ph-check-circle"></i> Salvar Alterações</button>
+                <button class="btn" style="padding: 12px 32px; background-color: transparent; border: 2px solid #504a4a; color: #fff;"><i class="ph ph-arrow-left"></i> Cancelar</button>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

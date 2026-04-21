@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Setup Admin - RTV Solar</title>
+    <style>
+        body {
+            background: #1a1a1a;
+            color: #aaa;
+            font-family: Arial;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: #222;
+            padding: 40px;
+            border-radius: 8px;
+            max-width: 400px;
+            text-align: center;
+        }
+        h1 {
+            color: #F4A222;
+            margin-bottom: 30px;
+        }
+        button {
+            background: #F4A222;
+            color: #000;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+            margin: 10px;
+            width: 100%;
+        }
+        button:hover {
+            opacity: 0.9;
+        }
+        .info {
+            background: #2A8C82;
+            color: #000;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 20px 0;
+            font-size: 13px;
+        }
+        .success {
+            background: #27c93f;
+            color: #000;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Setup Admin RTV</h1>
+        
+        <p>Clique abaixo para configurar o ambiente de teste:</p>
+        
+        <div class="info">
+            ℹ️ Isso vai criar dados de exemplo e fazer você fazer login como admin
+        </div>
+        
+        <button onclick="setupAdmin()">Setup Completo (Dados + Login Admin)</button>
+        <button onclick="abrirAdmin()">Abrir Gestão de Clientes</button>
+        <button onclick="limpar()">Limpar Dados</button>
+        
+        <div id="status"></div>
+    </div>
+
+    <script src="script.js" defer></script>
+    <script>
+        function setupAdmin() {
+            // 1. Criar dados de exemplo
+            if (typeof seedUsuariosPadrao === "function") {
+                seedUsuariosPadrao();
+            }
+            
+            // 2. Fazer login como admin
+            localStorage.setItem("rtv_usuario_logado", JSON.stringify({
+                nome: "Administrador RTV",
+                email: "admin@rtvsolar.com",
+                senha: "admin123",
+                role: "admin"
+            }));
+            
+            // Mostrar mensagem de sucesso
+            const status = document.getElementById("status");
+            status.innerHTML = '<div class="success">✅ Setup concluído! Você está logado como ADMIN<br>Redirecionando em 2 segundos...</div>';
+            
+            // Redirecionar para gestão de clientes
+            setTimeout(() => {
+                window.location.href = "admin-clientes.html";
+            }, 2000);
+        }
+        
+        function abrirAdmin() {
+            window.location.href = "admin-clientes.html";
+        }
+        
+        function limpar() {
+            if (confirm("Tem certeza que deseja limpar TODOS os dados?")) {
+                localStorage.clear();
+                document.getElementById("status").innerHTML = '<div class="success">✅ localStorage limpo!</div>';
+            }
+        }
+    </script>
+</body>
+</html>

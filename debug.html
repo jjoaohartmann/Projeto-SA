@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug RTV</title>
+    <style>
+        body { background: #1a1a1a; color: #aaa; font-family: Arial; padding: 20px; }
+        pre { background: #222; padding: 15px; border-radius: 4px; max-width: 500px; }
+    </style>
+</head>
+<body>
+    <h1>🔧 Debug RTV Solar</h1>
+    
+    <h2>Verificação de localStorage:</h2>
+    <pre id="debug"></pre>
+    
+    <h2>Teste de Admin API:</h2>
+    <pre id="debug2"></pre>
+    
+    <script src="script.js" defer></script>
+    <script src="admin-clientes.js" defer></script>
+    
+    <script>
+        setTimeout(() => {
+            let info = "=== VERIFICAÇÃO ===\n\n";
+            
+            // 1. Verificar se seedUsuariosPadrao existe
+            if (typeof seedUsuariosPadrao === "undefined") {
+                info += "❌ seedUsuariosPadrao não foi carregada\n";
+            } else {
+                info += "✅ seedUsuariosPadrao carregada\n";
+                seedUsuariosPadrao();
+                info += "✅ seedUsuariosPadrao executada\n";
+            }
+            
+            // 2. Verificar localStorage
+            const usuarios = JSON.parse(localStorage.getItem("rtv_usuarios")) || [];
+            info += `\n✓ Total de usuários: ${usuarios.length}\n`;
+            usuarios.forEach((u, i) => {
+                info += `  ${i}: ${u.nome} (role: ${u.role})\n`;
+            });
+            
+            // 3. Verificar AdminClientesAPI
+            info += "\n=== AdminClientesAPI ===\n";
+            if (typeof AdminClientesAPI === "undefined") {
+                info += "❌ AdminClientesAPI não foi carregada\n";
+            } else {
+                info += "✅ AdminClientesAPI carregada\n";
+                const clientes = AdminClientesAPI.obterClientes();
+                info += `✓ Total de clientes: ${clientes.length}\n`;
+                clientes.forEach((c, i) => {
+                    info += `  ${i}: ${c.nome} (aprovado: ${c.aprovadoAdmin})\n`;
+                });
+            }
+            
+            document.getElementById("debug").textContent = info;
+            document.getElementById("debug2").textContent = JSON.stringify(usuarios, null, 2);
+        }, 1000);
+    </script>
+</body>
+</html>

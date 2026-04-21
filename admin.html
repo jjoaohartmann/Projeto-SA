@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+    <script src="sistema-permissoes.js" defer></script>
+    <script src="cliente-sistema.js" defer></script>
+    <script src="workflow-aprovacoes.js" defer></script>
+    <script src="admin-funcoes.js" defer></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <title>Administração - RTV Solar</title>
+</head>
+<body class="pagina-painel pagina-admin">
+    <header class="nav-bar">
+        <a href="dashboard.html">
+            <img src="imagens/logo-site.png" alt="logo" class="logo">
+            <h3>RTV ENERGIA SOLAR</h3>
+        </a>
+        <div class="topbar-actions">
+            <div class="notification-wrapper">
+                <a href="#" id="btn-notificacoes" style="color: var(--amarelo-vivo); position: relative;">
+                    <i class="ph ph-bell" style="font-size: 24px;"></i>
+                    <span class="notif-badge" id="notif-count" style="display: none;">0</span>
+                </a>
+                <div class="notif-dropdown" id="notif-dropdown"></div>
+            </div>
+            <a href="#" id="btn-logout" class="btn" style="background-color: #ff5f56; padding: 8px 15px;">Sair</a>
+        </div>
+    </header>
+
+    <div class="dashboard-layout">
+        <aside class="sidebar">
+            <a href="dashboard.html"><i class="ph ph-squares-four"></i> Visão Geral</a>
+            <a href="admin.html" class="active"><i class="ph ph-user-gear"></i> Administração</a>
+            <a href="monitoramento.html"><i class="ph ph-monitor"></i> Monitoramento</a>
+            <a href="configuracoes.html"><i class="ph ph-gear"></i> Configurações</a>
+            <a href="manutencao.html"><i class="ph ph-wrench"></i> Manutenção</a>
+            <a href="suporte.html"><i class="ph ph-headset"></i> Suporte</a>
+        </aside>
+
+        <main class="dashboard-content">
+            <div class="dash-header">
+                <div>
+                    <h2>Área Administrativa</h2>
+                    <p style="color: #aaa;">Gerenciar usuários, permissões e configurações avançadas do sistema</p>
+                </div>
+            </div>
+
+            <!-- CARDS DE RESUMO ADMINISTRATIVO -->
+            <div class="grid-cards-mini">
+                <div class="dash-card mini">
+                    <i class="ph ph-users icone-bg" style="color: var(--verde-agua);"></i>
+                    <h4>Usuários Ativos</h4>
+                    <div class="valor" id="total-usuarios">--</div>
+                    <span class="status positivo">Gerenciar</span>
+                </div>
+                <div class="dash-card mini">
+                    <i class="ph ph-warning icone-bg" style="color: var(--amarelo-vivo);"></i>
+                    <h4>Alertas</h4>
+                    <div class="valor" id="total-alertas">0</div>
+                    <span class="status alerta">Atenção</span>
+                </div>
+                <div class="dash-card mini">
+                    <i class="ph ph-checkmark-circle icone-bg" style="color: #27c93f;"></i>
+                    <h4>Operacional</h4>
+                    <div class="valor">100%</div>
+                    <span class="status positivo">Online</span>
+                </div>
+                <div class="dash-card mini">
+                    <i class="ph ph-gear icone-bg" style="color: #aaa;"></i>
+                    <h4>Configurações</h4>
+                    <div class="valor" id="configs">--</div>
+                    <span class="status positivo">Ativas</span>
+                </div>
+            </div>
+
+            <!-- SEÇÃO DE GERENCIAMENTO -->
+            <div class="dash-card" style="grid-column: 1 / -1; margin-top: 30px; border-color: var(--verde-agua);">
+                <h3 style="color: var(--verde-agua); margin: 0 0 20px 0;"><i class="ph ph-user-gear"></i> Gerenciamento de Usuários</h3>
+                <div style="display: flex; gap: 15px;">
+                    <button class="btn" style="padding: 12px 24px;"><i class="ph ph-plus"></i> Adicionar Usuário</button>
+                    <button class="btn" style="padding: 12px 24px; background-color: transparent; border: 2px solid var(--verde-agua); color: var(--verde-agua);"><i class="ph ph-list"></i> Visualizar Usuários</button>
+                </div>
+            </div>
+
+            <!-- SEÇÃO DE SOLICITAÇÕES PENDENTES -->
+            <div class="dash-card" style="grid-column: 1 / -1; margin-top: 20px; border-color: var(--amarelo-vivo);">
+                <h3 style="color: var(--amarelo-vivo); margin: 0 0 20px 0;"><i class="ph ph-warning"></i> Solicitações Pendentes de Aprovação</h3>
+                <table class="comparativo-table" style="width: 100%; margin: 0;">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Tipo</th>
+                            <th>Cliente</th>
+                            <th>Data</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabela-solicitacoes-pendentes">
+                        <tr>
+                            <td colspan="6" style="color: #888; text-align: center;">Carregando...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- TABELA DE ÚLTIMAS AÇÕES -->
+            <div class="dash-card" style="grid-column: 1 / -1; margin-top: 20px; border-color: #ff5f56;">
+                <h3 style="color: #ff5f56; margin: 0 0 20px 0;"><i class="ph ph-activity"></i> Últimas Ações do Sistema</h3>
+                <table class="comparativo-table" style="width: 100%; margin: 0;">
+                    <thead>
+                        <tr>
+                            <th>Ação</th>
+                            <th>Usuário</th>
+                            <th>Data/Hora</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Login de usuário</td>
+                            <td>cliente@example.com</td>
+                            <td>Hoje, 14:30</td>
+                            <td><span class="status positivo">Sucesso</span></td>
+                        </tr>
+                        <tr>
+                            <td>Alteração de dados</td>
+                            <td>admin@example.com</td>
+                            <td>Hoje, 12:15</td>
+                            <td><span class="status positivo">Sucesso</span></td>
+                        </tr>
+                        <tr>
+                            <td>Backup realizado</td>
+                            <td>sistema</td>
+                            <td>Hoje, 03:00</td>
+                            <td><span class="status positivo">Sucesso</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

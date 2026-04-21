@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste de Dados - RTV</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #1a1a1a;
+            color: #aaa;
+            padding: 20px;
+        }
+        pre {
+            background: #222;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        h2 {
+            color: #F4A222;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        .success {
+            background: #27c93f;
+            color: #000;
+        }
+        .error {
+            background: #ff5f56;
+            color: #fff;
+        }
+        .warning {
+            background: #ff9500;
+            color: #000;
+        }
+        button {
+            background: #F4A222;
+            color: #000;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+            font-weight: bold;
+        }
+        button:hover {
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Teste de Dados - RTV Solar</h1>
+        
+        <h2>Estado do localStorage:</h2>
+        <div id="status-storage"></div>
+        
+        <h2>Dados de Usuários:</h2>
+        <pre id="usuarios-data">Carregando...</pre>
+        
+        <h2>Dados de Clientes Filtrados:</h2>
+        <pre id="clientes-data">Carregando...</pre>
+        
+        <h2>Ações:</h2>
+        <button onclick="seedData()">Gerar Dados de Exemplo</button>
+        <button onclick="limparDados()">Limpar localStorage</button>
+        <button onclick="recarregar()">Recarregar Página</button>
+        <button onclick="abrirAdmin()">Abrir Gestão de Clientes</button>
+    </div>
+
+    <script src="script.js" defer></script>
+    <script>
+        function exibirDados() {
+            // Status do storage
+            const usuarios = JSON.parse(localStorage.getItem("rtv_usuarios")) || [];
+            const statusDiv = document.getElementById("status-storage");
+            
+            statusDiv.innerHTML = `
+                <div class="status ${usuarios.length > 0 ? 'success' : 'error'}">
+                    Total de usuários no localStorage: <strong>${usuarios.length}</strong>
+                </div>
+            `;
+            
+            // Mostrar todos os usuários
+            document.getElementById("usuarios-data").textContent = JSON.stringify(usuarios, null, 2);
+            
+            // Filtrar apenas clientes
+            const clientes = usuarios.filter(u => u.role === "cliente");
+            document.getElementById("clientes-data").textContent = JSON.stringify(clientes, null, 2);
+        }
+        
+        function seedData() {
+            if (typeof seedUsuariosPadrao === "function") {
+                seedUsuariosPadrao();
+                alert("Dados de exemplo gerados!");
+                exibirDados();
+            } else {
+                alert("Erro: seedUsuariosPadrao não foi carregada");
+            }
+        }
+        
+        function limparDados() {
+            if (confirm("Tem certeza que deseja limpar todos os dados?")) {
+                localStorage.clear();
+                alert("localStorage limpo!");
+                exibirDados();
+            }
+        }
+        
+        function recarregar() {
+            location.reload();
+        }
+        
+        function abrirAdmin() {
+            window.location.href = "admin-clientes.html";
+        }
+        
+        // Executar ao carregar a página
+        document.addEventListener("DOMContentLoaded", () => {
+            exibirDados();
+        });
+    </script>
+</body>
+</html>

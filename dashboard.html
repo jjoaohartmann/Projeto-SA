@@ -5,9 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
     <script src="script.js" defer></script>
-    <script src="sistema-aprovacoes.js" defer></script>
     <script src="sistema-permissoes.js" defer></script>
     <script src="cliente-sistema.js" defer></script>
+    <script src="workflow-aprovacoes.js" defer></script>
+    <script src="cliente-funcoes.js" defer></script>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <title>Painel de Controle - RTV Solar</title>
@@ -19,17 +20,12 @@
             <h3>RTV ENERGIA SOLAR</h3>
         </a>
         <div class="topbar-actions">
-            <div class="search-bar">
-                <i class="ph ph-magnifying-glass"></i>
-                <input type="text" placeholder="Buscar dispositivos, chamados...">
-            </div>
             <div class="notification-wrapper">
                 <a href="#" id="btn-notificacoes" style="color: var(--amarelo-vivo); position: relative;">
                     <i class="ph ph-bell" style="font-size: 24px;"></i>
-                    <span class="notif-badge">3</span>
+                    <span class="notif-badge" id="notif-count" style="display: none;">0</span>
                 </a>
-                <div class="notif-dropdown" id="notif-dropdown">
-                    </div>
+                <div class="notif-dropdown" id="notif-dropdown"></div>
             </div>
             <a href="#" id="btn-logout" class="btn" style="background-color: #ff5f56; padding: 8px 15px;">Sair</a>
         </div>
@@ -44,127 +40,439 @@
             <a href="cliente-contratos.html"><i class="ph ph-chart-line-up"></i> Contratos</a>
             <a href="relatorios.html"><i class="ph ph-chart-line-up"></i> Relatórios Financeiros</a>
             <a href="suporte.html"><i class="ph ph-headset"></i> Suporte & Chamados</a>
-            <a href="admin-clientes.html" class="sidebar-link-admin" style="display: none;"><i class="ph ph-user-gear"></i> Administração</a>
+            <hr style="margin: 15px 0; border: none; border-top: 1px solid #444;">
+            <a href="admin-clientes.html" class="sidebar-link-admin" style="display: none; color: #F4A222; font-weight: bold;"><i class="ph ph-user-gear"></i> 🔧 Gestão de Clientes</a>
         </aside>
 
         <main class="dashboard-content">
+            <!-- CABEÇALHO -->
             <div class="dash-header">
                 <div>
                     <h2 id="saudacao-dash">Painel de Controle</h2>
-                    <p style="color: #aaa;">Status Geral do Sistema: <strong style="color: #27c93f;">Operacional e Otimizado</strong></p>
-                </div>
-                <div class="weather-widget">
-                    <i class="ph-fill ph-cloud-sun" style="font-size: 32px; color: var(--amarelo-vivo);"></i>
-                    <div class="weather-info">
-                        <h4 id="clima-temp">28°C</h4>
-                        <p id="clima-cond">Ensolarado (Alta Geração)</p>
-                    </div>
+                    <p style="color: #aaa;" id="status-sistema">Carregando...</p>
                 </div>
             </div>
 
+            <!-- AÇÕES RÁPIDAS -->
             <div class="shortcuts-grid">
+                <a href="cliente-geracao.html" class="shortcut-btn"><i class="ph ph-lightning"></i> Ver Geração</a>
+                <a href="cliente-consumo.html" class="shortcut-btn"><i class="ph ph-activity"></i> Consumo Real</a>
+                <a href="cliente-financeiro.html" class="shortcut-btn"><i class="ph ph-trend-up"></i> Economia</a>
                 <a href="suporte.html" class="shortcut-btn"><i class="ph ph-plus-circle"></i> Abrir Chamado</a>
-                <a href="relatorios.html" class="shortcut-btn"><i class="ph ph-file-pdf"></i> Gerar Relatório</a>
-                <a href="cliente-consumo.html" class="shortcut-btn"><i class="ph ph-activity"></i> Ver Consumo</a>
-                <a href="cliente-contratos.html" class="shortcut-btn"><i class="ph ph-calendar-plus"></i> Meus Contratos</a>
             </div>
 
-            <div class="grid-cards-mini">
-                <div class="dash-card mini"><i class="ph ph-lightning icone-bg"></i><h4>Consumo Agora</h4><div class="valor">1.2 kW</div><span class="status positivo">Estável</span></div>
-                <div class="dash-card mini"><i class="ph ph-calendar-blank icone-bg"></i><h4>Consumo Hoje</h4><div class="valor">14.5 kWh</div><span class="status positivo">Abaixo da média</span></div>
-                <div class="dash-card mini"><i class="ph ph-calendar icone-bg"></i><h4>Consumo Mês</h4><div class="valor">340 kWh</div><span class="status alerta">Atenção à meta</span></div>
-                <div class="dash-card mini"><i class="ph ph-currency-dollar icone-bg"></i><h4>Custo Estimado</h4><div class="valor">R$ 280,00</div><span class="status positivo">Bandeira Verde</span></div>
-                <div class="dash-card mini"><i class="ph ph-piggy-bank icone-bg"></i><h4>Economia Gerada</h4><div class="valor">R$ 412,50</div><span class="status positivo">No mês atual</span></div>
-                <div class="dash-card mini"><i class="ph ph-leaf icone-bg"></i><h4>CO₂ Evitado</h4><div class="valor">185 kg</div><span class="status positivo">Equivale a 8 árvores</span></div>
-                <div class="dash-card mini"><i class="ph ph-percent icone-bg"></i><h4>Eficiência Global</h4><div class="valor">96.8%</div><span class="status positivo">Scoring A+</span></div>
-                <div class="dash-card mini" style="border-color: #ff5f56;"><i class="ph ph-warning-circle icone-bg"></i><h4>Alertas Ativos</h4><div class="valor" style="color: #ff5f56;">1</div><span class="status negativo">Dispositivo Offline</span></div>
+            <!-- SOLICITAÇÕES DO CLIENTE -->
+            <div class="dash-card" style="grid-column: 1 / -1; margin-bottom: 30px; border-color: var(--verde-agua);">
+                <h3 style="color: var(--verde-agua); margin: 0 0 15px 0;"><i class="ph ph-list-checks"></i> Suas Solicitações</h3>
+                <table class="comparativo-table" style="width: 100%; margin: 0;">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Tipo</th>
+                            <th>Data</th>
+                            <th>Status</th>
+                            <th>Observações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabela-solicitacoes-cliente">
+                        <tr>
+                            <td colspan="5" style="color: #888; text-align: center;">Carregando...</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
 
+            <!-- GRID PRINCIPAL -->
             <div class="dash-grid-main">
-                <div class="grid-cards-mini">
-                <!-- GERAÇÃO SOLAR -->
-                <div class="dash-card mini" data-permissao="ver_geração_propria"><i class="ph ph-sun icone-bg" style="color: var(--amarelo-vivo);"></i><h4>Geração Agora</h4><div class="valor" id="geracao-atual">3.8 kW</div><span class="status positivo">Pico</span></div>
-                <div class="dash-card mini" data-permissao="ver_geração_propria"><i class="ph ph-calendar-blank icone-bg"></i><h4>Geração Hoje</h4><div class="valor" id="geracao-hoje">38.2 kWh</div><span class="status positivo">Acima média</span></div>
-                <div class="dash-card mini" data-permissao="ver_geração_propria"><i class="ph ph-calendar icone-bg"></i><h4>Geração Mês</h4><div class="valor" id="geracao-mes">1.150 kWh</div><span class="status positivo">Ótimo</span></div>
-                
-                <!-- CONSUMO -->
-                <div class="dash-card mini" data-permissao="ver_consumo_proprio"><i class="ph ph-lightning-charge icone-bg"></i><h4>Consumo Agora</h4><div class="valor" id="consumo-atual">1.2 kW</div><span class="status positivo">Estável</span></div>
-                <div class="dash-card mini" data-permissao="ver_consumo_proprio"><i class="ph ph-calendar-blank icone-bg"></i><h4>Consumo Hoje</h4><div class="valor" id="consumo-hoje">14.5 kWh</div><span class="status positivo">Abaixo média</span></div>
-                <div class="dash-card mini" data-permissao="ver_consumo_proprio"><i class="ph ph-calendar icone-bg"></i><h4>Consumo Mês</h4><div class="valor" id="consumo-mes">340 kWh</div><span class="status alerta">Atenção</span></div>
-                
-                <!-- ECONOMIA & CRÉDITOS -->
-                <div class="dash-card mini" data-permissao="ver_consumo_proprio"><i class="ph ph-piggy-bank icone-bg" style="color: #27c93f;"></i><h4>Economia (Mês)</h4><div class="valor" id="economia-mes">R$ 412,50</div><span class="status positivo">Vs rede</span></div>
-                <div class="dash-card mini" data-permissao="ver_consumo_proprio"><i class="ph ph-chart-line-up icone-bg" style="color: #27c93f;"></i><h4>Economia Acum.</h4><div class="valor" id="economia-acumulada">R$ 2.875,00</div><span class="status positivo">Total</span></div>
-                <div class="dash-card mini" data-permissao="ver_consumo_proprio"><i class="ph ph-coins icone-bg" style="color: var(--amarelo-vivo);"></i><h4>Créditos</h4><div class="valor" id="creditos-disponiveis">127.5 kWh</div><span class="status positivo">Disponível</span></div>
-                
-                <!-- IMPACTO AMBIENTAL -->
-                <div class="dash-card mini" data-permissao="ver_geração_propria"><i class="ph ph-leaf icone-bg"></i><h4>CO₂ Evitado</h4><div class="valor" id="co2-evitado">185 kg</div><span class="status positivo">Este mês</span></div>
-                <div class="dash-card mini" data-permissao="ver_geração_propria"><i class="ph ph-tree icone-bg" style="color: #4ade80;"></i><h4>Árvores</h4><div class="valor" id="arvores-equiv">8</div><span class="status positivo">Equivalente</span></div>
-                <div class="dash-card mini" data-permissao="ver_equipamentos_proprios"><i class="ph ph-percent icone-bg"></i><h4>Eficiência</h4><div class="valor" id="eficiencia-global">96.8%</div><span class="status positivo">A+</span></div>
-                
-                <!-- ROI & PAYBACK -->
-                <div class="dash-card mini" data-permissao="ver_equipamentos_proprios"><i class="ph ph-chart-bar icone-bg"></i><h4>Payback</h4><div class="valor" id="payback-estimado">6.2 anos</div><span class="status positivo">ROI</span></div>
-            </div>
-                    <div style="display: flex; justify-content: space-between;">
-                        <h4 style="margin-top:0;">Curva de Geração vs Consumo (Tempo Real / Previsão)</h4>
-                        <select style="background: #1a1a1a; color: white; border: 1px solid #333; border-radius: 5px; padding: 5px;"><option>Hoje</option><option>Semana</option></select>
+                <!-- SEÇÃO 1: GERAÇÃO HOJE -->
+                <div class="dash-card" style="grid-column: 1 / -1; border-color: var(--amarelo-vivo);">
+                    <h3 style="color: var(--amarelo-vivo); margin: 0 0 15px 0;"><i class="ph ph-sun"></i> Geração Solar</h3>
+                    <div class="grid-cards-mini">
+                        <div class="dash-card mini">
+                            <i class="ph ph-lightning icone-bg" style="color: var(--amarelo-vivo);"></i>
+                            <h4>Agora</h4>
+                            <div class="valor" id="geracao-atual">--</div>
+                            <span class="status positivo" id="status-geracao-atual">Carregando...</span>
+                        </div>
+                        <div class="dash-card mini">
+                            <i class="ph ph-sun-dim icone-bg"></i>
+                            <h4>Hoje</h4>
+                            <div class="valor" id="geracao-hoje">--</div>
+                            <span class="status positivo">Acumulado</span>
+                        </div>
+                        <div class="dash-card mini">
+                            <i class="ph ph-sum icone-bg"></i>
+                            <h4>Mês</h4>
+                            <div class="valor" id="geracao-mes">--</div>
+                            <span class="status positivo">Total</span>
+                        </div>
+                        <div class="dash-card mini">
+                            <i class="ph ph-trend-up icone-bg" style="color: #27c93f;"></i>
+                            <h4>Média</h4>
+                            <div class="valor" id="geracao-media">--</div>
+                            <span class="status positivo">Eficiência</span>
+                        </div>
                     </div>
-                    <canvas id="chartPrincipal"></canvas>
+                </div>
+
+                <!-- SEÇÃO 2: CONSUMO -->
+                <div class="dash-card" style="grid-column: 1 / -1; border-color: #ff5f56;">
+                    <h3 style="color: #ff5f56; margin: 0 0 15px 0;"><i class="ph ph-lightning-charge"></i> Consumo</h3>
+                    <div class="grid-cards-mini">
+                        <div class="dash-card mini">
+                            <i class="ph ph-lightning-charge icone-bg" style="color: #ff5f56;"></i>
+                            <h4>Agora</h4>
+                            <div class="valor" id="consumo-atual">--</div>
+                            <span class="status" id="status-consumo-atual">Carregando...</span>
+                        </div>
+                        <div class="dash-card mini">
+                            <i class="ph ph-calendar-blank icone-bg"></i>
+                            <h4>Hoje</h4>
+                            <div class="valor" id="consumo-hoje">--</div>
+                            <span class="status positivo">Acumulado</span>
+                        </div>
+                        <div class="dash-card mini">
+                            <i class="ph ph-calendar icone-bg"></i>
+                            <h4>Mês</h4>
+                            <div class="valor" id="consumo-mes">--</div>
+                            <span class="status" id="status-consumo-mes">Carregando...</span>
+                        </div>
+                        <div class="dash-card mini">
+                            <i class="ph ph-percent icone-bg"></i>
+                            <h4>vs. Meta</h4>
+                            <div class="valor" id="consumo-percentual">--</div>
+                            <span class="status positivo">% da meta</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SEÇÃO 3: ECONOMIA & CRÉDITOS (2+2) -->
+                <div class="dash-card" style="border-color: #27c93f;">
+                    <h3 style="color: #27c93f; margin: 0 0 15px 0;"><i class="ph ph-piggy-bank"></i> Economia Mês</h3>
+                    <div style="text-align: center; padding: 15px 0;">
+                        <div class="valor" style="font-size: 28px; color: #27c93f;" id="economia-mes">--</div>
+                        <p style="color: #aaa; margin: 5px 0 0 0;">vs. Custo na rede</p>
+                    </div>
+                </div>
+
+                <div class="dash-card" style="border-color: var(--verde-agua);">
+                    <h3 style="color: var(--verde-agua); margin: 0 0 15px 0;"><i class="ph ph-coins"></i> Créditos</h3>
+                    <div style="text-align: center; padding: 15px 0;">
+                        <div class="valor" style="font-size: 28px;" id="creditos-disponiveis">--</div>
+                        <p style="color: #aaa; margin: 5px 0 0 0;">kWh disponível</p>
+                    </div>
+                </div>
+
+                <div class="dash-card" style="border-color: #2A8C82;">
+                    <h3 style="color: #2A8C82; margin: 0 0 15px 0;"><i class="ph ph-leaf"></i> CO₂ Evitado</h3>
+                    <div style="text-align: center; padding: 15px 0;">
+                        <div class="valor" style="font-size: 28px;" id="co2-evitado">--</div>
+                        <p style="color: #aaa; margin: 5px 0 0 0;">kg este mês</p>
+                    </div>
+                </div>
+
+                <div class="dash-card" style="border-color: #F4A222;">
+                    <h3 style="color: #F4A222; margin: 0 0 15px 0;"><i class="ph ph-gauge"></i> Eficiência</h3>
+                    <div style="text-align: center; padding: 15px 0;">
+                        <div class="valor" style="font-size: 28px; color: #F4A222;" id="eficiencia-global">--</div>
+                        <p style="color: #aaa; margin: 5px 0 0 0;">Performance global</p>
+                    </div>
+                </div>
+
+                <!-- GRÁFICO -->
+                <div class="dash-card" style="grid-column: 1 / -1;">
+                    <h3 style="color: var(--verde-agua); margin: 0 0 15px 0;"><i class="ph ph-chart-line"></i> Geração vs Consumo (7 dias)</h3>
+                    <canvas id="chartGeracaoConsumo" style="max-height: 300px;"></canvas>
+                </div>
+
+                <!-- STATUS & ALERTAS -->
+                <div class="dash-card" style="grid-column: 1 / -1;">
+                    <h3 style="color: var(--verde-agua); margin: 0 0 15px 0;"><i class="ph ph-cpu"></i> Status do Sistema</h3>
+                    <div id="system-status-list" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 12px;">
+                        <!-- Preenchido por JavaScript -->
+                    </div>
+                </div>
+
+                <!-- PRÓXIMAS AÇÕES -->
+                <div class="dash-card">
+                    <h3 style="color: var(--verde-agua); margin: 0 0 15px 0;"><i class="ph ph-calendar-plus"></i> Manutenções Próximas</h3>
+                    <div id="manutencoes-list" style="font-size: 12px;">
+                        <p style="color: #aaa;">Nenhuma manutenção agendada</p>
+                    </div>
                 </div>
 
                 <div class="dash-card">
-                    <h3 style="color: var(--verde-agua); margin-top:0;"><i class="ph-fill ph-brain"></i> RTV Intelligence</h3>
-                    <p style="font-size: 13px; color: #aaa;">Analisamos seus padrões de consumo para sugerir melhorias.</p>
-                    
-                    <div class="ai-box">
-                        <i class="ph-fill ph-lightbulb" style="font-size: 24px; color: var(--amarelo-vivo);"></i>
-                        <div><strong>Recomendação:</strong> Desloque o uso de máquinas pesadas para entre 11h e 14h, pico de irradiação solar atual. Economia estimada: R$ 45,00.</div>
+                    <h3 style="color: var(--verde-agua); margin: 0 0 15px 0;"><i class="ph ph-ticket"></i> Chamados Abertos</h3>
+                    <div id="chamados-list" style="font-size: 12px;">
+                        <p style="color: #aaa;">Nenhum chamado aberto</p>
                     </div>
-                    <div class="ai-box" style="border-color: #ff5f56; background: rgba(255,95,86,0.1);">
-                        <i class="ph-fill ph-warning" style="font-size: 24px; color: #ff5f56;"></i>
-                        <div><strong>Anomalia Detectada:</strong> Consumo atípico noturno (Ar-condicionado Sala 2).</div>
-                    </div>
-
-                    <h4 style="margin-top: 20px;">Meta de Consumo Mensal</h4>
-                    <div style="display: flex; justify-content: space-between; font-size: 12px; color: #aaa;"><span>Atual: 340 kWh</span><span>Teto: 400 kWh</span></div>
-                    <div class="progress-container"><div class="progress-bar warning" style="width: 85%;"></div></div>
-                </div>
-            </div>
-
-            <div class="dash-grid-triple">
-                <div class="tabela-wrapper">
-                    <h4 style="margin-top:0; color: var(--verde-agua);">Sensores e Equipamentos</h4>
-                    <table>
-                        <tbody>
-                            <tr><td>Inversor RTV-X1</td><td><span class="badge online">Online</span></td></tr>
-                            <tr><td>Painel String A</td><td><span class="badge online">Online</span></td></tr>
-                            <tr><td>Medidor Geral</td><td><span class="badge offline">Falha (Error #203)</span></td></tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="tabela-wrapper">
-                    <h4 style="margin-top:0; color: var(--verde-agua);">Fila de Operações</h4>
-                    <table>
-                        <tbody>
-                            <tr><td>Limpeza de Placas</td><td><span class="badge aberto">Em 2 dias</span></td></tr>
-                            <tr><td>Ticket #10024</td><td><span class="badge aberto">Aguardando Peça</span></td></tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="tabela-wrapper">
-                    <h4 style="margin-top:0; color: var(--verde-agua);">Atividade Recente</h4>
-                    <table style="font-size: 12px;">
-                        <tbody>
-                            <tr><td style="color:#aaa;">10:45</td><td>Login realizado (IP: 192...)</td></tr>
-                            <tr><td style="color:#aaa;">09:30</td><td>Backup automático do banco</td></tr>
-                            <tr><td style="color:#aaa;">08:15</td><td style="color:#ff5f56;">Perda de ping (Medidor Geral)</td></tr>
-                        </tbody>
-                    </table>
                 </div>
             </div>
         </main>
+
+        <script>
+            // ===== INICIALIZAÇÃO DO DASHBOARD =====
+            document.addEventListener('DOMContentLoaded', () => {
+                try {
+                    atualizarSaudacao();
+                    atualizarDados();
+                    renderizarStatusSistema();
+                    renderizarManutencoes();
+                    renderizarChamados();
+                    inicializarGrafico();
+
+                    // Atualizar a cada 60 segundos
+                    setInterval(() => {
+                        atualizarDados();
+                    }, 60000);
+
+                    // Setup logout
+                    document.getElementById('btn-logout').addEventListener('click', (e) => {
+                        e.preventDefault();
+                        localStorage.removeItem('rtv_usuario_logado');
+                        window.location.href = 'login.html';
+                    });
+                } catch (err) {
+                    console.error('Erro ao carregar dashboard:', err);
+                    document.getElementById('status-sistema').textContent = 
+                        '❌ Erro ao carregar dados. Recarregue a página.';
+                }
+            });
+
+            function atualizarSaudacao() {
+                const usuario = obterUsuarioLogado();
+                if (!usuario) {
+                    window.location.href = 'login.html';
+                    return;
+                }
+                
+                const hora = new Date().getHours();
+                let saudacao = hora < 12 ? 'Bom dia' : hora < 18 ? 'Boa tarde' : 'Boa noite';
+                
+                document.getElementById('saudacao-dash').textContent = 
+                    `${saudacao}, ${usuario.nome}!`;
+            }
+
+            function atualizarDados() {
+                const sistema = obterSistemaCliente();
+                if (!sistema) {
+                    document.getElementById('status-sistema').textContent = 
+                        '❌ Erro: Sistema solar não encontrado.';
+                    return;
+                }
+
+                const met = sistema.metricas_dia;
+                const metAc = sistema.metricas_acumuladas;
+
+                // GERAÇÃO
+                document.getElementById('geracao-atual').textContent = `${met.geracaoAgora.toFixed(1)} kW`;
+                document.getElementById('geracao-hoje').textContent = `${met.geracaoHoje.toFixed(1)} kWh`;
+                document.getElementById('geracao-mes').textContent = `${metAc.geracaoMes.toFixed(0)} kWh`;
+                document.getElementById('geracao-media').textContent = `${met.geracaoMedia.toFixed(1)} kWh`;
+
+                // Status de geração
+                const statusGeracaoEl = document.getElementById('status-geracao-atual');
+                if (met.geracaoAgora > 3.0) {
+                    statusGeracaoEl.textContent = 'Pico';
+                    statusGeracaoEl.className = 'status positivo';
+                } else if (met.geracaoAgora > 1.0) {
+                    statusGeracaoEl.textContent = 'Normal';
+                    statusGeracaoEl.className = 'status positivo';
+                } else {
+                    statusGeracaoEl.textContent = 'Baixa/Noite';
+                    statusGeracaoEl.className = 'status alerta';
+                }
+
+                // CONSUMO
+                document.getElementById('consumo-atual').textContent = `${met.consumoAgora.toFixed(1)} kW`;
+                document.getElementById('consumo-hoje').textContent = `${met.consumoHoje.toFixed(1)} kWh`;
+                document.getElementById('consumo-mes').textContent = `${metAc.consumoMes.toFixed(0)} kWh`;
+
+                // Status de consumo
+                const metaConsumo = 400;
+                const percentualConsumo = (metAc.consumoMes / metaConsumo * 100).toFixed(0);
+                document.getElementById('consumo-percentual').textContent = `${percentualConsumo}%`;
+                
+                const statusConsumoEl = document.getElementById('status-consumo-mes');
+                if (percentualConsumo > 90) {
+                    statusConsumoEl.textContent = 'Acima da meta';
+                    statusConsumoEl.className = 'status negativo';
+                } else if (percentualConsumo > 75) {
+                    statusConsumoEl.textContent = 'Próximo da meta';
+                    statusConsumoEl.className = 'status alerta';
+                } else {
+                    statusConsumoEl.textContent = 'Dentro da meta';
+                    statusConsumoEl.className = 'status positivo';
+                }
+
+                // ECONOMIA & FINANCEIRO
+                document.getElementById('economia-mes').textContent = `R$ ${met.economiaHoje.toFixed(2)}`;
+                document.getElementById('creditos-disponiveis').textContent = `${metAc.creditosTotais.toFixed(1)} kWh`;
+                document.getElementById('co2-evitado').textContent = `${metAc.co2EviradoMes.toFixed(0)} kg`;
+                document.getElementById('eficiencia-global').textContent = `${(sistema.performance.eficienciaGlobal || 96.8).toFixed(1)}%`;
+
+                // STATUS DO SISTEMA
+                document.getElementById('status-sistema').textContent = 
+                    '✅ Sistema Operacional | Atualizado agora';
+            }
+
+            function renderizarStatusSistema() {
+                const sistema = obterSistemaCliente();
+                if (!sistema) return;
+
+                const statusList = document.getElementById('system-status-list');
+                const equip = sistema.equipamentos;
+
+                const statusHTML = `
+                    <div style="padding: 10px; background: #1a1a1a; border-radius: 5px; border-left: 3px solid ${equip.inversor.status === 'online' ? '#27c93f' : '#ff5f56'};">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 3px;">
+                            <strong>Inversor</strong>
+                            <span style="background: ${equip.inversor.status === 'online' ? '#27c93f' : '#ff5f56'}; color: white; padding: 2px 8px; border-radius: 3px; font-size: 11px;">
+                                ${equip.inversor.status === 'online' ? '✅ Online' : '❌ Offline'}
+                            </span>
+                        </div>
+                        <p style="margin: 0; font-size: 11px; color: #aaa;">${equip.inversor.modelo}</p>
+                    </div>
+
+                    <div style="padding: 10px; background: #1a1a1a; border-radius: 5px; border-left: 3px solid ${equip.medidor.status === 'online' ? '#27c93f' : '#ff5f56'};">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 3px;">
+                            <strong>Medidor</strong>
+                            <span style="background: ${equip.medidor.status === 'online' ? '#27c93f' : '#ff5f56'}; color: white; padding: 2px 8px; border-radius: 3px; font-size: 11px;">
+                                ${equip.medidor.status === 'online' ? '✅ Online' : '❌ Offline'}
+                            </span>
+                        </div>
+                        <p style="margin: 0; font-size: 11px; color: #aaa;">${equip.medidor.modelo}</p>
+                    </div>
+
+                    <div style="padding: 10px; background: #1a1a1a; border-radius: 5px; border-left: 3px solid #2A8C82;">
+                        <div style="margin-bottom: 3px;">
+                            <strong>Painéis Solares</strong>
+                        </div>
+                        <p style="margin: 0; font-size: 11px; color: #aaa;">${equip.paineis.quantidade} x ${equip.paineis.potencia}W</p>
+                    </div>
+
+                    <div style="padding: 10px; background: #1a1a1a; border-radius: 5px; border-left: 3px solid #F4A222;">
+                        <div style="margin-bottom: 3px;">
+                            <strong>Status Geral</strong>
+                        </div>
+                        <p style="margin: 0; font-size: 11px; color: #aaa;">Scoring <strong style="color: #F4A222;">${sistema.performance.scoring}</strong></p>
+                    </div>
+                `;
+
+                statusList.innerHTML = statusHTML;
+            }
+
+            function renderizarManutencoes() {
+                const sistema = obterSistemaCliente();
+                if (!sistema || !sistema.performance.alertas || sistema.performance.alertas.length === 0) {
+                    return;
+                }
+
+                const manutList = document.getElementById('manutencoes-list');
+                const alertasHTML = sistema.performance.alertas
+                    .map(alerta => `<div style="padding: 8px; background: rgba(255,95,86,0.1); border-radius: 4px; margin-bottom: 8px; border-left: 3px solid #ff5f56;"><strong style="color: #ff5f56;">⚠️</strong> ${alerta}</div>`)
+                    .join('');
+                
+                if (alertasHTML) {
+                    manutList.innerHTML = alertasHTML;
+                }
+            }
+
+            function renderizarChamados() {
+                const chamados = JSON.parse(localStorage.getItem('rtv_chamados')) || [];
+                const usuarioLogado = obterUsuarioLogado();
+                const chamadosUsuario = chamados.filter(c => c.usuarioId === usuarioLogado.id && c.status !== 'fechado');
+
+                const chamadosList = document.getElementById('chamados-list');
+                
+                if (chamadosUsuario.length === 0) {
+                    chamadosList.innerHTML = '<p style="color: #aaa;">Nenhum chamado aberto</p>';
+                    return;
+                }
+
+                const chamadosHTML = chamadosUsuario
+                    .slice(0, 3)
+                    .map(c => `<div style="padding: 8px; background: #1a1a1a; border-radius: 4px; margin-bottom: 8px; border-left: 3px solid var(--verde-agua);">
+                        <div style="display: flex; justify-content: space-between; font-weight: bold; margin-bottom: 2px;">
+                            <span>#${c.id}</span>
+                            <span style="font-size: 11px; color: #aaa;">${c.categoria}</span>
+                        </div>
+                        <p style="margin: 0; font-size: 11px; color: #aaa;">${c.descricao}</p>
+                    </div>`)
+                    .join('');
+
+                chamadosList.innerHTML = chamadosHTML + 
+                    `<a href="suporte.html" style="display: block; margin-top: 10px; color: var(--verde-agua); text-decoration: none; font-size: 11px;">Ver todos →</a>`;
+            }
+
+            function inicializarGrafico() {
+                const ctx = document.getElementById('chartGeracaoConsumo');
+                if (!ctx) return;
+
+                const sistema = obterSistemaCliente();
+                if (!sistema) return;
+
+                // Dados dos últimos 7 dias (simulado com variação realista)
+                const dias = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
+                const geracao = [32, 35, 38, 36, 39, 42, 38.2];
+                const consumo = [12, 13, 14, 15, 14, 13, 14.5];
+
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: dias,
+                        datasets: [
+                            {
+                                label: 'Geração (kWh)',
+                                data: geracao,
+                                borderColor: 'var(--amarelo-vivo)',
+                                backgroundColor: 'rgba(244, 162, 34, 0.1)',
+                                borderWidth: 2,
+                                tension: 0.4,
+                                fill: true,
+                                pointBackgroundColor: 'var(--amarelo-vivo)',
+                                pointBorderColor: '#000',
+                                pointRadius: 5,
+                                pointHoverRadius: 7
+                            },
+                            {
+                                label: 'Consumo (kWh)',
+                                data: consumo,
+                                borderColor: '#ff5f56',
+                                backgroundColor: 'rgba(255, 95, 86, 0.1)',
+                                borderWidth: 2,
+                                tension: 0.4,
+                                fill: true,
+                                pointBackgroundColor: '#ff5f56',
+                                pointBorderColor: '#000',
+                                pointRadius: 4,
+                                pointHoverRadius: 6
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        plugins: {
+                            legend: {
+                                labels: { color: '#aaa', font: { size: 12 } }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: { color: '#666' },
+                                grid: { color: '#222' }
+                            },
+                            x: {
+                                ticks: { color: '#666' },
+                                grid: { color: '#222' }
+                            }
+                        }
+                    }
+                });
+            }
+        </script>
     </div>
 </body>
 </html>

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Limpar e Configurar - RTV</title>
+    <style>
+        body {
+            background: #1a1a1a;
+            color: #aaa;
+            font-family: Arial;
+            padding: 40px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        button {
+            background: #F4A222;
+            color: #000;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 10px 0;
+            width: 100%;
+            font-size: 16px;
+        }
+        button:hover {
+            opacity: 0.9;
+        }
+        .info {
+            background: #222;
+            padding: 20px;
+            border-radius: 4px;
+            margin: 20px 0;
+            border-left: 4px solid #F4A222;
+        }
+        .success {
+            background: #27c93f;
+            color: #000;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Limpar e Configurar RTV</h1>
+        
+        <div class="info">
+            <strong>⚠️ IMPORTANTE:</strong> Clique em "Limpar localStorage Completamente" primeiro
+        </div>
+        
+        <button onclick="limparTudo()">1️⃣ Limpar localStorage Completamente</button>
+        <button onclick="configurarDados()">2️⃣ Configurar Dados de Exemplo</button>
+        <button onclick="fazerLoginAdmin()">3️⃣ Fazer Login como Admin</button>
+        <button onclick="abrirAdmin()">4️⃣ Abrir Gestão de Clientes</button>
+        
+        <div id="resultado"></div>
+    </div>
+
+    <script src="script.js" defer></script>
+    <script>
+        function limparTudo() {
+            if (confirm("ATENÇÃO! Isso vai LIMPAR TODOS os dados. Tem certeza?")) {
+                localStorage.clear();
+                sessionStorage.clear();
+                document.getElementById("resultado").innerHTML = 
+                    '<div class="success">✅ localStorage limpo completamente!</div>';
+            }
+        }
+        
+        function configurarDados() {
+            if (typeof seedUsuariosPadrao === "function") {
+                seedUsuariosPadrao();
+                document.getElementById("resultado").innerHTML = 
+                    '<div class="success">✅ Dados de exemplo criados!</div>';
+            } else {
+                document.getElementById("resultado").innerHTML = 
+                    '<div style="background: #ff5f56; color: #000; padding: 15px; border-radius: 4px;">❌ Erro: seedUsuariosPadrao não carregada</div>';
+            }
+        }
+        
+        function fazerLoginAdmin() {
+            localStorage.setItem("rtv_usuario_logado", JSON.stringify({
+                nome: "Administrador RTV",
+                email: "admin@rtvsolar.com",
+                senha: "admin123",
+                role: "admin"
+            }));
+            document.getElementById("resultado").innerHTML = 
+                '<div class="success">✅ Login como ADMIN realizado!</div>';
+        }
+        
+        function abrirAdmin() {
+            window.location.href = "admin-clientes.html";
+        }
+    </script>
+</body>
+</html>
