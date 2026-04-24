@@ -51,22 +51,22 @@
                 <h3 style="color: var(--verde-agua); margin: 0 0 20px 0;"><i class="ph ph-toggle-right"></i> Preferências Gerais</h3>
                 <div class="input-group" style="margin-bottom: 20px;">
                     <label>Tema</label>
-                    <select style="width: 100%; max-width: 300px;">
-                        <option>Escuro (Padrão)</option>
-                        <option>Claro</option>
-                        <option>Automático</option>
+                    <select id="sel-tema" style="width: 100%; max-width: 300px;">
+                        <option value="escuro">Escuro (Padrão)</option>
+                        <option value="claro">Claro</option>
+                        <option value="auto">Automático</option>
                     </select>
                 </div>
                 <div class="input-group" style="margin-bottom: 20px;">
                     <label>Unidade de Medida</label>
-                    <select style="width: 100%; max-width: 300px;">
-                        <option>kW (Kilowatt) - Padrão</option>
-                        <option>W (Watt)</option>
+                    <select id="sel-unidade" style="width: 100%; max-width: 300px;">
+                        <option value="kw">kW (Kilowatt) - Padrão</option>
+                        <option value="w">W (Watt)</option>
                     </select>
                 </div>
                 <div class="input-group">
                     <label>
-                        <input type="checkbox" checked> Notificações por Email
+                        <input type="checkbox" id="notif-email" checked> Notificações por Email
                     </label>
                 </div>
             </div>
@@ -106,8 +106,8 @@
             <div class="dash-card" style="margin-top: 20px; border-color: #ff5f56;">
                 <h3 style="color: #ff5f56; margin: 0 0 20px 0;"><i class="ph ph-lock"></i> Privacidade e Segurança</h3>
                 <div style="display: flex; gap: 15px;">
-                    <button class="btn" style="padding: 12px 24px;"><i class="ph ph-key"></i> Alterar Senha</button>
-                    <button class="btn" style="padding: 12px 24px; background-color: transparent; border: 2px solid #ff5f56; color: #ff5f56;"><i class="ph ph-sign-out"></i> Encerrar Todas as Sessões</button>
+                    <button id="btn-alterar-senha" class="btn" style="padding: 12px 24px;"><i class="ph ph-key"></i> Alterar Senha</button>
+                    <button id="btn-encerrar-sessoes" class="btn" style="padding: 12px 24px; background-color: transparent; border: 2px solid #ff5f56; color: #ff5f56;"><i class="ph ph-sign-out"></i> Encerrar Todas as Sessões</button>
                 </div>
             </div>
 
@@ -116,17 +116,143 @@
                 <h3 style="color: var(--verde-agua); margin: 0 0 20px 0;"><i class="ph ph-file"></i> Dados e Privacidade</h3>
                 <p style="color: #aaa; margin-bottom: 20px;">Gerenciar suas informações pessoais e dados do sistema.</p>
                 <div style="display: flex; gap: 15px;">
-                    <button class="btn" style="padding: 12px 24px;"><i class="ph ph-download"></i> Baixar Meus Dados</button>
-                    <button class="btn" style="padding: 12px 24px; background-color: transparent; border: 2px solid var(--verde-agua); color: var(--verde-agua);"><i class="ph ph-trash"></i> Deletar Conta</button>
+                    <button id="btn-baixar-dados" class="btn" style="padding: 12px 24px;"><i class="ph ph-download"></i> Baixar Meus Dados</button>
+                    <button id="btn-deletar-conta" class="btn" style="padding: 12px 24px; background-color: transparent; border: 2px solid var(--verde-agua); color: var(--verde-agua);"><i class="ph ph-trash"></i> Deletar Conta</button>
                 </div>
             </div>
 
             <!-- BOTÕES DE AÇÃO -->
             <div style="display: flex; gap: 15px; margin-top: 30px;">
-                <button class="btn" style="padding: 12px 32px;"><i class="ph ph-check-circle"></i> Salvar Alterações</button>
-                <button class="btn" style="padding: 12px 32px; background-color: transparent; border: 2px solid #504a4a; color: #fff;"><i class="ph ph-arrow-left"></i> Cancelar</button>
+                <button id="btn-salvar-config" class="btn" style="padding: 12px 32px;"><i class="ph ph-check-circle"></i> Salvar Alterações</button>
+                <button id="btn-cancelar-config" class="btn" style="padding: 12px 32px; background-color: transparent; border: 2px solid #504a4a; color: #fff;"><i class="ph ph-arrow-left"></i> Cancelar</button>
             </div>
         </main>
     </div>
+
+<!-- Modal: Alterar Senha -->
+<div id="modal-senha-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:9999;">
+    <div class="dash-card" style="max-width:480px;width:calc(100% - 40px);margin:15vh auto;background:#242424;">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+            <h3 style="color:var(--verde-agua);margin:0;"><i class="ph ph-key"></i> Alterar Senha</h3>
+            <a href="#" id="modal-senha-fechar" style="color:#aaa;text-decoration:none;font-size:24px;">×</a>
+        </div>
+        <div style="height:1px;background:rgba(255,255,255,0.06);margin:15px 0 20px;"></div>
+        <form id="form-alterar-senha" class="form-interno">
+            <div class="input-group"><label>Senha Atual</label><input type="password" id="senha-atual" required></div>
+            <div class="input-group" style="margin-top:10px;"><label>Nova Senha</label><input type="password" id="senha-nova" required minlength="6"></div>
+            <div class="input-group" style="margin-top:10px;"><label>Confirmar Nova Senha</label><input type="password" id="senha-confirmar" required></div>
+            <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:18px;">
+                <button type="button" id="btn-senha-cancelar" class="btn-secundario">Cancelar</button>
+                <button type="submit" class="btn">Salvar Nova Senha</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const usuario = typeof obterUsuarioLogado==='function' ? obterUsuarioLogado() : null;
+    const chave = usuario ? 'rtv_prefs_'+usuario.email : 'rtv_prefs_guest';
+
+    // Carregar preferências salvas
+    const prefs = JSON.parse(localStorage.getItem(chave)) || {};
+    if (prefs.tema) document.getElementById('sel-tema').value = prefs.tema;
+    if (prefs.unidade) document.getElementById('sel-unidade').value = prefs.unidade;
+    if (prefs.notifEmail !== undefined) document.getElementById('notif-email').checked = prefs.notifEmail;
+    if (prefs.notifGeracao !== undefined) document.getElementById('notif-geração').checked = prefs.notifGeracao;
+    if (prefs.notifConsumo !== undefined) document.getElementById('notif-consumo').checked = prefs.notifConsumo;
+    if (prefs.notifManut !== undefined) document.getElementById('notif-manutencao').checked = prefs.notifManut;
+    if (prefs.notifNews !== undefined) document.getElementById('notif-newsletter').checked = prefs.notifNews;
+
+    // Salvar Alterações
+    document.getElementById('btn-salvar-config').addEventListener('click', () => {
+        const novasPrefs = {
+            tema:        document.getElementById('sel-tema').value,
+            unidade:     document.getElementById('sel-unidade').value,
+            notifEmail:  document.getElementById('notif-email').checked,
+            notifGeracao:document.getElementById('notif-geração').checked,
+            notifConsumo:document.getElementById('notif-consumo').checked,
+            notifManut:  document.getElementById('notif-manutencao').checked,
+            notifNews:   document.getElementById('notif-newsletter').checked
+        };
+        localStorage.setItem(chave, JSON.stringify(novasPrefs));
+        if (typeof showToast==='function') showToast('Preferências salvas com sucesso!','success');
+    });
+
+    // Cancelar
+    document.getElementById('btn-cancelar-config').addEventListener('click', () => {
+        window.location.href = 'dashboard.html';
+    });
+
+    // Encerrar Sessões
+    document.getElementById('btn-encerrar-sessoes').addEventListener('click', async () => {
+        const confirmado = await CustomDialog.confirm('Encerrar Sessões', 'Isso fará logout da sua conta. Deseja continuar?', 'warning', 'Sair');
+        if (confirmado) {
+            localStorage.removeItem('rtv_usuario_logado');
+            window.location.href = 'login.html';
+        }
+    });
+
+    // Baixar Dados
+    document.getElementById('btn-baixar-dados').addEventListener('click', () => {
+        const dados = {
+            usuario: usuario,
+            preferencias: prefs,
+            chamados: (JSON.parse(localStorage.getItem('rtv_chamados'))||[]).filter(c => c.usuarioEmail===usuario?.email),
+            exportadoEm: new Date().toLocaleString('pt-BR')
+        };
+        const blob = new Blob([JSON.stringify(dados, null, 2)], {type:'application/json'});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a'); a.href=url; a.download='meus-dados-rtv.json'; a.click();
+        URL.revokeObjectURL(url);
+        if (typeof showToast==='function') showToast('Download iniciado!','success');
+    });
+
+    // Deletar Conta
+    document.getElementById('btn-deletar-conta').addEventListener('click', async () => {
+        const conf1 = await CustomDialog.confirm('Deletar Conta', 'ATENÇÃO: Esta ação é irreversível. Sua conta será removida. Confirmar?', 'error', 'Prosseguir', true);
+        if (!conf1) return;
+        
+        const conf2 = await CustomDialog.prompt('Tem certeza absoluta?', 'Digite OK para confirmar a exclusão da sua conta.');
+        if (conf2 !== 'OK') return;
+
+        const usuarios = JSON.parse(localStorage.getItem('rtv_usuarios'))||[];
+        const novosUsuarios = usuarios.filter(u => u.email !== usuario?.email);
+        localStorage.setItem('rtv_usuarios', JSON.stringify(novosUsuarios));
+        localStorage.removeItem('rtv_usuario_logado');
+        localStorage.removeItem(chave);
+        window.location.href = 'index.html';
+    });
+
+    // Modal alterar senha
+    document.getElementById('btn-alterar-senha').addEventListener('click', () => {
+        document.getElementById('modal-senha-overlay').style.display = 'block';
+    });
+    ['modal-senha-fechar','btn-senha-cancelar'].forEach(id => {
+        document.getElementById(id).addEventListener('click', (e) => {
+            e.preventDefault();
+            document.getElementById('modal-senha-overlay').style.display = 'none';
+            document.getElementById('form-alterar-senha').reset();
+        });
+    });
+    document.getElementById('form-alterar-senha').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const atual = document.getElementById('senha-atual').value;
+        const nova  = document.getElementById('senha-nova').value;
+        const conf  = document.getElementById('senha-confirmar').value;
+        if (nova !== conf) { if (typeof showToast==='function') showToast('As senhas não coincidem.','error'); return; }
+        const usuarios = JSON.parse(localStorage.getItem('rtv_usuarios'))||[];
+        const idx = usuarios.findIndex(u => u.email === usuario?.email);
+        if (idx === -1 || usuarios[idx].senha !== atual) {
+            if (typeof showToast==='function') showToast('Senha atual incorreta.','error'); return;
+        }
+        usuarios[idx].senha = nova;
+        localStorage.setItem('rtv_usuarios', JSON.stringify(usuarios));
+        document.getElementById('modal-senha-overlay').style.display = 'none';
+        document.getElementById('form-alterar-senha').reset();
+        if (typeof showToast==='function') showToast('Senha alterada com sucesso!','success');
+    });
+});
+</script>
 </body>
 </html>

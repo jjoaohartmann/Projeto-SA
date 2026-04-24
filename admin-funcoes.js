@@ -66,34 +66,43 @@ function atualizarMetricasAdmin() {
 /**
  * Aprovar solicitação
  */
-function aprovarSolicitacao(solicitacaoId) {
-    if (!confirm("Tem certeza que deseja aprovar esta solicitação?")) return;
+async function aprovarSolicitacao(solicitacaoId) {
+    const confirmado = await CustomDialog.confirm('Aprovar', 'Deseja aprovar esta solicitação?', 'success', 'Aprovar');
+    if (!confirmado) return;
     
-    WorkflowAPI.atualizarStatusSolicitacao(solicitacaoId, "aprovado", "Aprovado pelo administrador");
-    
-    if (typeof showToast === "function") {
-        showToast("Solicitação aprovada com sucesso!", "success");
-    }
-    
-    renderizarSolicitacoesPendentes();
-    atualizarMetricasAdmin();
+    showLoader();
+    setTimeout(() => {
+        WorkflowAPI.atualizarStatusSolicitacao(solicitacaoId, "aprovado", "Aprovado pelo administrador");
+        
+        if (typeof showToast === "function") {
+            showToast("Solicitação aprovada com sucesso!", "success");
+        }
+        
+        renderizarSolicitacoesPendentes();
+        atualizarMetricasAdmin();
+        hideLoader();
+    }, 600);
 }
 
 /**
  * Rejeitar solicitação
  */
-function rejeitarSolicitacao(solicitacaoId) {
-    const observacoes = prompt("Motivo da rejeição (opcional):");
-    if (observacoes === null) return; // Cancelado
+async function rejeitarSolicitacao(solicitacaoId) {
+    const motivo = await CustomDialog.prompt("Rejeitar Solicitação", "Motivo da rejeição (opcional):", "Digite o motivo...");
+    if (motivo === null) return;
     
-    WorkflowAPI.atualizarStatusSolicitacao(solicitacaoId, "rejeitado", observacoes || "Rejeitado pelo administrador");
-    
-    if (typeof showToast === "function") {
-        showToast("Solicitação rejeitada.", "success");
-    }
-    
-    renderizarSolicitacoesPendentes();
-    atualizarMetricasAdmin();
+    showLoader();
+    setTimeout(() => {
+        WorkflowAPI.atualizarStatusSolicitacao(solicitacaoId, "rejeitado", motivo || "Sem motivo especificado");
+        
+        if (typeof showToast === "function") {
+            showToast("Solicitação rejeitada.", "success");
+        }
+        
+        renderizarSolicitacoesPendentes();
+        atualizarMetricasAdmin();
+        hideLoader();
+    }, 600);
 }
 
 /**

@@ -79,9 +79,32 @@
             <!-- SEÇÃO: ABRIR NOVO CHAMADO -->
             <div class="dash-card" style="grid-column: 1 / -1; margin-top: 30px; border-color: var(--verde-agua);">
                 <h3 style="color: var(--verde-agua); margin: 0 0 20px 0;"><i class="ph ph-plus-circle"></i> Abrir Novo Chamado de Manutenção</h3>
-                <div style="display: flex; gap: 15px; margin-bottom: 20px;">
-                    <button class="btn" style="padding: 12px 24px;"><i class="ph ph-plus"></i> Novo Chamado</button>
-                    <button class="btn" style="padding: 12px 24px; background-color: transparent; border: 2px solid var(--verde-agua); color: var(--verde-agua);"><i class="ph ph-phone"></i> Agendar Visita</button>
+                <div id="form-chamado-manut-area" style="display:none; background:#1a1a1a; padding:20px; border-radius:8px; margin-bottom:20px; border:1px solid var(--verde-agua);">
+                    <h4 style="color:var(--verde-agua); margin:0 0 15px 0;">Novo Chamado de Manução</h4>
+                    <form id="form-novo-chamado-manut">
+                        <div class="input-group">
+                            <label>Tipo</label>
+                            <select id="cat-chamado-manut">
+                                <option>Limpeza de Painéis</option>
+                                <option>Inspeção Técnica</option>
+                                <option>Reparo de Equipamento</option>
+                                <option>Manutenção Preventiva</option>
+                                <option>Outro</option>
+                            </select>
+                        </div>
+                        <div class="input-group" style="margin-top:10px;">
+                            <label>Descrição</label>
+                            <textarea id="desc-chamado-manut" required placeholder="Descreva o problema..." style="min-height:80px;"></textarea>
+                        </div>
+                        <div style="display:flex; gap:10px; margin-top:15px;">
+                            <button type="submit" class="btn" style="padding:10px 20px;">Enviar</button>
+                            <button type="button" id="btn-cancelar-chamado-manut" class="btn-secundario" style="padding:10px 20px;">Cancelar</button>
+                        </div>
+                    </form>
+                </div>
+                <div style="display: flex; gap: 15px; margin-bottom: 20px;" id="div-btns-manutencao">
+                    <button id="btn-novo-chamado-manut" class="btn" style="padding: 12px 24px;"><i class="ph ph-plus"></i> Novo Chamado</button>
+                    <button id="btn-agendar-manutencao" class="btn" style="padding: 12px 24px; background-color: transparent; border: 2px solid var(--verde-agua); color: var(--verde-agua);"><i class="ph ph-phone"></i> Agendar Visita</button>
                 </div>
             </div>
 
@@ -98,29 +121,7 @@
                             <th>Status</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr>
-                            <td>#001</td>
-                            <td>Limpeza</td>
-                            <td>Limpeza dos painéis solares</td>
-                            <td>19/04/2026</td>
-                            <td><span class="status alerta">Pendente</span></td>
-                        </tr>
-                        <tr>
-                            <td>#002</td>
-                            <td>Inspeção</td>
-                            <td>Inspeção técnica do inversor</td>
-                            <td>18/04/2026</td>
-                            <td><span class="status alerta">Pendente</span></td>
-                        </tr>
-                        <tr>
-                            <td>#003</td>
-                            <td>Reparo</td>
-                            <td>Substituição de cabo danificado</td>
-                            <td>17/04/2026</td>
-                            <td><span class="status alerta">Pendente</span></td>
-                        </tr>
-                    </tbody>
+                    <tbody id="tbody-chamados-pendentes"><tr><td colspan="5" style="text-align:center;color:#888;padding:20px;">Carregando...</td></tr></tbody>
                 </table>
             </div>
 
@@ -137,32 +138,112 @@
                             <th>Status</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr>
-                            <td>#098</td>
-                            <td>Limpeza</td>
-                            <td>Limpeza de rotina dos painéis</td>
-                            <td>15/04/2026</td>
-                            <td><span class="status positivo">Concluído</span></td>
-                        </tr>
-                        <tr>
-                            <td>#097</td>
-                            <td>Inspeção</td>
-                            <td>Verificação de segurança</td>
-                            <td>12/04/2026</td>
-                            <td><span class="status positivo">Concluído</span></td>
-                        </tr>
-                        <tr>
-                            <td>#096</td>
-                            <td>Manutenção</td>
-                            <td>Manutenção preventiva</td>
-                            <td>10/04/2026</td>
-                            <td><span class="status positivo">Concluído</span></td>
-                        </tr>
-                    </tbody>
+                    <tbody id="tbody-chamados-historico"><tr><td colspan="5" style="text-align:center;color:#888;padding:20px;">Carregando...</td></tr></tbody>
                 </table>
             </div>
         </main>
     </div>
+
+<!-- Modal: Agendar Visita Técnica -->
+<div id="modal-manutencao-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:9999;">
+    <div class="dash-card" style="max-width:560px;width:calc(100% - 40px);margin:10vh auto;background:#242424;">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+            <h3 style="color:var(--verde-agua);margin:0;"><i class="ph ph-calendar"></i> Agendar Visita Técnica</h3>
+            <a href="#" id="modal-manutencao-fechar" style="color:#aaa;text-decoration:none;font-size:24px;">×</a>
+        </div>
+        <div style="height:1px;background:rgba(255,255,255,0.06);margin:15px 0 20px;"></div>
+        <form id="form-manutencao-visita" class="form-interno">
+            <div class="input-group">
+                <label>Data Preferida</label>
+                <input type="date" id="manut-data" required style="width:100%;">
+            </div>
+            <div class="input-group" style="margin-top:10px;">
+                <label>Período</label>
+                <select id="manut-periodo" style="width:100%;">
+                    <option value="manha">Manhã (8h–12h)</option>
+                    <option value="tarde">Tarde (13h–18h)</option>
+                </select>
+            </div>
+            <div class="input-group" style="margin-top:10px;">
+                <label>Observações</label>
+                <textarea id="manut-obs" placeholder="Detalhes adicionais (opcional)..." style="min-height:70px;"></textarea>
+            </div>
+            <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:18px;">
+                <button type="button" id="btn-manutencao-cancelar" class="btn-secundario">Cancelar</button>
+                <button type="submit" class="btn">Confirmar Agendamento</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    renderizarManutencao();
+
+    const btnNovo = document.getElementById('btn-novo-chamado-manut');
+    const formArea = document.getElementById('form-chamado-manut-area');
+    const divBtns = document.getElementById('div-btns-manutencao');
+    if (btnNovo) btnNovo.addEventListener('click', () => { formArea.style.display='block'; divBtns.style.display='none'; });
+    const btnCanc = document.getElementById('btn-cancelar-chamado-manut');
+    if (btnCanc) btnCanc.addEventListener('click', () => { formArea.style.display='none'; divBtns.style.display='flex'; });
+
+    const formManut = document.getElementById('form-novo-chamado-manut');
+    if (formManut) {
+        formManut.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const usuario = typeof obterUsuarioLogado==='function' ? obterUsuarioLogado() : null;
+            const chamado = {
+                id: '#' + Math.floor(Math.random()*90000+10000),
+                categoria: document.getElementById('cat-chamado-manut').value,
+                descricao: document.getElementById('desc-chamado-manut').value,
+                data: new Date().toLocaleDateString('pt-BR'),
+                status: 'aberto',
+                usuarioId: usuario ? (usuario.id||usuario.email) : null,
+                usuarioEmail: usuario ? usuario.email : null,
+                usuarioNome: usuario ? usuario.nome : ''
+            };
+            let chamados = JSON.parse(localStorage.getItem('rtv_chamados'))||[];
+            chamados.unshift(chamado);
+            localStorage.setItem('rtv_chamados', JSON.stringify(chamados));
+            if (typeof showToast==='function') showToast('Chamado aberto com sucesso!','success');
+            formManut.reset();
+            formArea.style.display='none'; divBtns.style.display='flex';
+            if (typeof registrarAuditoria==='function') registrarAuditoria('Chamado de manutenção: '+chamado.id);
+            renderizarManutencao();
+        });
+    }
+});
+
+function renderizarManutencao() {
+    const usuario = typeof obterUsuarioLogado==='function' ? obterUsuarioLogado() : null;
+    let chamados = JSON.parse(localStorage.getItem('rtv_chamados'))||[];
+    let pedidos  = JSON.parse(localStorage.getItem('rtv_manutencao_pedidos'))||[];
+    if (usuario && usuario.role !== 'admin') {
+        chamados = chamados.filter(c => c.usuarioId===usuario.id || c.usuarioEmail===usuario.email || (!c.usuarioId&&!c.usuarioEmail));
+        pedidos  = pedidos.filter(p => p.usuarioEmail===usuario.email || !p.usuarioEmail);
+    }
+    const pendentes  = chamados.filter(c => c.status!=='resolvido'&&c.status!=='fechado');
+    const concluidos = chamados.filter(c => c.status==='resolvido'||c.status==='fechado');
+    const elP=document.getElementById('chamados-pendentes'); if(elP) elP.textContent=pendentes.length;
+    const elA=document.getElementById('chamados-andamento'); if(elA) elA.textContent=pedidos.length;
+    const elC=document.getElementById('chamados-concluidos'); if(elC) elC.textContent=concluidos.length;
+
+    const tbP=document.getElementById('tbody-chamados-pendentes');
+    if(tbP) tbP.innerHTML = pendentes.length===0
+        ? '<tr><td colspan="5" style="text-align:center;color:#888;padding:20px;">Nenhum chamado pendente</td></tr>'
+        : pendentes.map(c=>`<tr><td>${c.id}</td><td>${c.categoria||'Manutenção'}</td><td style="color:#aaa;font-size:12px;">${c.descricao||'—'}</td><td>${c.data}</td><td><span class="status alerta">Pendente</span></td></tr>`).join('');
+
+    const tbH=document.getElementById('tbody-chamados-historico');
+    if(tbH) {
+        const hist=[
+            ...concluidos.map(c=>({id:c.id,tipo:c.categoria||'Chamado',desc:c.descricao||'—',data:c.data,label:'Concluído'})),
+            ...pedidos.map(p=>({id:'AGD-'+(p.dataPreferida||'').replace(/\//g,''),tipo:'Visita Técnica',desc:'Data: '+(p.dataPreferida||'—')+' ('+(p.periodo==='manha'?'Manhã':'Tarde')+')',data:p.dataPedido||'—',label:'Agendado'}))
+        ];
+        tbH.innerHTML = hist.length===0
+            ? '<tr><td colspan="5" style="text-align:center;color:#888;padding:20px;">Nenhum histórico registrado</td></tr>'
+            : hist.map(i=>`<tr><td>${i.id}</td><td>${i.tipo}</td><td style="color:#aaa;font-size:12px;">${i.desc}</td><td>${i.data}</td><td><span class="status positivo">${i.label}</span></td></tr>`).join('');
+    }
+}
+</script>
 </body>
 </html>

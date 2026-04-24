@@ -17,6 +17,7 @@ const ROLES_CONFIG = {
             "deletar_cliente",
             "aprovar_cliente",
             "rejeitar_cliente",
+            "gerenciar_clientes",
             
             // Chamados
             "ver_todos_chamados",
@@ -32,7 +33,10 @@ const ROLES_CONFIG = {
             "gerenciar_usuarios",
             "ver_auditoria",
             "gerenciar_equipamentos",
-            "ver_relatorios_globais"
+            "ver_relatorios_globais",
+            "ver_relatorios",
+            "gerenciar_config",
+            "gerenciar_servicos"
         ]
     },
     "cliente": {

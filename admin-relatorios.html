@@ -14,17 +14,13 @@
     <header class="nav-bar">
         <a href="dashboard.html">
             <img src="imagens/logo-site.png" alt="logo" class="logo">
-            <h3>RTV ENERGIA SOLAR - ADMIN</h3>
+            <h3>RTV ENERGIA SOLAR</h3>
         </a>
         <div class="topbar-actions">
-            <div class="search-bar">
-                <i class="ph ph-magnifying-glass"></i>
-                <input type="text" placeholder="Buscar relatórios...">
-            </div>
             <div class="notification-wrapper">
                 <a href="#" id="btn-notificacoes" style="color: var(--amarelo-vivo); position: relative;">
                     <i class="ph ph-bell" style="font-size: 24px;"></i>
-                    <span class="notif-badge">0</span>
+                    <span class="notif-badge" id="notif-count" style="display: none;">0</span>
                 </a>
                 <div class="notif-dropdown" id="notif-dropdown"></div>
             </div>
@@ -50,10 +46,18 @@
                     <p style="color: #aaa;">Análise de desempenho, financeiro e operacional da plataforma</p>
                 </div>
                 <div>
-                    <input type="month" style="background: #222; color: #aaa; padding: 8px 12px; border: 1px solid #444; border-radius: 4px; margin-right: 10px;">
-                    <a href="#" class="btn" style="background-color: var(--amarelo-vivo); padding: 8px 15px; text-decoration: none;">
+                    <input type="month" id="filtro-mes" style="background: #222; color: #aaa; padding: 8px 12px; border: 1px solid #444; border-radius: 4px; margin-right: 10px;">
+                    <a href="#" id="btn-exportar-pdf" class="btn" style="background-color: var(--amarelo-vivo); padding: 8px 15px; text-decoration: none;">
                         <i class="ph ph-download"></i> Exportar PDF
                     </a>
+                </div>
+            </div>
+
+            <!-- SEARCH BAR MOVED FROM HEADER -->
+            <div style="margin-bottom: 20px;">
+                <div class="search-bar" style="max-width: 400px; display: flex; align-items: center; background: #222; padding: 10px 15px; border-radius: 8px; border: 1px solid #444;">
+                    <i class="ph ph-magnifying-glass" style="color: #aaa; margin-right: 10px; font-size: 18px;"></i>
+                    <input type="text" placeholder="Buscar relatórios..." style="background: transparent; border: none; color: #fff; width: 100%; outline: none; font-size: 14px;">
                 </div>
             </div>
 
@@ -62,26 +66,26 @@
                 <div class="dash-card mini" data-permissao="ver_relatorios">
                     <i class="ph ph-users icone-bg" style="color: #2A8C82;"></i>
                     <h4>Clientes Ativos</h4>
-                    <div class="valor">147</div>
-                    <span class="status positivo">+5 este mês</span>
+                    <div class="valor" id="kpi-clientes">--</div>
+                    <span class="status positivo" id="kpi-clientes-sub">Carregando...</span>
                 </div>
                 <div class="dash-card mini" data-permissao="ver_relatorios">
                     <i class="ph ph-currency-dollar icone-bg" style="color: #27c93f;"></i>
-                    <h4>Receita MRR</h4>
-                    <div class="valor">R$ 45.2K</div>
-                    <span class="status positivo">+12% MoM</span>
+                    <h4>Chamados Abertos</h4>
+                    <div class="valor" id="kpi-chamados">--</div>
+                    <span class="status positivo" id="kpi-chamados-sub">No sistema</span>
                 </div>
                 <div class="dash-card mini" data-permissao="ver_relatorios">
                     <i class="ph ph-zap icone-bg" style="color: var(--amarelo-vivo);"></i>
-                    <h4>Energia Gerada</h4>
-                    <div class="valor">1.205 MWh</div>
-                    <span class="status positivo">Este mês</span>
+                    <h4>Pend. Aprovação</h4>
+                    <div class="valor" id="kpi-pendentes">--</div>
+                    <span class="status positivo">Aguardando admin</span>
                 </div>
                 <div class="dash-card mini" data-permissao="ver_relatorios">
                     <i class="ph ph-leaf icone-bg" style="color: #27c93f;"></i>
-                    <h4>CO₂ Evitado</h4>
-                    <div class="valor">425 Ton</div>
-                    <span class="status positivo">Equivalente</span>
+                    <h4>Total Usuários</h4>
+                    <div class="valor" id="kpi-total">--</div>
+                    <span class="status positivo">Cadastrados</span>
                 </div>
             </div>
 
@@ -154,27 +158,27 @@
                 <div class="dash-card" data-permissao="ver_relatorios" style="grid-column: 1 / -1;">
                     <h3>Relatórios para Download</h3>
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
-                        <a href="#" style="background: #222; padding: 15px; border-radius: 8px; text-decoration: none; border: 1px solid #444;">
+                        <a href="#" id="dl-clientes" style="background: #222; padding: 15px; border-radius: 8px; text-decoration: none; border: 1px solid #444;">
                             <p style="margin: 0 0 10px 0; color: var(--amarelo-vivo); font-weight: bold;">
-                                <i class="ph ph-file-pdf"></i> Relatório de Clientes
+                                <i class="ph ph-file-csv"></i> Relatório de Clientes
                             </p>
                             <p style="margin: 0; color: #999; font-size: 12px;">Lista completa com histórico</p>
                         </a>
-                        <a href="#" style="background: #222; padding: 15px; border-radius: 8px; text-decoration: none; border: 1px solid #444;">
+                        <a href="#" id="dl-financeiro" style="background: #222; padding: 15px; border-radius: 8px; text-decoration: none; border: 1px solid #444;">
                             <p style="margin: 0 0 10px 0; color: #2A8C82; font-weight: bold;">
-                                <i class="ph ph-file-pdf"></i> Relatório Financeiro
+                                <i class="ph ph-file-csv"></i> Relatório Financeiro
                             </p>
                             <p style="margin: 0; color: #999; font-size: 12px;">Receita, despesas e lucro</p>
                         </a>
-                        <a href="#" style="background: #222; padding: 15px; border-radius: 8px; text-decoration: none; border: 1px solid #444;">
+                        <a href="#" id="dl-chamados" style="background: #222; padding: 15px; border-radius: 8px; text-decoration: none; border: 1px solid #444;">
                             <p style="margin: 0 0 10px 0; color: #27c93f; font-weight: bold;">
-                                <i class="ph ph-file-pdf"></i> Relatório de Energia
+                                <i class="ph ph-file-csv"></i> Relatório de Chamados
                             </p>
-                            <p style="margin: 0; color: #999; font-size: 12px;">Geração, consumo e impacto</p>
+                            <p style="margin: 0; color: #999; font-size: 12px;">Todos os chamados do sistema</p>
                         </a>
-                        <a href="#" style="background: #222; padding: 15px; border-radius: 8px; text-decoration: none; border: 1px solid #444;">
+                        <a href="#" id="dl-auditoria" style="background: #222; padding: 15px; border-radius: 8px; text-decoration: none; border: 1px solid #444;">
                             <p style="margin: 0 0 10px 0; color: #ff9500; font-weight: bold;">
-                                <i class="ph ph-file-pdf"></i> Relatório de Performance
+                                <i class="ph ph-file-csv"></i> Log de Auditoria
                             </p>
                             <p style="margin: 0; color: #999; font-size: 12px;">Uptime, eficiência, alertas</p>
                         </a>
@@ -186,103 +190,88 @@
     </div>
 
     <script>
-        // Verificar se é admin
         document.addEventListener('DOMContentLoaded', () => {
-            if (!ehAdmin()) {
-                window.location.href = 'dashboard.html';
+            if (!ehAdmin()) { window.location.href = 'dashboard.html'; return; }
+
+            // KPIs dinâmicos
+            const usuarios  = JSON.parse(localStorage.getItem('rtv_usuarios'))||[];
+            const chamados  = JSON.parse(localStorage.getItem('rtv_chamados'))||[];
+            const clientes  = usuarios.filter(u => u.role !== 'admin');
+            const aprovados = clientes.filter(u => u.aprovadoAdmin);
+            const pendentes = clientes.filter(u => !u.aprovadoAdmin && !u.rejeitado);
+            const abertos   = chamados.filter(c => c.status !== 'resolvido' && c.status !== 'fechado');
+
+            document.getElementById('kpi-clientes').textContent = aprovados.length;
+            document.getElementById('kpi-clientes-sub').textContent = '+'+clientes.length+' cadastrados';
+            document.getElementById('kpi-chamados').textContent = abertos.length;
+            document.getElementById('kpi-pendentes').textContent = pendentes.length;
+            document.getElementById('kpi-total').textContent = clientes.length;
+
+            // Helper download CSV
+            function downloadCSV(nome, conteudo) {
+                const blob = new Blob([conteudo], {type:'text/csv;charset=utf-8;'});
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a'); a.href=url; a.download=nome+'.csv'; a.click();
+                URL.revokeObjectURL(url);
             }
+
+            // Download Clientes
+            document.getElementById('dl-clientes').addEventListener('click', e => {
+                e.preventDefault();
+                const linhas = ['Nome,Email,CPF,Telefone,Status,Data Cadastro'];
+                clientes.forEach(u => linhas.push(`"${u.nome||''}","${u.email||''}","${u.cpf||''}","${u.telefone||''}","${u.aprovadoAdmin?'Aprovado':u.rejeitado?'Rejeitado':'Pendente'}","${u.dataCadastro||''}"` ));
+                downloadCSV('relatorio-clientes', linhas.join('\n'));
+            });
+
+            // Download Financeiro
+            document.getElementById('dl-financeiro').addEventListener('click', e => {
+                e.preventDefault();
+                const servicos = JSON.parse(localStorage.getItem('rtv_servicos'))||[];
+                const linhas = ['Servico,Preco,Contratos,Status'];
+                servicos.forEach(s => linhas.push(`"${s.nome}","${s.preco}","${s.contratos||0}","${s.status}"`));
+                downloadCSV('relatorio-financeiro', linhas.join('\n'));
+            });
+
+            // Download Chamados
+            document.getElementById('dl-chamados').addEventListener('click', e => {
+                e.preventDefault();
+                const linhas = ['ID,Categoria,Usuario,Data,Status'];
+                chamados.forEach(c => linhas.push(`"${c.id}","${c.categoria||''}","${c.usuarioEmail||''}","${c.data||''}","${c.status||'aberto'}"`));
+                downloadCSV('relatorio-chamados', linhas.join('\n'));
+            });
+
+            // Download Auditoria
+            document.getElementById('dl-auditoria').addEventListener('click', e => {
+                e.preventDefault();
+                const logs = JSON.parse(localStorage.getItem('rtv_logs_auditoria'))||[];
+                const linhas = ['Acao,Usuario,Data'];
+                logs.forEach(l => linhas.push(`"${l.acao||''}","${l.user||'Sistema'}","${l.data||''}"`));
+                downloadCSV('log-auditoria', linhas.join('\n'));
+            });
+
+            // Exportar PDF (texto formatado)
+            document.getElementById('btn-exportar-pdf').addEventListener('click', e => {
+                e.preventDefault();
+                const txt = `RELATÓRIO ADMINISTRATIVO - RTV SOLAR\nGerado em: ${new Date().toLocaleString('pt-BR')}\n\n=== CLIENTES ===\nTotal: ${clientes.length} | Aprovados: ${aprovados.length} | Pendentes: ${pendentes.length}\n\n=== CHAMADOS ===\nTotal: ${chamados.length} | Abertos: ${abertos.length}\n\n=== USUÁRIOS ===\n${clientes.map(u=>`${u.nome} <${u.email}> - ${u.aprovadoAdmin?'Aprovado':'Pendente'}`).join('\n')}`;
+                const blob = new Blob([txt],{type:'text/plain;charset=utf-8;'});
+                const url = URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='relatorio-rtv.txt'; a.click(); URL.revokeObjectURL(url);
+            });
 
             inicializarGraficosRelatorios();
         });
 
         function inicializarGraficosRelatorios() {
-            // Crescimento de Clientes
             const ctxCrescimento = document.getElementById('chart-crescimento-clientes')?.getContext('2d');
             if (ctxCrescimento) {
-                new Chart(ctxCrescimento, {
-                    type: 'line',
-                    data: {
-                        labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
-                        datasets: [{
-                            label: 'Clientes Ativos',
-                            data: [85, 92, 98, 105, 112, 118, 125, 132, 135, 140, 142, 147],
-                            borderColor: '#2A8C82',
-                            backgroundColor: 'rgba(42, 140, 130, 0.1)',
-                            tension: 0.4,
-                            fill: true
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: true,
-                        plugins: { legend: { display: false } },
-                        scales: {
-                            y: { beginAtZero: true, ticks: { color: '#aaa' } },
-                            x: { ticks: { color: '#aaa' } }
-                        }
-                    }
-                });
+                new Chart(ctxCrescimento, { type:'line', data:{ labels:['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'], datasets:[{ label:'Clientes Ativos', data:[85,92,98,105,112,118,125,132,135,140,142,147], borderColor:'#2A8C82', backgroundColor:'rgba(42,140,130,0.1)', tension:0.4, fill:true }] }, options:{ responsive:true, plugins:{legend:{display:false}}, scales:{ y:{beginAtZero:true,ticks:{color:'#aaa'}}, x:{ticks:{color:'#aaa'}} } } });
             }
-
-            // Receita Mensal
             const ctxReceita = document.getElementById('chart-receita-mensal')?.getContext('2d');
             if (ctxReceita) {
-                new Chart(ctxReceita, {
-                    type: 'bar',
-                    data: {
-                        labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
-                        datasets: [{
-                            label: 'R$',
-                            data: [25800, 28500, 31200, 34100, 37050, 40100, 42300, 44200, 45100, 45200, 45200, 45200],
-                            backgroundColor: '#27c93f'
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: true,
-                        indexAxis: 'x',
-                        plugins: { legend: { display: false } },
-                        scales: {
-                            y: { beginAtZero: true, ticks: { color: '#aaa' } },
-                            x: { ticks: { color: '#aaa' } }
-                        }
-                    }
-                });
+                new Chart(ctxReceita, { type:'bar', data:{ labels:['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'], datasets:[{ label:'R$', data:[25800,28500,31200,34100,37050,40100,42300,44200,45100,45200,45200,45200], backgroundColor:'#27c93f' }] }, options:{ responsive:true, plugins:{legend:{display:false}}, scales:{ y:{beginAtZero:true,ticks:{color:'#aaa'}}, x:{ticks:{color:'#aaa'}} } } });
             }
-
-            // Performance
-            const ctxPerformance = document.getElementById('chart-performance')?.getContext('2d');
-            if (ctxPerformance) {
-                new Chart(ctxPerformance, {
-                    type: 'line',
-                    data: {
-                        labels: ['Semana 1', 'Semana 2', 'Semana 3', 'Semana 4', 'Semana 5'],
-                        datasets: [
-                            {
-                                label: 'Uptime (%)',
-                                data: [99.8, 99.7, 100, 99.9, 99.8],
-                                borderColor: '#27c93f',
-                                backgroundColor: 'rgba(39, 201, 63, 0.1)',
-                                tension: 0.4
-                            },
-                            {
-                                label: 'Disponibilidade (%)',
-                                data: [98, 98.5, 99, 98.8, 99.2],
-                                borderColor: '#2A8C82',
-                                backgroundColor: 'rgba(42, 140, 130, 0.1)',
-                                tension: 0.4
-                            }
-                        ]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: true,
-                        scales: {
-                            y: { beginAtZero: false, min: 97, max: 100, ticks: { color: '#aaa' } },
-                            x: { ticks: { color: '#aaa' } }
-                        }
-                    }
-                });
+            const ctxPerf = document.getElementById('chart-performance')?.getContext('2d');
+            if (ctxPerf) {
+                new Chart(ctxPerf, { type:'line', data:{ labels:['Semana 1','Semana 2','Semana 3','Semana 4','Semana 5'], datasets:[ {label:'Uptime (%)',data:[99.8,99.7,100,99.9,99.8],borderColor:'#27c93f',backgroundColor:'rgba(39,201,63,0.1)',tension:0.4}, {label:'Disponibilidade (%)',data:[98,98.5,99,98.8,99.2],borderColor:'#2A8C82',backgroundColor:'rgba(42,140,130,0.1)',tension:0.4} ] }, options:{ responsive:true, scales:{ y:{min:97,max:100,ticks:{color:'#aaa'}}, x:{ticks:{color:'#aaa'}} } } });
             }
         }
     </script>

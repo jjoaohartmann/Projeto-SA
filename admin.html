@@ -80,8 +80,8 @@
             <div class="dash-card" style="grid-column: 1 / -1; margin-top: 30px; border-color: var(--verde-agua);">
                 <h3 style="color: var(--verde-agua); margin: 0 0 20px 0;"><i class="ph ph-user-gear"></i> Gerenciamento de Usuários</h3>
                 <div style="display: flex; gap: 15px;">
-                    <button class="btn" style="padding: 12px 24px;"><i class="ph ph-plus"></i> Adicionar Usuário</button>
-                    <button class="btn" style="padding: 12px 24px; background-color: transparent; border: 2px solid var(--verde-agua); color: var(--verde-agua);"><i class="ph ph-list"></i> Visualizar Usuários</button>
+                    <button class="btn" style="padding: 12px 24px;" onclick="window.location.href='admin-clientes.html?novo=1'"><i class="ph ph-plus"></i> Adicionar Usuário</button>
+                    <button class="btn" style="padding: 12px 24px; background-color: transparent; border: 2px solid var(--verde-agua); color: var(--verde-agua);" onclick="window.location.href='admin-clientes.html'"><i class="ph ph-list"></i> Visualizar Usuários</button>
                 </div>
             </div>
 
@@ -107,7 +107,7 @@
                 </table>
             </div>
 
-            <!-- TABELA DE ÚLTIMAS AÇÕES -->
+            <!-- TABELA DE ÚCTIMAS AÇÕES -->
             <div class="dash-card" style="grid-column: 1 / -1; margin-top: 20px; border-color: #ff5f56;">
                 <h3 style="color: #ff5f56; margin: 0 0 20px 0;"><i class="ph ph-activity"></i> Últimas Ações do Sistema</h3>
                 <table class="comparativo-table" style="width: 100%; margin: 0;">
@@ -119,29 +119,43 @@
                             <th>Status</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr>
-                            <td>Login de usuário</td>
-                            <td>cliente@example.com</td>
-                            <td>Hoje, 14:30</td>
-                            <td><span class="status positivo">Sucesso</span></td>
-                        </tr>
-                        <tr>
-                            <td>Alteração de dados</td>
-                            <td>admin@example.com</td>
-                            <td>Hoje, 12:15</td>
-                            <td><span class="status positivo">Sucesso</span></td>
-                        </tr>
-                        <tr>
-                            <td>Backup realizado</td>
-                            <td>sistema</td>
-                            <td>Hoje, 03:00</td>
-                            <td><span class="status positivo">Sucesso</span></td>
-                        </tr>
+                    <tbody id="tabela-ultimas-acoes">
+                        <tr><td colspan="4" style="text-align:center; color:#888; padding:20px;">Carregando...</td></tr>
                     </tbody>
                 </table>
             </div>
         </main>
     </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // Renderizar tabela de auditoria real
+    const tbody = document.getElementById('tabela-ultimas-acoes');
+    if (tbody) {
+        const logs = JSON.parse(localStorage.getItem('rtv_logs_auditoria')) || [];
+        if (logs.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:#888; padding:20px;">Nenhuma ação registrada ainda.</td></tr>';
+        } else {
+            tbody.innerHTML = logs.slice(0, 15).map(l => `
+                <tr>
+                    <td>${l.acao || '—'}</td>
+                    <td>${l.user || 'Sistema'}</td>
+                    <td>${l.data || '—'}</td>
+                    <td><span class="status positivo">Registrado</span></td>
+                </tr>`).join('');
+        }
+    }
+    // Atualizar card de usuários ativos
+    const elU = document.getElementById('total-usuarios');
+    if (elU) {
+        const usuarios = JSON.parse(localStorage.getItem('rtv_usuarios')) || [];
+        elU.textContent = usuarios.filter(u => u.role !== 'admin').length;
+    }
+    // Abrir modal de novo cliente se vier de ?novo=1
+    if (window.location.search.includes('novo=1')) {
+        window.location.href = 'admin-clientes.html?novo=1';
+    }
+});
+</script>
 </body>
 </html>

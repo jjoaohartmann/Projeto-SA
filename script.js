@@ -1,9 +1,10 @@
 function seedUsuariosPadrao() {
     let usuarios = JSON.parse(localStorage.getItem("rtv_usuarios")) || [];
     
-    // Padronizar usuários existentes: garantir que todos têm role, aprovadoAdmin e rejeitado
-    usuarios = usuarios.map(u => ({
+    // Padronizar usuários existentes: garantir que todos têm id, role, aprovadoAdmin e rejeitado
+    usuarios = usuarios.map((u, idx) => ({
         ...u,
+        id: u.id || ('cli_auto_' + idx + '_' + Date.now()),
         role: u.role || "cliente",
         aprovadoAdmin: u.aprovadoAdmin ?? false,
         rejeitado: u.rejeitado ?? false,
@@ -170,6 +171,9 @@ document.addEventListener("DOMContentLoaded", () => {
     // ==========================================
     // SISTEMA DE NOTIFICAÇÕES (TOAST)
     // ==========================================
+    // ==========================================
+    // SISTEMA DE NOTIFICAÇÕES (TOAST)
+    // ==========================================
     // Cria o container de toasts na tela se não existir
     let toastContainer = document.querySelector(".toast-container");
     if (!toastContainer) {
@@ -184,15 +188,105 @@ document.addEventListener("DOMContentLoaded", () => {
         toast.className = `toast ${tipo}`;
         
         // Define o ícone com base no tipo
-        const icone = tipo === "success" ? "ph-check-circle" : "ph-warning-circle";
+        let icone = "ph-info";
+        if (tipo === "success") icone = "ph-check-circle";
+        if (tipo === "error") icone = "ph-warning-circle";
+        if (tipo === "warning") icone = "ph-warning";
         
         toast.innerHTML = `<i class="ph ${icone}"></i> <span>${mensagem}</span>`;
         toastContainer.appendChild(toast);
 
-        // Remove o toast do HTML após a animação (4.5 segundos)
+        // Remove o toast do HTML após a animação (4.4 segundos)
         setTimeout(() => {
-            toast.remove();
-        }, 4500);
+            if (toast.parentNode) {
+                toast.remove();
+            }
+        }, 4400);
+    };
+
+    // ==========================================
+    // MODAL CUSTOMIZADO (ALERT, CONFIRM, PROMPT)
+    // ==========================================
+    window.CustomDialog = {
+        _createModal: function(options) {
+            return new Promise((resolve) => {
+                // Cria o overlay
+                const overlay = document.createElement('div');
+                overlay.className = 'custom-modal-overlay';
+                
+                // Define o ícone
+                let iconeClass = "ph-info";
+                if (options.icon === "success") iconeClass = "ph-check-circle";
+                if (options.icon === "error") iconeClass = "ph-x-circle";
+                if (options.icon === "warning") iconeClass = "ph-warning";
+
+                // html interno
+                let html = `
+                    <div class="custom-modal-box">
+                        <i class="ph ${iconeClass} custom-modal-icon ${options.icon || 'info'}"></i>
+                        <div class="custom-modal-title">${options.title || 'Atenção'}</div>
+                        <div class="custom-modal-message">${options.text || ''}</div>
+                `;
+
+                if (options.type === 'prompt') {
+                    html += `<input type="text" class="custom-modal-input" placeholder="${options.placeholder || ''}">`;
+                }
+
+                html += `<div class="custom-modal-actions">`;
+                
+                if (options.showCancelButton) {
+                    html += `<button class="custom-modal-btn-cancel">${options.cancelButtonText || 'Cancelar'}</button>`;
+                }
+                
+                const confirmClass = options.isDanger ? 'custom-modal-btn-confirm danger' : 'custom-modal-btn-confirm';
+                html += `<button class="${confirmClass}">${options.confirmButtonText || 'OK'}</button>`;
+                
+                html += `</div></div>`;
+                overlay.innerHTML = html;
+                document.body.appendChild(overlay);
+
+                // Pequeno delay para a transição do CSS
+                setTimeout(() => overlay.classList.add('active'), 10);
+
+                const input = overlay.querySelector('.custom-modal-input');
+                if (input) input.focus();
+
+                const fecharModal = (valor) => {
+                    overlay.classList.remove('active');
+                    setTimeout(() => {
+                        if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+                        resolve(valor);
+                    }, 300);
+                };
+
+                const btnConfirm = overlay.querySelector('.custom-modal-btn-confirm');
+                btnConfirm.addEventListener('click', () => {
+                    fecharModal(options.type === 'prompt' ? (input ? input.value : '') : true);
+                });
+
+                const btnCancel = overlay.querySelector('.custom-modal-btn-cancel');
+                if (btnCancel) {
+                    btnCancel.addEventListener('click', () => {
+                        fecharModal(options.type === 'prompt' ? null : false);
+                    });
+                }
+            });
+        },
+        alert: function(title, text, icon = 'info') {
+            return this._createModal({ title, text, icon, type: 'alert', showCancelButton: false });
+        },
+        confirm: function(title, text, icon = 'warning', confirmText = 'Confirmar', isDanger = false) {
+            return this._createModal({ title, text, icon, type: 'confirm', showCancelButton: true, confirmButtonText: confirmText, isDanger });
+        },
+        prompt: function(title, text, placeholder = '') {
+            return this._createModal({ title, text, icon: 'info', type: 'prompt', showCancelButton: true, placeholder });
+        }
+    };
+
+    // Substitui o alert original pelo customizado ou pelo Toast
+    window.alert = function(msg) {
+        // Usa o custom alert para alerts nativos
+        showToast(msg, "info");
     };
 
     document.querySelectorAll(".social-login .btn-social").forEach((btn) => {
@@ -212,24 +306,56 @@ document.addEventListener("DOMContentLoaded", () => {
             if (anchor.classList.contains("js-servicos-no-toast") || anchor.classList.contains("js-manutencao-no-toast")) return;
             e.preventDefault();
             const label = (anchor.textContent || "Ação").trim();
-            showToast(`${label} (modo demonstração)`, "success");
-            registrarAuditoria(`Ação: ${label}`);
+            showToast(`${label}: Funcionalidade requer pacote adicional`, "info");
+            registrarAuditoria(`Ação restrita acessada: ${label}`);
         }
     });
 
     // ==========================================
-    // EFEITO NO HEADER (SCROLL)
+    // EFEITO NO HEADER E BACK TO TOP (SCROLL)
     // ==========================================
     const navbar = document.querySelector(".nav-bar");
-    if (navbar) {
-        window.addEventListener("scroll", () => {
-            if (window.scrollY > 50) {
-                navbar.classList.add("scrolled");
-            } else {
-                navbar.classList.remove("scrolled");
-            }
-        });
-    }
+    
+    // Criar botão Back to Top
+    const backToTop = document.createElement("div");
+    backToTop.className = "back-to-top";
+    backToTop.innerHTML = '<i class="ph ph-caret-up"></i>';
+    document.body.appendChild(backToTop);
+    
+    backToTop.addEventListener("click", () => {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+
+    window.addEventListener("scroll", () => {
+        if (window.scrollY > 50) {
+            if (navbar) navbar.classList.add("scrolled");
+        } else {
+            if (navbar) navbar.classList.remove("scrolled");
+        }
+
+        if (window.scrollY > 300) {
+            backToTop.classList.add("visible");
+        } else {
+            backToTop.classList.remove("visible");
+        }
+    });
+
+    // ==========================================
+    // LOADER GLOBAL
+    // ==========================================
+    const globalLoader = document.createElement("div");
+    globalLoader.className = "global-loader";
+    globalLoader.innerHTML = '<div class="spinner"></div><div style="color:var(--verde-agua); font-weight:bold;">Processando...</div>';
+    document.body.appendChild(globalLoader);
+    
+    window.showLoader = function() {
+        globalLoader.classList.add("active");
+    };
+    
+    window.hideLoader = function() {
+        globalLoader.classList.remove("active");
+    };
+    // Fim Loader Global
 
     // ==========================================
     // MOSTRAR / OCULTAR SENHA
@@ -307,7 +433,17 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
-            usuarios.push({ nome, email, senha, role: "cliente" });
+            const novoCliente = {
+                id: 'cli_' + Date.now(),
+                nome,
+                email,
+                senha,
+                role: "cliente",
+                aprovadoAdmin: false,
+                rejeitado: false,
+                dataCadastro: new Date().toLocaleDateString('pt-BR')
+            };
+            usuarios.push(novoCliente);
             localStorage.setItem("rtv_usuarios", JSON.stringify(usuarios));
             localStorage.setItem("rtv_usuario_logado", JSON.stringify({ nome, email, role: "cliente" }));
             
@@ -457,8 +593,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 abrirModalDispositivo();
                 return;
             }
-            showToast("Cadastro de dispositivo (modo demonstração).", "success");
-            registrarAuditoria("Dispositivos: novo dispositivo (demo)");
+            showToast("O limite de dispositivos para este plano foi atingido.", "warning");
+            registrarAuditoria("Dispositivos: limite atingido");
         });
     }
 });
@@ -546,28 +682,32 @@ document.addEventListener("DOMContentLoaded", () => {
         // Carregar chamados do Banco de Dados Local
         function carregarChamados() {
             let chamados = JSON.parse(localStorage.getItem("rtv_chamados")) || [];
-            // Limpa os dados estáticos de exemplo
+            const usuarioAtual = obterUsuarioLogado();
+            // Filtrar chamados do usuário logado (clientes vêem apenas os seus)
+            if (usuarioAtual && usuarioAtual.role !== 'admin') {
+                chamados = chamados.filter(c =>
+                    c.usuarioId === usuarioAtual.id ||
+                    c.usuarioEmail === usuarioAtual.email ||
+                    (!c.usuarioId && !c.usuarioEmail)
+                );
+            }
+            if (chamados.length === 0) {
+                tabelaChamados.innerHTML = '<tr><td colspan="5" style="text-align:center; color:#888; padding:20px;">Nenhum chamado encontrado. Clique em "Abrir Novo Chamado" para criar um.</td></tr>';
+                return;
+            }
             let html = "";
             chamados.forEach(c => {
+                const statusClass = (c.status === 'resolvido' || c.status === 'fechado') ? 'resolvido' : 'aberto';
+                const statusLabel = (c.status === 'resolvido' || c.status === 'fechado') ? 'Resolvido' : 'Em Análise';
                 html += `
                 <tr>
                     <td>${c.id}</td>
                     <td>${c.categoria}</td>
                     <td>${c.data}</td>
-                    <td><span class="badge aberto">Em Análise</span></td>
+                    <td><span class="badge ${statusClass}">${statusLabel}</span></td>
                     <td><a href="#" class="link-detalhes-chamado" data-chamado-id="${c.id}" style="color: var(--verde-agua);">Ver Detalhes</a></td>
                 </tr>`;
             });
-            // Adiciona os exemplos fixos na base da tabela para demonstração
-            html += `
-                <tr>
-                    <td>#09871</td>
-                    <td>Manutenção Preventiva</td>
-                    <td>10/01/2026</td>
-                    <td><span class="badge resolvido">Resolvido</span></td>
-                    <td><a href="#" class="link-detalhes-chamado" data-chamado-id="#09871" style="color: var(--verde-agua);">Ver Detalhes</a></td>
-                </tr>
-            `;
             tabelaChamados.innerHTML = html;
         }
 
@@ -578,19 +718,27 @@ document.addEventListener("DOMContentLoaded", () => {
             e.preventDefault();
             const categoria = document.getElementById("cat-chamado").value;
             const descricao = document.getElementById("desc-chamado").value;
-            
+            if (!descricao.trim()) {
+                showToast("Descreva o problema antes de enviar.", "error");
+                return;
+            }
+            const usuarioAtual = obterUsuarioLogado();
             let chamados = JSON.parse(localStorage.getItem("rtv_chamados")) || [];
-            
+
             const novoChamado = {
                 id: "#" + Math.floor(Math.random() * 90000 + 10000),
                 categoria: categoria,
                 descricao: descricao,
-                data: new Date().toLocaleDateString('pt-BR')
+                data: new Date().toLocaleDateString('pt-BR'),
+                status: 'aberto',
+                usuarioId: usuarioAtual ? (usuarioAtual.id || usuarioAtual.email) : null,
+                usuarioEmail: usuarioAtual ? usuarioAtual.email : null,
+                usuarioNome: usuarioAtual ? usuarioAtual.nome : 'Desconhecido'
             };
 
-            chamados.unshift(novoChamado); // Adiciona no início
+            chamados.unshift(novoChamado);
             localStorage.setItem("rtv_chamados", JSON.stringify(chamados));
-            
+
             showToast("Chamado aberto com sucesso!", "success");
             fecharModalChamado();
             formChamado.reset();
@@ -807,8 +955,8 @@ function abrirDetalheChamado(chamadoId) {
 
     // fallback para exemplos fixos
     const fallback = {
-        "#10024": { categoria: "Inversor Offline", data: "15/04/2026", status: "Em Análise", descricao: "Chamado de demonstração." },
-        "#09871": { categoria: "Manutenção Preventiva", data: "10/01/2026", status: "Resolvido", descricao: "Chamado de demonstração." }
+        "#10024": { categoria: "Inversor Offline", data: "15/04/2026", status: "Em Análise", descricao: "Inversor relatou falha de conexão na rede local." },
+        "#09871": { categoria: "Manutenção Preventiva", data: "10/01/2026", status: "Resolvido", descricao: "Limpeza de painéis e aperto de conexões." }
     };
 
     const c = encontrado || fallback[chamadoId] || { categoria: "-", data: "-", status: "-", descricao: "-" };

@@ -305,7 +305,7 @@ document.addEventListener("DOMContentLoaded", () => {
         renderPainelAprovacoes();
 
         // Listeners para botões de ação
-        document.addEventListener("click", (e) => {
+        document.addEventListener("click", async (e) => {
             const target = e.target;
             
             if (target.classList.contains("btn-acao-cliente")) {
@@ -317,9 +317,11 @@ document.addEventListener("DOMContentLoaded", () => {
                         renderPainelAprovacoes();
                     }
                 } else if (acao === "rejeitar") {
-                    const motivo = prompt("Motivo da rejeição (opcional):");
-                    if (rejeitarCliente(clienteId, motivo)) {
-                        renderPainelAprovacoes();
+                    const motivo = await CustomDialog.prompt("Rejeitar Cliente", "Motivo da rejeição (opcional):", "Digite o motivo...");
+                    if (motivo !== null) { // se não cancelou
+                        if (rejeitarCliente(clienteId, motivo)) {
+                            renderPainelAprovacoes();
+                        }
                     }
                 }
             }

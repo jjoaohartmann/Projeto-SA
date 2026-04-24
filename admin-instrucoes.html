@@ -12,8 +12,18 @@
     <header class="nav-bar">
         <a href="dashboard.html">
             <img src="imagens/logo-site.png" alt="logo" class="logo">
-            <h3>RTV ENERGIA SOLAR - ADMIN</h3>
+            <h3>RTV ENERGIA SOLAR</h3>
         </a>
+        <div class="topbar-actions">
+            <div class="notification-wrapper">
+                <a href="#" id="btn-notificacoes" style="color: var(--amarelo-vivo); position: relative;">
+                    <i class="ph ph-bell" style="font-size: 24px;"></i>
+                    <span class="notif-badge" id="notif-count" style="display: none;">0</span>
+                </a>
+                <div class="notif-dropdown" id="notif-dropdown"></div>
+            </div>
+            <a href="#" id="btn-logout" class="btn" style="background-color: #ff5f56; padding: 8px 15px;">Sair</a>
+        </div>
     </header>
 
     <div class="dashboard-layout">
