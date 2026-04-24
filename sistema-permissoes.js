@@ -228,14 +228,13 @@ function renderMenuDinamico() {
 /**
  * Verificar acesso à página atual
  */
+
 function verificarAcessoPagina() {
     const usuario = obterUsuarioLogado();
     if (!usuario) {
         // Redirecionar para login
         if (!window.location.pathname.includes("login") && 
-            !window.location.pathname.includes("index") &&
-            !window.location.pathname.includes("registro") &&
-            !window.location.pathname.includes("servicos")) {
+            !window.location.pathname.includes("cadastro")) {
             window.location.href = "login.html";
         }
         return;
