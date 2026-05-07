@@ -1393,7 +1393,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const det = document.getElementById("sim-detalhe");
         if (!inp || !sel || !out || !det) return;
         const r = economiaAnualSimuladorServicos(inp.value, sel.value);
-        out.textContent = r.valor.toLocaleString("pt-PT", { style: "currency", currency: "EUR" });
+        out.textContent = r.valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
         det.textContent = r.detalhe;
     }
 
@@ -1490,7 +1490,7 @@ document.addEventListener("DOMContentLoaded", () => {
             guardarHistoricoServicos({
                 data: new Date().toLocaleString("pt-PT"),
                 tipo: "Simulação",
-                resumo: `${labelTipo} — ${r.valor.toLocaleString("pt-PT", { style: "currency", currency: "EUR" })} /ano`
+                resumo: `${labelTipo} — ${r.valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })} /ano`
             });
             renderHistoricoServicosTabela();
             showToast("Simulação guardada no histórico local.", "success");
